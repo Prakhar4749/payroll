@@ -1,4 +1,4 @@
-import logo from './logo.svg';
+
 import './App.css';
 import Department from "./Pages/Department";
 import Employee from './Pages/Employee';
