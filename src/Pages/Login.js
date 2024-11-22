@@ -1,17 +1,31 @@
 import React, {useState} from 'react'
-import { Link } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 
 export default function Login() {
+  let isLogedIN = "false";
+  const navigate = useNavigate();
+
+  const auth ={
+    user: "Prakhar",
+    password: "1234567890"
+  }
   const [user, setUser] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = (e) => {
+    
     e.preventDefault();
     console.log("user:", user);
     console.log("Password:", password);
     // Add login logic here (e.g., call an API)
-
+    if(user === auth.user && password === auth.password ){
+      isLogedIN = "true";
+      
+      
+    }
+    console.log({isLogedIN})
+    
   };
 
   return (
@@ -70,4 +84,5 @@ export default function Login() {
     </div>
   );
 }
+
 

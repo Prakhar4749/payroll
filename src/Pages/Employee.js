@@ -6,6 +6,7 @@ export default function Employee() {
     <div>
       <Navbar/>
       <h1>employee</h1>
+      
     </div>
   )
 }
