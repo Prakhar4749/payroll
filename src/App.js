@@ -20,7 +20,6 @@ function App() {
           <Route path= "/department" element={<Department/>}/>
           <Route path= "/user" element={<User/>}/>
           <Route path= "*" element={<NotFound/>}/>
-
         </Routes>
       </BrowserRouter>
     </div>
