@@ -1,7 +1,20 @@
 import React from "react";
 import Navbar from "./component/Navbar";
+import Emp_Table from "./component/Emp_Table";
 
 export default function Employee() {
+   
+  const emp = [
+    { id: 1, name: 'jkhkdjfsgh', mob: 28 , email: "ghjfjghfjhgf", state: "tytguytujytuy", title: "fghhrtjty"},
+    { id: 2, name: 'agsdfs', mob: 34,  email: "ghjfjghfjtgrewwfiudjghdkiugdksiughdfskiufgdskiufdsgkdfisugdfksiugfdfsikgufdghgf", state: "tytguytujytuy", title: "fghhrtjty" },
+    { id: 3, name: 'agsfs', mob: 45,  email: "ghjfjghfjhgf", state: "tytguytujytuy", title: "fghhrtjty" },
+    { id: 2, name: 'agsdfs', mob: 34,  email: "ghjfjghfjtgrewwfiudjghdkiugdksiughdfskiufgdskiufdsgkdfisugdfksiugfdfsikgufdghgf", state: "tytguytujytuy", title: "fghhrtjty" },
+    { id: 3, name: 'agsfs', mob: 45,  email: "ghjfjghfjhgf", state: "tytguytujytuy", title: "fghhrtjty" },
+    { id: 2, name: 'agsdfs', mob: 34,  email: "ghjfjghfjtgrewwfiudjghdkiugdksiughdfskiufgdskiufdsgkdfisugdfksiugfdfsikgufdghgf", state: "tytguytujytuy", title: "fghhrtjty" },
+    { id: 3, name: 'agsfs', mob: 45,  email: "ghjfjghfjhgf", state: "tytguytujytuy", title: "fghhrtjty" },
+    { id: 2, name: 'agsdfs', mob: 34,  email: "ghjfjghfjtgrewwfiudjghdkiugdksiughdfskiufgdskiufdsgkdfisugdfksiugfdfsikgufdghgf", state: "tytguytujytuy", title: "fghhrtjty" },
+    { id: 3, name: 'agsfs', mob: 45,  email: "ghjfjghfjhgf", state: "tytguytujytuy", title: "fghhrtjty" },
+  ];
   return (
     <>
       <Navbar />
@@ -65,9 +78,10 @@ export default function Employee() {
 
 
 
-        <main className="w-2/3 h-screen bg-red-600 ">
-          {" "}
-          {/* this main is for contaning table */}
+        <main className="w-2/3 ">
+        <Emp_Table className="flex" data = {emp}/>
+          
+          
         </main>
       </div>
     </>
