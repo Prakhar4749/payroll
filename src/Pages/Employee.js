@@ -3,7 +3,6 @@ import Navbar from "./component/Navbar";
 
 export default function Employee() {
   return (
-<<<<<<< HEAD
     <div>
       <Navbar/>
       <h1>employee</h1>
