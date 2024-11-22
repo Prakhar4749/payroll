@@ -3,6 +3,14 @@ import Navbar from "./component/Navbar";
 
 export default function Employee() {
   return (
+<<<<<<< HEAD
+    <div>
+      <Navbar/>
+      <h1>employee</h1>
+      
+    </div>
+  )
+=======
     <>
       <Navbar />
 
@@ -72,4 +80,5 @@ export default function Employee() {
       </div>
     </>
   );
+>>>>>>> 72e60c177e899148d0b4eddae42ab911e992c166
 }

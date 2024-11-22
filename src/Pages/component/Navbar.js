@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 
 function Navbar() {
+    const y = 100;
   return (
     <nav className="bg-white shadow-md p-4">
       <div className="flex justify-center space-x-4 gap-4 	text-transform: uppercase text-lg font-serif font-normal tracking-2">
@@ -27,7 +28,7 @@ function Navbar() {
           Department
         </NavLink>
         <NavLink
-          to="/user"
+          to={"/user/4565"}
           className= {(e)=>{return e.isActive? "bg-blue-600 text-white px-6 py-2 rounded-md " : "text-gray-600 hover:bg-gray-200 px-6 py-2 rounded-md" }
           }
         >
