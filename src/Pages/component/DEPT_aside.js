@@ -2,23 +2,23 @@ import React, { useState } from 'react';
 
 
 const DEPT_aside = () => {
-    const [eId,setEID]=useState("");
-  const [eName,setEName]=useState("");
-  const [eMob,setEMob]=useState("");
+    const [dId,setdID]=useState("");
+  const [dName,setdName]=useState("");
+ 
 
-  function addEmp(){
+  function adddept(){
 
   
   }
-  function updateEmp(){
+  function updatedept(){
   
   
   }
-  function removeEmp(){
+  function removedept(){
   
   
   }
-  function viewEmp(){
+  function viewdept(){
   
   
   }
@@ -39,34 +39,31 @@ const DEPT_aside = () => {
           {/* this aside is for sidebar */}
           <div className="flex flex-col items-center justify-center">
             <button className="bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-full w-9/12 text-xl my-3 mt-4  sm:w-2/3  truncate">
-              Add Employee
+              Add Department
             </button>
             <button className="bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-full w-9/12 text-xl my-3  truncate">
-              Update Employee
+              Update Department
             </button>
             <button className="bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-full w-9/12 text-xl my-3">
-              Remove Employee
+              Remove Department
             </button>
             <button className="bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-full w-9/12 text-xl my-3">
-              View Employee
+              View Department
             </button>
           </div>
           <div className="flex   flex-col">
             <h1 className="text-3xl underline mt-4 mx-5 ">filter</h1>
 
-            <div className="flex flex-col items-center justify-center">
+            <div className="flex flex-col items-center justify-end">
               <span className="  my-1 mt-5 mx-2">
-                <label className="text-2xl " vlaue={eId} onClick={(e)=> setEID(e.target.vlaue)} >E_ID: </label>
-                <input type="text" />
+                <label className="text-2xl "  >D_ID: </label>
+                <input type="text" vlaue={dId} onClick={(e)=> setdID(e.target.vlaue)} />
               </span>
               <span className=" my-1  mx-2">
-                <label className=" text-2xl ">E_Name: </label>
-                <input type="text"  vlaue={eName} onClick={(e)=> setEName(e.target.vlaue)} />
+                <label className=" text-2xl ">D_Name: </label>
+                <input type="text"  vlaue={dName} onClick={(e)=> setdName(e.target.vlaue)} />
               </span>
-              <span className=" my-1 mx-2">
-                <label className=" text-2xl ">E_Mob: </label>
-                <input type="text" vlaue={eMob} onClick={(e)=> setEMob(e.target.vlaue)} />
-              </span>
+              
               {/* <span className="  my-1 mx-2">
                 <label className=" text-2xl ">E_ID: </label>
                 <input type="text" />

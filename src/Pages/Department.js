@@ -17,8 +17,7 @@ function Department() {
       <Navbar/>
 
       <div className="flex w-full ">
-        {" "}
-        {/* this div is the main contaner*/}
+       
         <DEPT_aside/>
 
 

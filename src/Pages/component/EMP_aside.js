@@ -56,8 +56,8 @@ const EMP_aside = () => {
 
             <div className="flex flex-col items-center justify-center">
               <span className="  my-1 mt-5 mx-2">
-                <label className="text-2xl " vlaue={eId} onClick={(e)=> setEID(e.target.vlaue)} >E_ID: </label>
-                <input type="text" />
+                <label className="text-2xl " >E_ID: </label>
+                <input type="text"  vlaue={eId} onClick={(e)=> setEID(e.target.vlaue)} />
               </span>
               <span className=" my-1  mx-2">
                 <label className=" text-2xl ">E_Name: </label>
