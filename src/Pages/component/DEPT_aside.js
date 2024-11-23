@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 
-const DEPT_aside = () => {
+const DEPT_aside = ({deptData, setdeptData}) => {
     const [dId,setdID]=useState("");
   const [dName,setdName]=useState("");
  
@@ -23,6 +23,15 @@ const DEPT_aside = () => {
   
   }
   function apply( ){
+    
+    let a = deptData.filter(dept => dept.id.slice(0,dId.length) === dId  && dept.name.slice(0,dName.length) === dName);
+    console.log(deptData)
+    console.log(dId)
+    console.log(a)
+
+
+    setdeptData(a);
+
   
   
   
@@ -57,11 +66,11 @@ const DEPT_aside = () => {
             <div className="flex flex-col items-center justify-end">
               <span className="  my-1 mt-5 mx-2">
                 <label className="text-2xl "  >D_ID: </label>
-                <input type="text" vlaue={dId} onClick={(e)=> setdID(e.target.vlaue)} />
+                <input type="text" vlaue={dId} onChange={(e)=> setdID(e.target.value)} />
               </span>
               <span className=" my-1  mx-2">
                 <label className=" text-2xl ">D_Name: </label>
-                <input type="text"  vlaue={dName} onClick={(e)=> setdName(e.target.vlaue)} />
+                <input type="text"  vlaue={dName} onChange={(e)=> setdName(e.target.value)} />
               </span>
               
               {/* <span className="  my-1 mx-2">
@@ -75,7 +84,7 @@ const DEPT_aside = () => {
                 <button className="bg-gray-700 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full w-5/12 text-xl">
                   Clear filter
                 </button>
-                <button className="bg-gray-700 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full w-5/12 text-xl ml-1 text-center ">
+                <button className="bg-gray-700 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full w-5/12 text-xl ml-1 text-center "  onClick={apply}>
                   Apply
                 </button>
               </div>

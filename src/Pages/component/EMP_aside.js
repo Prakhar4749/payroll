@@ -24,7 +24,7 @@ const EMP_aside = ({ empData, setEMPData }) => {
   }
   function apply( ){
   
-    let a = empData.filter(employee => employee.id.slice(0,eId.length) == eId  && employee.name.slice(0,eName.length) == eName);
+    let a = empData.filter(employee => employee.id.slice(0,eId.length) === eId  && employee.name.slice(0,eName.length) === eName);
     console.log(empData)
     console.log(eId)
     console.log(a)
@@ -61,8 +61,8 @@ const EMP_aside = ({ empData, setEMPData }) => {
 
             <div className="flex flex-col items-end justify-center">
               <span className="  my-1 mt-5 mx-2">
-                <label className="text-2xl " vlaue={eId} onClick={(e)=> setEID(e.target.vlaue)} >E_ID: </label>
-                <input type="text" />
+                <label className="text-2xl " >E_ID: </label>
+                <input type="text" value={eId} onChange={(e)=> setEID(e.target.value)} />
               </span>
               <span className=" my-1  mx-2">
                 <label className=" text-2xl ">E_Name: </label>
