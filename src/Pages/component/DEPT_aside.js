@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 
-const EMP_aside = () => {
+const DEPT_aside = () => {
     const [eId,setEID]=useState("");
   const [eName,setEName]=useState("");
   const [eMob,setEMob]=useState("");
@@ -89,4 +89,4 @@ const EMP_aside = () => {
   )
 }
 
-export default EMP_aside
+export default DEPT_aside 

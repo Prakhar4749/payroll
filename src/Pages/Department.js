@@ -1,6 +1,7 @@
 import React from "react";
 import Navbar from "./component/Navbar";
 import Dept_Table from "./component/Dept_Table";
+import DEPT_aside from "./component/DEPT_aside";
 function Department() {
   const dept = [
     { id: 1, name: "IT"},
@@ -18,9 +19,7 @@ function Department() {
       <div className="flex w-full ">
         {" "}
         {/* this div is the main contaner*/}
-        <aside className="w-1/3  bg-blue-300 flex  flex-col  mx-auto ">
-          
-        </aside>
+        <DEPT_aside/>
 
 
 
