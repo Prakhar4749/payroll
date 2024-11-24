@@ -28,7 +28,7 @@ export default function Login() {
 
       setError('');
       setIsLogedIn(true);
-      localStorage.setItem('login', true);
+      sessionStorage.setItem('login', true);
 
 
     } else {
@@ -39,7 +39,7 @@ export default function Login() {
   };
   const navigate = useNavigate();
   useEffect(() => {
-    let login = localStorage.getItem('login');
+    let login = sessionStorage.getItem('login');
     if (login){
       navigate('/payslip');
 
