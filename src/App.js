@@ -17,13 +17,13 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Login />} />
-          {/* Protection
-          <Route element={<ProtectedRoute />}> */}
+          {/* Protection */}
+          <Route element={<ProtectedRoute />}>
             <Route path="/payslip" element={<Payslip />} />
             <Route path="/employee" element={<Employee />} />
             <Route path="/department" element={<Department />} />
             <Route path="/user/:x" element={<User />} />
-          {/* </Route> */}
+          </Route>
 
           <Route path="*" element={<NotFound />} />
 

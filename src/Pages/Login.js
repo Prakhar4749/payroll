@@ -1,33 +1,50 @@
-import React, {useState} from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import ProtectedRoute from './component/ProtectedRoute';
 
 export default function Login() {
-  let isLogedIN = "false";
-  const navigate = useNavigate();
 
-  const auth ={
-    user: "Prakhar",
-    password: "1234567890"
-  }
   const [user, setUser] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
+  const [isLogedIn, setIsLogedIn] = useState(false);
+
+  const auth = {
+    user: "Prakhar",
+    password: "1234567890"
+  }
 
   const handleSubmit = (e) => {
-    
+
     e.preventDefault();
     console.log("user:", user);
     console.log("Password:", password);
+    console.log(auth.user);
+    console.log(auth.password);
     // Add login logic here (e.g., call an API)
-    if(user === auth.user && password === auth.password ){
-      isLogedIN = "true";
-      
-      
-      
+    if (user === auth.user && password === auth.password) {
+
+      setError('');
+      setIsLogedIn(true);
+      localStorage.setItem('login', true);
+
+
+    } else {
+      setError('Invalid username or password');
+      setIsLogedIn(false);
     }
-    console.log({isLogedIN})
-    
+    console.log(isLogedIn);
   };
+  const navigate = useNavigate();
+  useEffect(() => {
+    let login = localStorage.getItem('login');
+    if (login){
+      navigate('/payslip');
+
+    }
+    });
 
   return (
     <div className="flex items-center justify-center h-screen bg-gray-100">
@@ -69,17 +86,17 @@ export default function Login() {
               </button>
             </div>
 
-            
+
           </div>
-    
-          
+
+
           <button
             type="submit"
             className="w-full px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             Log In
           </button>
-          <Link to= {"/payslip"}> try login</Link>
+          <Link to="/payslip">try login</Link>
         </form>
       </div>
     </div>
