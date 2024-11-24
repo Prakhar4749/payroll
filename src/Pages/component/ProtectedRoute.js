@@ -5,7 +5,7 @@ import { Navigate, Outlet, useNavigate } from 'react-router-dom';
 function ProtectedRoute(){
   const navigate = useNavigate();
   useEffect(() => {
-    let login = localStorage.getItem('login');
+    let login = sessionStorage.getItem('login');
     if (!login){
       navigate('/');
 
