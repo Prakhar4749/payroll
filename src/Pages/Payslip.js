@@ -26,9 +26,6 @@ export default function Payslip() {
                   Submit
                 </button>
               </div>
-            
-
-        
       </div>
     </div>
   );
