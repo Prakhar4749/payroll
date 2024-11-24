@@ -1,13 +1,20 @@
 import React, { useState } from "react";
 import Navbar from "./component/Navbar";
 
+
+const payslip_data = require('./component/payslip_data')
+
+
+
 export default function Payslip() {
 
   const [eName,setEName] = useState("");
   const [eID,setEID] = useState("");
 
   const submate=()=>{
-    
+    let a= payslip_data.emp_data.filter(emp => emp.e_id === eID)
+     console.log(payslip_data.emp_data)
+     console.log(a)
   }
   const clear=()=>{
 
