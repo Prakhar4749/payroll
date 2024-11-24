@@ -1,6 +1,6 @@
 import React from 'react';
 import Navbar from './component/Navbar';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 
 export default function User() {
     const {x} = useParams();
@@ -8,6 +8,8 @@ export default function User() {
     <div>
         <Navbar/>
       <h1>user {x}</h1>
+      <Link to="/payslip/form">Payslip_Form</Link>
+      
     </div>
   )
 }

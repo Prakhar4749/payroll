@@ -9,6 +9,7 @@ import NotFound from './Pages/NotFound';
 
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import ProtectedRoute from './Pages/component/ProtectedRoute';
+import Payslip_Form from './Pages/component/Payslip_Form';
 
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
           {/* Protection */}
           <Route element={<ProtectedRoute />}>
             <Route path="/payslip" element={<Payslip />} />
+            <Route path="/payslip/form" element={<Payslip_Form />} />
             <Route path="/employee" element={<Employee />} />
             <Route path="/department" element={<Department />} />
             <Route path="/user/:x" element={<User />} />

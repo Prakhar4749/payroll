@@ -13,7 +13,7 @@ export default function Login() {
 
   const auth = {
     user: "Prakhar",
-    password: "1234567890"
+    password: "1234"
   }
 
   const handleSubmit = (e) => {
