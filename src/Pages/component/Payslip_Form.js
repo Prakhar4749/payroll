@@ -1,72 +1,110 @@
 import React, { useState } from 'react'
+import { useLocation } from 'react-router-dom';
 
 const Payslip_Form = () => {
+    const location = useLocation();
+    const e_data = location.state;
+    console.log(e_data)
 
     const [formData, setFormData] = useState({
-        e_id: "1000",
-        e_name: "flkudjsociklv;gj",
-        e_dept: "fgfghd",
-        e_desgn: "sfdhgdfgsh",
-        e_CPF: "sdfhhh",
-        e_attndc: "dfsghdfgh",
-        e_bank_name: "",
-        e_acc_no: "",
-        e_pan_no: "",
-
-        // earning 
-        e_basic: "",
-        e_spc: "",
-        e_dearness: "",
-        e_DA: "",
-        e_ADA: "",
-        e_IR: "",
-        e_HRA: "",
-        e_CCA: "",
-        e_conv: "",
-        e_medical: "",
-        e_wash: "",
-        e_BDP: "",
-        e_arrears: "",
-
-
-        // deduction
-        e_d_CPF: "",
-        e_GIS: "",
-        e_house_rent: "",
-        e_water: "",
-        e_elect: "",
-        e_veh: "",
-        e_HB_loan: "",
-        e_GPF_loan: "",
-        e_festv_loan: "",
-        e_grain: "",
-        e_bank_adv: "",
-        e_advance: "",
-        e_RGPV_adv: "",
-        e_incom_tax: "",
-        e_proff_tax: "",
-    });
+        e_id: e_data[0]?.e_id || "", // Fetch e_id from e_data[0] or set as empty string if undefined
+        e_name: e_data[0]?.e_name || "", // Fetch e_name from e_data[0] or set as empty string if undefined
+        e_dept: e_data[0]?.e_dept || "",
+        e_desgn: e_data[0]?.e_desgn || "",
+        e_CPF: e_data[0]?.e_CPF || "",
+        e_attndc: e_data[0]?.e_attndc || "",
+        e_bank_name: e_data[0]?.e_bank_name || "",
+        e_acc_no: e_data[0]?.e_acc_no || "",
+        e_pan_no: e_data[0]?.e_pan_no || "",
+      
+        // Earnings
+        e_basic: e_data[0]?.e_basic || "",
+        e_spc: e_data[0]?.e_spc || "",
+        e_dearness: e_data[0]?.e_dearness || "",
+        e_DA: e_data[0]?.e_DA || "",
+        e_ADA: e_data[0]?.e_ADA || "",
+        e_IR: e_data[0]?.e_IR || "",
+        e_HRA: e_data[0]?.e_HRA || "",
+        e_CCA: e_data[0]?.e_CCA || "",
+        e_conv: e_data[0]?.e_conv || "",
+        e_medical: e_data[0]?.e_medical || "",
+        e_wash: e_data[0]?.e_wash || "",
+        e_BDP: e_data[0]?.e_BDP || "",
+        e_arrears: e_data[0]?.e_arrears || "",
+      
+        // Deductions
+        e_d_CPF: e_data[0]?.e_d_CPF || "",
+        e_GIS: e_data[0]?.e_GIS || "",
+        e_house_rent: e_data[0]?.e_house_rent || "",
+        e_water: e_data[0]?.e_water || "",
+        e_elect: e_data[0]?.e_elect || "",
+        e_veh: e_data[0]?.e_veh || "",
+        e_HB_loan: e_data[0]?.e_HB_loan || "",
+        e_GPF_loan: e_data[0]?.e_GPF_loan || "",
+        e_festv_loan: e_data[0]?.e_festv_loan || "",
+        e_grain: e_data[0]?.e_grain || "",
+        e_bank_adv: e_data[0]?.e_bank_adv || "",
+        e_advance: e_data[0]?.e_advance || "",
+        e_RGPV_adv: e_data[0]?.e_RGPV_adv || "",
+        e_incom_tax: e_data[0]?.e_incom_tax || "",
+        e_proff_tax: e_data[0]?.e_proff_tax || "",
+      });
+      
 
     // Handle input changes
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
+    console.log( "id" ,formData.e_id)
 
     // Handle form submission
     const handleSubmit = (e) => {
         e.preventDefault();
-        const { basicSalary, deductions } = formData;
-        const totalSalary = basicSalary - deductions;
+        const earnings = [
+            formData.e_basic,
+            formData.e_spc,
+            formData.e_dearness,
+            formData.e_DA,
+            formData.e_ADA,
+            formData.e_IR,
+            formData.e_HRA,
+            formData.e_CCA,
+            formData.e_conv,
+            formData.e_medical,
+            formData.e_wash,
+            formData.e_BDP,
+            formData.e_arrears,
+          ].reduce((sum, value) => sum + parseFloat(value || 0), 0);
+      
+          const deductions = [
+            formData.e_d_CPF,
+            formData.e_GIS,
+            formData.e_house_rent,
+            formData.e_water,
+            formData.e_elect,
+            formData.e_veh,
+            formData.e_HB_loan,
+            formData.e_GPF_loan,
+            formData.e_festv_loan,
+            formData.e_grain,
+            formData.e_bank_adv,
+            formData.e_advance,
+            formData.e_RGPV_adv,
+            formData.e_incom_tax,
+            formData.e_proff_tax,
+          ].reduce((sum, value) => sum + parseFloat(value || 0), 0);
+      
+          const totalSalary = earnings - deductions;
 
         // Update state with total salary
         setFormData((prev) => ({
             ...prev,
             totalSalary,
-        }));
-
-        alert("Payslip created successfully!");
-    };
+          }));
+      
+          alert("Payslip created successfully! Total Salary: ₹" + totalSalary);
+        };
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-100">
