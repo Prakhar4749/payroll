@@ -1,11 +1,33 @@
-import express, { json } from'express'; 
+import express from'express'; 
 import { checkConnection, pool } from './config/db.js';
-
+import emproute from "./routes/emp.js"
+const PORT  = 5000
 const app = express();
-app.listen(3003, async()=>{
+
+app.use(express.json())
+app.use('/emp' , emproute)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+app.listen(PORT, async()=>{
     try {
-        await checkConnection();
-        console.log('Server is running on port 3000 and database connection is established.');
+        await checkConnection().then(()=>{
+            console.log(`database connection is established.`)
+        })
+
+        console.log(`Server is running on port ${PORT} ...`);
     } catch (error) {
         console.log("failed to initialize connection", error);
         
@@ -13,21 +35,4 @@ app.listen(3003, async()=>{
 
 });
 
-app.get("/getuser", async (req, res) => {
-    const sql = "SELECT * FROM emp_details";
-    try {
 
-        const data = await pool.query(sql);
-
-        
-        res.json(data);
-        console.log(data);
-        
-    } catch (err) {
-        console.error("Database query error:", err);
-        res.status(500).json({ error: "Failed to fetch user data." });
-        
-    }
-    
-    
-});
