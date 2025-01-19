@@ -210,9 +210,15 @@ async function add_new_emp(req, res) {
   }
 }
 
+//update the emp
+async function update_emp(req,res){
+    
+}
+
 export {
   get_all_basic__emp_details,
   get_all_e_id_emp_details,
   delete_e_id,
   add_new_emp,
+  update_emp,
 };
