@@ -1,12 +1,12 @@
 import express from 'express'
-import {get_all_basic__emp_details ,get_all_e_id_emp_details , delete_e_id ,add_new_emp, update_emp } from '../controller/emp.js'
+import {get_all_basic__emp_details ,get_all_e_id_emp_details , delete_e_id ,add_new_emp, update_emp ,check_for_data } from '../controller/emp.js'
 
 
 const route = express.Router();
 
 
 //  for geting all the emp_details
-route.get("/",get_all_basic__emp_details);
+// route.get("/",get_all_basic__emp_details);
 
 
 //  for geting detail by e_id the emp_details
@@ -22,6 +22,9 @@ route.post('/' , add_new_emp)
 
 // for updating the data of emp
 route.put('/:e_id',update_emp)
+
+
+route.get("/", check_for_data )
 
 
 export default route;
