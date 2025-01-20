@@ -1,7 +1,10 @@
 import express from "express";
-import {get_by_user_name} from '../controller/authcontroller.js'
+import {login_user,register_user} from '../controller/authcontroller.js'
 const route = express.Router();
 
-route.get("/:user_name",get_by_user_name);
+route.get("/login",login_user);
+
+
+route.get("/register",register_user);
 
 export default route;

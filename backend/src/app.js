@@ -6,7 +6,7 @@ const PORT  = 5000
 const app = express();
 
 app.use(express.json())
-app.use('/login' , authroute)
+app.use('/' , authroute)
 app.use('/emp' , emproute)
 
 
