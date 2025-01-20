@@ -1,21 +1,13 @@
 import express from'express'; 
 import { checkConnection, pool } from './config/db.js';
 import emproute from "./routes/emp.js"
+import authroute from "./routes/authroutes.js"
 const PORT  = 5000
 const app = express();
 
 app.use(express.json())
+app.use('/login' , authroute)
 app.use('/emp' , emproute)
-
-
-
-
-
-
-
-
-
-
 
 
 
