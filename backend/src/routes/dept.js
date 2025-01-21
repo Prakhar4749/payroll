@@ -9,9 +9,7 @@ const route = express.Router();
 route.get("/",get_all_dept_details);
 
 
-
 route.get("/d_id",get_d_id_details);
-
 
 
 route.delete("/delete_d_id" , delete_d_id)

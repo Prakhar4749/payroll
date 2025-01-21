@@ -29,8 +29,6 @@ async function get_d_id_details(req, res) {
   const { d_id }= req.body;
     
     try {
-       
-
         const sql = `SELECT * FROM dept_details WHERE d_id = ?`;
         const [results,fields] = await pool.query(sql,[d_id]);
         const sanitizedFields = fields.map((field) => ({
