@@ -1,5 +1,5 @@
 
-import './App.css';
+import './assets/styles/App.css';
 import Department from "./Pages/Department";
 import Employee from './Pages/Employee';
 import Payslip from './Pages/Payslip';
@@ -8,8 +8,8 @@ import User from './Pages/User';
 import NotFound from './Pages/NotFound';
 
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import ProtectedRoute from './Pages/component/ProtectedRoute';
-import Payslip_Form from './Pages/component/Payslip_Form';
+import ProtectedRoute from './routes/ProtectedRoute';
+import Payslip_Form from './components/page_specific/Payslip_Form';
 
 
 function App() {

@@ -1,5 +1,5 @@
 import React from 'react';
-import Navbar from './component/Navbar';
+import Navbar from '../components/layout/Navbar';
 import { useParams, Link } from 'react-router-dom';
 
 export default function User() {

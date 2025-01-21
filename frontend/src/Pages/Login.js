@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import ProtectedRoute from './component/ProtectedRoute';
+import ProtectedRoute from '../routes/ProtectedRoute';
 
 export default function Login() {
 
@@ -9,56 +9,56 @@ export default function Login() {
   const [user_password, setuser_password] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
-  // const [isLogedIn, setIsLogedIn] = useState(false);
+  const [isLogedIn, setIsLogedIn] = useState(false);
 
-  // const auth = {
-  //   user: "admin",
-  //   password: "admin"
-  // }
+  const auth = {
+    user: "admin",
+    password: "admin"
+  }
   const navigate = useNavigate();
   const handleSubmit = async (e) => {
 
     e.preventDefault();
 
-    try {
-      const response = await axios.get("http://localhost:5000/emp/E001", {
-        user_name: user_name,
-        user_password: user_password,
-      });
-      localStorage.setItem("token", response.data.token); // Store token
-      alert("Login successful");
-      navigate('/payslip'); // Redirect to protected route
-    } catch (err) {
-      setError(err.response?.data?.error || "Something went wrong");
-    }
-  };
-    
-  //   console.log("user:", user);
-  //   console.log("Password:", password);
-  //   console.log(auth.user);
-  //   console.log(auth.password);
-  //   // Add login logic here (e.g., call an API)
-  //   if (user === auth.user && password === auth.password) {
-
-  //     setError('');
-  //     setIsLogedIn(true);
-  //     sessionStorage.setItem('login', true);
-
-
-  //   } else {
-  //     setError('Invalid username or password');
-  //     setIsLogedIn(false);
+  //   try {
+  //     const response = await axios.get("http://localhost:5000/emp/E001", {
+  //       user_name: user_name,
+  //       user_password: user_password,
+  //     });
+  //     localStorage.setItem("token", response.data.token); // Store token
+  //     alert("Login successful");
+  //     navigate('/payslip'); // Redirect to protected route
+  //   } catch (err) {
+  //     setError(err.response?.data?.error || "Something went wrong");
   //   }
-  //   console.log(isLogedIn);
   // };
-  
-  // useEffect(() => {
-  //   let login = sessionStorage.getItem('login');
-  //   if (login){
-  //     navigate('/payslip');
+    
+    console.log("user:", user_name);
+    console.log("Password:", user_password);
+    console.log(auth.user);
+    console.log(auth.password);
+    // Add login logic here (e.g., call an API)
+    if (user_name === auth.user && user_password=== auth.password) {
 
-  //   }
-  //   });
+      setError('');
+      setIsLogedIn(true);
+      sessionStorage.setItem('login', true);
+
+
+    } else {
+      setError('Invalid username or password');
+      setIsLogedIn(false);
+    }
+    console.log(isLogedIn);
+  };
+  
+  useEffect(() => {
+    let login = sessionStorage.getItem('login');
+    if (login){
+      navigate('/payslip');
+
+    }
+    });
 
   return (
     <div className="flex items-center justify-center h-screen bg-gray-100">
