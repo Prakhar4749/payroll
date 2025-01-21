@@ -58,10 +58,12 @@ route.put("/change_password",change_password);
  * Input (Request Body - JSON):
  *  - current_user_name: The current username of the user.
  *  - new_user_name: The new username to set.
+ *  - user_password: The  user password to verify.
  * Example:
  *  {
  *    "current_user_name": "johndoe",
  *    "new_user_name": "john_doe_updated"
+ *    "user_password": "654321"
  *  }
  */
 route.put("/change_user_name",change_user_name);
