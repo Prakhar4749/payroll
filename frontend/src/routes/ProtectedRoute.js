@@ -1,23 +1,27 @@
-import React,{useEffect} from 'react';
-import Login from '../Pages/Login';
-import { Navigate, Outlet, useNavigate } from 'react-router-dom';
+import React from 'react';
+import { Navigate, Outlet } from 'react-router-dom';
+import {jwtDecode} from 'jwt-decode';
 
-function ProtectedRoute(){
-  const navigate = useNavigate();
-  useEffect(() => {
-    let login = sessionStorage.getItem('login');
-    if (!login){
-      navigate('/');
+const ProtectedRoute = () => {
+  const token = localStorage.getItem('token');
 
+  // Function to validate the JWT token
+  const isValidToken = () => {
+    if (!token) return false;
+
+    try {
+      const decoded = jwtDecode(token); // Decode the token
+      const currentTime = Date.now() / 1000; // Current time in seconds
+      return decoded.exp > currentTime; // Check if token is expired
+    } catch (err) {
+      console.error("Invalid token:", err);
+      return false;
     }
-    });
-  
-  return( 
-    <div>
-      <h1></h1>
-      <Outlet/>
-    </div>
-  );
-}
+  };
+
+  const isAuthenticated = isValidToken();
+
+  return isAuthenticated ? <Outlet /> : <Navigate to="/" />;
+};
 
 export default ProtectedRoute;

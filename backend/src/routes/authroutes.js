@@ -16,7 +16,7 @@ const route = express.Router();
  *    "user_password": "123456"
  *  }
  */
-route.get("/login",login_user);
+route.post("/login",login_user);
 
 
 /**

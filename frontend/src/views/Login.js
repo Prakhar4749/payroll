@@ -1,69 +1,40 @@
-import React, { useState, useEffect } from 'react'
-import { Link, Navigate, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import ProtectedRoute from '../routes/ProtectedRoute';
+// Login.js
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { loginUser } from '../controller/authController';
 
 export default function Login() {
-
-  const [user_name, setuser_name] = useState("");
-  const [user_password, setuser_password] = useState("");
+  const [user_name, setUserName] = useState("");
+  const [user_password, setUserPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
-  const [isLogedIn, setIsLogedIn] = useState(false);
-
-  const auth = {
-    user: "admin",
-    password: "admin"
-  }
   const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
-
     e.preventDefault();
+    const result = await loginUser(user_name, user_password);
 
-  //   try {
-  //     const response = await axios.get("http://localhost:5000/emp/E001", {
-  //       user_name: user_name,
-  //       user_password: user_password,
-  //     });
-  //     localStorage.setItem("token", response.data.token); // Store token
-  //     alert("Login successful");
-  //     navigate('/payslip'); // Redirect to protected route
-  //   } catch (err) {
-  //     setError(err.response?.data?.error || "Something went wrong");
-  //   }
-  // };
-    
-    console.log("user:", user_name);
-    console.log("Password:", user_password);
-    console.log(auth.user);
-    console.log(auth.password);
-    // Add login logic here (e.g., call an API)
-    if (user_name === auth.user && user_password=== auth.password) {
-
-      setError('');
-      setIsLogedIn(true);
-      sessionStorage.setItem('login', true);
-
-
-    } else {
-      setError('Invalid username or password');
-      setIsLogedIn(false);
-    }
-    console.log(isLogedIn);
-  };
-  
-  useEffect(() => {
-    let login = sessionStorage.getItem('login');
-    if (login){
+    if (result.success) {
+      alert(result.message);
       navigate('/payslip');
-
+    } else {
+      setError(result.error);
     }
-    });
+  };
+
+  useEffect(() => {
+    // Redirect if already logged in
+    let login = sessionStorage.getItem('login');
+    if (login) {
+      navigate('/payslip');
+    }
+  }, [navigate]);
 
   return (
     <div className="flex items-center justify-center h-screen bg-gray-100">
       <div className="w-full max-w-md p-8 space-y-6 bg-white shadow-lg rounded-md">
         <h2 className="text-2xl font-bold text-center text-gray-800">Login</h2>
+        {error && <p className="text-red-500 text-sm">{error}</p>}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700" htmlFor="user">
@@ -73,7 +44,7 @@ export default function Login() {
               type="text"
               id="user"
               value={user_name}
-              onChange={(e) => setuser_name(e.target.value)}
+              onChange={(e) => setUserName(e.target.value)}
               required
               className="w-full px-4 py-2 mt-1 text-gray-900 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
@@ -87,7 +58,7 @@ export default function Login() {
                 type={showPassword ? "text" : "password"}
                 id="password"
                 value={user_password}
-                onChange={(e) => setuser_password(e.target.value)}
+                onChange={(e) => setUserPassword(e.target.value)}
                 required
                 className="w-full px-4 py-2 mt-1 text-gray-900 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
               />
@@ -99,22 +70,18 @@ export default function Login() {
                 {showPassword ? "🙈" : "👁️"}
               </button>
             </div>
-
-
           </div>
-
-
           <button
             type="submit"
             className="w-full px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             Log In
           </button>
-          <Link to="/payslip">try login</Link>
+          <Link to="/payslip" className="block text-center text-blue-500 hover:underline">
+            Try Login
+          </Link>
         </form>
       </div>
     </div>
   );
 }
-
-
