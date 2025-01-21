@@ -52,16 +52,7 @@ export default function Payslip() {
 
             <div className="w-full mb-4">
 
-              <label className="block text-xl mb-2" htmlFor="e_name">
-                E_name
-              </label>
-              <input
-                id="e_name"
-                type="text"
-                className="w-full p-2 border-2 border-gray-300 rounded-md"
-                value={eName}
-                onChange={(e) => { setEName(e.target.value) }}
-              />
+              
             </div>
 
             <div className="w-full mb-4">

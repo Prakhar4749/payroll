@@ -15,12 +15,6 @@ const route = express.Router();
 route.get("/",get_all_dept_details);
 
 
-<<<<<<< HEAD
-route.get("/d_id",get_d_id_details);
-
-
-route.delete("/delete_d_id" , delete_d_id)
-=======
 /**
  * Route: GET /d_id
  * Description: Fetches details of a specific department by its ID.
@@ -45,7 +39,6 @@ route.get("/d_id",get_d_id_details);
  *  }
  */
 route.delete("/delete_d_id" , delete_d_id);
->>>>>>> ff92d9fecd66cc46ff8d846fbee1686ac25e260e
 
 
 /**
