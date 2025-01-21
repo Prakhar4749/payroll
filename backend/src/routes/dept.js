@@ -14,13 +14,13 @@ route.get("/d_id",get_d_id_details);
 
 
 
-route.delete("/delete_d_id" , delete_d_id)
+route.delete("/delete_d_id" , delete_d_id);
 
 
-route.post('/add_dept' , add_new_dept)
+route.post('/add_dept' , add_new_dept);
 
 
-route.put('/update_d_id',update_dept)
+route.put('/update_d_id',update_dept);
 
 
 export default route;

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import Navbar from "./component/Navbar";
+import Navbar from "../components/layout/Navbar";
 import { useNavigate } from "react-router-dom";
 
 
 
-const payslip_data = require('./component/payslip_data')
+const payslip_data = require('../utils/payslip_data')
 
 
 

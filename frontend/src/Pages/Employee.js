@@ -1,8 +1,8 @@
 import React from "react";
-import Navbar from "./component/Navbar";
+import Navbar from "../components/layout/Navbar";
 import { useState } from "react";
-import EMP_aside from "./component/EMP_aside";
-import Emp_Table from "./component/Emp_Table";
+import EMP_aside from "../components/page_specific/EMP_aside";
+import Emp_Table from "../components/page_specific/Emp_Table";
 
 export default function Employee() {
 

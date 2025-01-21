@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import Navbar from "./component/Navbar";
-import Dept_Table from "./component/Dept_Table";
-import DEPT_aside from "./component/DEPT_aside";
+import Navbar from "../components/layout/Navbar";
+import Dept_Table from "../components/page_specific/Dept_Table";
+import DEPT_aside from "../components/page_specific/DEPT_aside";
 function Department() {
   const dept = [
     { id: "1", name: "IT"},
