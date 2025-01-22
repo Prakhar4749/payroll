@@ -3,7 +3,7 @@ import { Navigate, Outlet } from 'react-router-dom';
 import {jwtDecode} from 'jwt-decode';
 
 const ProtectedRoute = () => {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
 
   // Function to validate the JWT token
   const isValidToken = () => {

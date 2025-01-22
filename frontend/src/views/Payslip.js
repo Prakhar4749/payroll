@@ -10,22 +10,16 @@ const payslip_data = require('../utils/payslip_data')
 
 export default function Payslip() {
 
-  const [eName, setEName] = useState("");
-  const [eID, setEID] = useState("");
+  
+  const [e_id, sete_id] = useState("");
   const navigate = useNavigate();
 
   const submit = () => {
-    let a = payslip_data.emp_data.filter(emp => emp.e_id === eID)
-    console.log(payslip_data.emp_data)
-    console.log(a)
 
-    if(a.length != 0){
-
-      navigate('/payslip/form', { state: a });
-    }
-    else{
-      alert("enter valid id");
-    }
+      
+      navigate('/payslip/form');
+    
+   
 
 
     ;
@@ -63,9 +57,9 @@ export default function Payslip() {
                 id="e_id"
                 type="text"
                 className="w-full p-2 border-2 border-gray-300 rounded-md"
-                value={eID}
+                value={e_id}
                 required
-                onChange={(e) => { setEID(e.target.value) }}
+                onChange={(e) => { sete_id(e.target.value) }}
               />
             </div>
 

@@ -26,7 +26,7 @@ async function get_all_dept_details(req, res) {
 
 async function get_d_id_details(req, res) {
 
-  const { d_id }= req.body;
+  const { d_id }= req.params
     
     try {
         const sql = `SELECT * FROM dept_details WHERE d_id = ?`;
@@ -42,6 +42,7 @@ async function get_d_id_details(req, res) {
         res.status(500).json({ error: "Failed to fetch department data." });
       }
 }
+
 
 async function delete_d_id(req, res) {
   const { d_id }= req.body;

@@ -10,7 +10,7 @@ export const loginUser = async (user_name, user_password) => {
     console.log(response)
 
     // On success, store token and return response
-    localStorage.setItem("token", response.data.token);
+    sessionStorage.setItem("token", response.data.token);
     sessionStorage.setItem("login", true); // For ProtectedRoute
     return { success: true, message: "Login successful" };
   } catch (err) {

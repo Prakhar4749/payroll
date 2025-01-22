@@ -25,7 +25,7 @@ route.get("/",get_all_dept_details);
  *    "d_id": "D001"
  *  }
  */
-route.get("/d_id",get_d_id_details);
+route.get("/:d_id",get_d_id_details);
 
 
 /**
