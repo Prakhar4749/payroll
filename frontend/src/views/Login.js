@@ -31,11 +31,13 @@ export default function Login() {
   }, [navigate]);
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-100">
-      <div className="w-full max-w-md p-8 space-y-6 bg-white shadow-lg rounded-md">
-        <h2 className="text-2xl font-bold text-center text-gray-800">Login</h2>
+    <div className="flex items-center justify-center h-screen bg-gradient-to-r from-blue-100 to-blue-300">
+      <div className="w-full max-w-md p-8 space-y-6 bg-white shadow-lg rounded-lg border border-gray-200">
+        <h2 className="text-3xl font-semibold text-center text-gray-800">Login</h2>
+        
         {error && <p className="text-red-500 text-sm">{error}</p>}
-        <form onSubmit={handleSubmit} className="space-y-4">
+        
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label className="block text-sm font-medium text-gray-700" htmlFor="user">
               User Name
@@ -46,9 +48,10 @@ export default function Login() {
               value={user_name}
               onChange={(e) => setUserName(e.target.value)}
               required
-              className="w-full px-4 py-2 mt-1 text-gray-900 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 mt-1 text-gray-900 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
+          
           <div>
             <label className="block text-sm font-medium text-gray-700" htmlFor="password">
               Password
@@ -60,7 +63,7 @@ export default function Login() {
                 value={user_password}
                 onChange={(e) => setUserPassword(e.target.value)}
                 required
-                className="w-full px-4 py-2 mt-1 text-gray-900 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
+                className="w-full px-4 py-3 mt-1 text-gray-900 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
               />
               <button
                 type="button"
@@ -71,17 +74,17 @@ export default function Login() {
               </button>
             </div>
           </div>
+          
           <button
             type="submit"
-            className="w-full px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-3 text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             Log In
           </button>
-          <Link to="/payslip" className="block text-center text-blue-500 hover:underline">
-            Try Login
-          </Link>
+          
         </form>
       </div>
     </div>
   );
+  
 }

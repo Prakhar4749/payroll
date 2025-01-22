@@ -3,51 +3,11 @@ import { useLocation } from 'react-router-dom';
 
 const Payslip_Form = () => {
     const location = useLocation();
-    const e_data = location.state;
-    console.log(e_data)
+    const {e_id, salary_month, salary_year} = location.state;
+    
 
     const [formData, setFormData] = useState({
-        e_id: e_data[0]?.e_id || "", // Fetch e_id from e_data[0] or set as empty string if undefined
-        e_name: e_data[0]?.e_name || "", // Fetch e_name from e_data[0] or set as empty string if undefined
-        e_dept: e_data[0]?.e_dept || "",
-        e_desgn: e_data[0]?.e_desgn || "",
-        e_CPF: e_data[0]?.e_CPF || "",
-        e_attndc: e_data[0]?.e_attndc || "",
-        e_bank_name: e_data[0]?.e_bank_name || "",
-        e_acc_no: e_data[0]?.e_acc_no || "",
-        e_pan_no: e_data[0]?.e_pan_no || "",
-      
-        // Earnings
-        e_basic: e_data[0]?.e_basic || "",
-        e_spc: e_data[0]?.e_spc || "",
-        e_dearness: e_data[0]?.e_dearness || "",
-        e_DA: e_data[0]?.e_DA || "",
-        e_ADA: e_data[0]?.e_ADA || "",
-        e_IR: e_data[0]?.e_IR || "",
-        e_HRA: e_data[0]?.e_HRA || "",
-        e_CCA: e_data[0]?.e_CCA || "",
-        e_conv: e_data[0]?.e_conv || "",
-        e_medical: e_data[0]?.e_medical || "",
-        e_wash: e_data[0]?.e_wash || "",
-        e_BDP: e_data[0]?.e_BDP || "",
-        e_arrears: e_data[0]?.e_arrears || "",
-      
-        // Deductions
-        e_d_CPF: e_data[0]?.e_d_CPF || "",
-        e_GIS: e_data[0]?.e_GIS || "",
-        e_house_rent: e_data[0]?.e_house_rent || "",
-        e_water: e_data[0]?.e_water || "",
-        e_elect: e_data[0]?.e_elect || "",
-        e_veh: e_data[0]?.e_veh || "",
-        e_HB_loan: e_data[0]?.e_HB_loan || "",
-        e_GPF_loan: e_data[0]?.e_GPF_loan || "",
-        e_festv_loan: e_data[0]?.e_festv_loan || "",
-        e_grain: e_data[0]?.e_grain || "",
-        e_bank_adv: e_data[0]?.e_bank_adv || "",
-        e_advance: e_data[0]?.e_advance || "",
-        e_RGPV_adv: e_data[0]?.e_RGPV_adv || "",
-        e_incom_tax: e_data[0]?.e_incom_tax || "",
-        e_proff_tax: e_data[0]?.e_proff_tax || "",
+       
       });
       
 
