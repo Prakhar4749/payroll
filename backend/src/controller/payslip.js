@@ -1,24 +1,22 @@
 import { pool } from '../config/db.js'; // Adjust the import path
 
 async function chk_that_payslip_is_generated(req, res) {
-  const e_id = req.params['e_id']; 
-  const current_date = new Date();
-  const current_month = current_date.toLocaleString('default', { month: 'long' }); // Get full month name, e.g. 'January'
-  const current_year = current_date.getFullYear(); // Get current year
+    const { e_id, salary_month , salary_year } = req.body;
+  
 
   try {
     const sql = `
-      SELECT COUNT(*) AS count 
+      SELECT *
       FROM salary_archive 
       WHERE e_id = ? AND salary_month = ? AND salary_year = ?
     `;
 
-    const [rows] = await pool.query(sql, [e_id, current_month, current_year]);
+    const [results, fields] = await pool.query(sql, [e_id, salary_month, salary_year]);
 
-    if (rows[0].count > 0) {
-      return res.json({ message: `Payslip for ${e_id} is generated for ${current_month}, ${current_year}.`, payslipGenerated: true });
+    if (results.length > 0) {
+      return res.json({ message: `Payslip for ${e_id} is generated for ${salary_month}, ${salary_year}.`, payslipGenerated: true });
     } else {
-      return res.json({ message: `Payslip for ${e_id} is NOT generated for ${current_month}, ${current_year}.`, payslipGenerated: false });
+      return res.json({ message: `Payslip for ${e_id} is NOT generated for ${salary_month}, ${salary_year}.`, payslipGenerated: false });
     }
 
   } catch (err) {
@@ -34,12 +32,28 @@ async function update_and_change_in_the_salary_archive(req, res) {
         return res.status(400).json({ message: "Invalid request data" });
     }
 
-    const { emp_deduction_details, emp_earning_details } = data;
+    const { salary_details , emp_deduction_details, emp_earning_details } = data;
+
+    //  salary_details{
+    // e_id,
+    // salary_month,
+    // salary_year
+    // }
 
     // Get current month and year
-    const current_date = new Date();
-    const salary_month = current_date.toLocaleString('default', { month: 'long' }); // E.g. "January"
-    const salary_year = current_date.getFullYear();
+    const now = new Date();
+
+    // Extract components
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+    const date = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+
+    const formattedDate = `${year}-${month}-${date} ${hours}:${minutes}:${seconds}`;
+    console.log(formattedDate);
+    
 
     try {
         // Start a transaction
@@ -102,21 +116,21 @@ async function update_and_change_in_the_salary_archive(req, res) {
             emp_deduction_details.RGPV_advance + emp_deduction_details.income_tax + emp_deduction_details.professional_tax;
 
         const net_payable = total_earning - total_deduction;
-
+ 
         // SQL to insert into salary_archive
         const insertSalaryArchiveSQL = `
             INSERT INTO salary_archive (
-                e_id, salary_month, salary_year, e_name, basic_salary, special_pay, dearness_allowance, DA, ADA, 
+                e_id, salary_month, salary_year, e_name, date_and_time, basic_salary, special_pay, dearness_allowance, DA, ADA, 
                 interim_relief, HRA, CCA, conveyance, medical, washing_allowance, BDP, arrears, 
                 leave_days, leave_deduction_amount, deduction_CPF, GIS, house_rent, water_charges, 
                 electricity_charges, vehicle_deduction, HB_loan, GPF_loan, festival_loan, grain_charges, 
                 bank_advance, advance, RGPV_advance, income_tax, professional_tax, total_earning, 
                 total_deduction, net_payable
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
         `;
 
         const archiveParams = [
-            emp_earning_details.e_id, salary_month, salary_year, emp_earning_details.e_name,
+            salary_details.e_id, salary_details.salary_month, salary_details.salary_year, emp_earning_details.e_name, formattedDate,
             emp_earning_details.basic_salary, emp_earning_details.special_pay, emp_earning_details.dearness_allowance,
             emp_earning_details.DA, emp_earning_details.ADA, emp_earning_details.interim_relief, emp_earning_details.HRA,
             emp_earning_details.CCA, emp_earning_details.conveyance, emp_earning_details.medical, emp_earning_details.washing_allowance,
@@ -144,3 +158,5 @@ async function update_and_change_in_the_salary_archive(req, res) {
 }
 
 export { chk_that_payslip_is_generated , update_and_change_in_the_salary_archive };
+
+
