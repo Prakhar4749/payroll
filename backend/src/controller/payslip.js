@@ -157,6 +157,45 @@ async function update_and_change_in_the_salary_archive(req, res) {
     }
 }
 
-export { chk_that_payslip_is_generated , update_and_change_in_the_salary_archive };
+const get_data_for_pdf = async (req ,res) =>{
+    const { e_id , salary_month , salary_year } = req.body;
+
+    try{
+        // fetching emp details 
+        const sql_emp_details =`SELECT * FROM emp_details WHERE e_id = ?`;
+
+        const [emp_details, emp_fields] = await pool.query(sql_emp_details, [e_id])
+
+
+        // fetching dept details 
+        const sql_dept_details =`SELECT * FROM dept_details WHERE d_id = ?`;
+
+        const [dept_details, dept_fields] = await pool.query(sql_dept_details, [emp_details[0].d_id])
+
+
+        // fetching emp bank details 
+        const sql_bank_details =` SELECT * FROM emp_bank_details WHERE e_id = ?`;
+
+        const [bank_details, bank_fields] = await pool.query(sql_bank_details, [e_id])
+
+
+        // fetching salary archive details 
+        const sql_archive_details =` SELECT * FROM salary_archive WHERE e_id = ? AND salary_month = ? AND salary_year = ?`;
+
+        const [salary_details, salary_fields] = await pool.query(sql_archive_details, [e_id, salary_month, salary_year]);
+
+        return res.json({
+            emp_details: emp_details[0],
+            dept_details: dept_details[0],
+            bank_details: bank_details[0],
+            salary_details: salary_details[0]
+        })
+    }
+    catch{
+        res.json({ err_: err });
+    }
+
+}
+export { chk_that_payslip_is_generated , update_and_change_in_the_salary_archive ,get_data_for_pdf };
 
 
