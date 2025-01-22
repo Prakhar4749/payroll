@@ -1,42 +1,13 @@
 import React, { useState } from 'react';
 
 
-const DEPT_aside = ({deptData, setdeptData}) => {
+const DEPT_aside = ({deptData, setdeptData , d_id}) => {
     const [dId,setdID]=useState("");
   const [dName,setdName]=useState("");
- 
+  
+  const class_for_btn = (d_id)? 'bg-blue-700 hover:bg-blue-800 text-white font-bold':"bg-gray-700 hover:bg-gray-800"
+  console.log('new d_id is ' ,d_id)
 
-  function adddept(){
-
-  
-  }
-  function updatedept(){
-  
-  
-  }
-  function removedept(){
-  
-  
-  }
-  function viewdept(){
-  
-  
-  }
-  function apply( ){
-    
-    let a = deptData.filter(dept => dept.id.slice(0,dId.length) === dId  && dept.name.slice(0,dName.length) === dName);
-    console.log(deptData)
-    console.log(dId)
-    console.log(a)
-
-
-    setdeptData(a);
-
-  
-  
-  
-  
-  }
   function clearFilter(){
   
   
@@ -50,15 +21,20 @@ const DEPT_aside = ({deptData, setdeptData}) => {
             <button className="bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-full w-9/12 text-xl my-3 mt-4  sm:w-2/3  truncate">
               Add Department
             </button>
-            <button className="bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-full w-9/12 text-xl my-3  truncate">
+            <button className={ ` ${ class_for_btn }  text-white font-bold font-bold py-2 px-4 rounded-full w-9/12 text-xl my-3` }>
               Update Department
             </button>
-            <button className="bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-full w-9/12 text-xl my-3">
+            <button className= { ` ${ class_for_btn }  text-white font-bold font-bold py-2 px-4 rounded-full w-9/12 text-xl my-3` } >
               Remove Department
             </button>
-            <button className="bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-full w-9/12 text-xl my-3">
+
+
+            {/* <button className="bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-full w-9/12 text-xl my-3">
               View Department
-            </button>
+            </button> */}
+
+
+
           </div>
           <div className="flex   flex-col">
             <h1 className="text-3xl underline mt-4 mx-5 ">filter</h1>
@@ -84,7 +60,7 @@ const DEPT_aside = ({deptData, setdeptData}) => {
                 <button className="bg-gray-700 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full w-5/12 text-xl">
                   Clear filter
                 </button>
-                <button className="bg-gray-700 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full w-5/12 text-xl ml-1 text-center "  onClick={apply}>
+                <button className="bg-gray-700 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full w-5/12 text-xl ml-1 text-center ">
                   Apply
                 </button>
               </div>
