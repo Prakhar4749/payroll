@@ -2,6 +2,7 @@ import React from 'react'
 
 const Dept_Table = ({ data }) => {
   const rows = Array.isArray(data) ? data : [];
+  console.log(rows)
 
     return (
       <table className="table-auto border-collapse border border-gray-300 w-full">
