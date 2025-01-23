@@ -1,17 +1,13 @@
 import React, { useState } from "react";
-import { useNavigate , useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../layout/Navbar";
-import { checkDepartment, updateDepartment } from "../../controller/department.controller";
+import { checkDepartment, addToDepartment } from "../../controller/department.controller";
 
-const DeptUpdateForm = () => {
-  // State for the form fields
-  const location = useLocation();
-  const data = location.state;
-  console.log(data)
-  const [dId, setDId] = useState(data.d_id.toUpperCase());
-  const [dName, setDName] = useState(data.d_name);
-
+const DeptAddForm = () => {
   const navigate = useNavigate();
+
+  const [dId, setDId] = useState("");
+  const [dName, setDName] = useState("");
 
   // Reset form fields
   const clearForm = () => {
@@ -23,38 +19,48 @@ const DeptUpdateForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Check if department ID starts with 'D' and last three characters are numeric
+    if (dId[0] !== 'D') {
+      alert("Department ID should start with letter 'D'.");
+      return;
+    }
+
+    if (!/^\d{3}$/.test(dId.slice(-3))) {
+      alert("Department ID's Last three characters should be numeric.");
+      return;
+    }
+    
+
+    // Check if department already exists
     const result = await checkDepartment(dId, dName);
-    if (result.d_name === false && dId[0] !='D') {
-      const set = {
-        d_id: data.d_id.toUpperCase(),
-        new_d_id: dId,
-        new_d_name: dName,
+
+    if (result.d_id === true && result.d_name === true) {
+      alert("Both Department ID and Department Name already exist.");
+    } else if (result.d_id === true) {
+      alert("Department ID already exists.");
+    } else if (result.d_name === true) {
+      alert("Department Name already exists.");
+    } else {
+      // If department doesn't exist, proceed to add it
+      const departmentData = {
+        d_id: dId,
+        d_name: dName
       };
 
-      const set_update = await updateDepartment(set);
-      navigate("/department");
+      try {
+        await addToDepartment(departmentData);
+        navigate("/department");
+      } catch (err) {
+        console.error("Error adding department:", err);
+      }
     }
-    else if(dId[0] !='D'){
-      alert(`Department ID start with latter -> D`);
-
-    }
-     else {
-      // Handle case where department exists
-      setDId(data.d_id.toUpperCase())
-      setDName(data.d_name)
-      console.log("Department already exists");
-      alert("Department Name already exists");
-    }
-
-
-
   };
 
   return (
     <>
       <Navbar />
       <div className="container mx-auto p-4">
-        <h1 className="text-xl font-semibold mb-4">Update Department</h1>
+        <h1 className="text-xl font-semibold mb-4">Add New Department</h1>
 
         <form onSubmit={handleSubmit}>
           {/* Department ID Field */}
@@ -113,4 +119,4 @@ const DeptUpdateForm = () => {
   );
 };
 
-export default DeptUpdateForm;
+export default DeptAddForm;

@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const DEPT_aside = ({ deptData, setdeptData, d_id }) => {
+const DEPT_aside = ({ deptData, setdeptData, d_id , d_name}) => {
   const navigate = useNavigate();
   const [dId, setdID] = useState("");
   const [dName, setdName] = useState("");
 
+  function add_dept(){
+    navigate("/department/add_form");
+  }
+
   function update() {
-    const d = { d_id: 'd007', d_name: 'it' };
+    const d = { d_id: d_id, d_name: 'it' };
 
     if (d_id) {
       navigate("/department/update_form", { state: d });
@@ -30,6 +34,7 @@ const DEPT_aside = ({ deptData, setdeptData, d_id }) => {
         <div className="flex flex-col items-center justify-center">
           <button
             className="bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-full w-9/12 text-xl my-3 mt-4 sm:w-2/3 truncate"
+            onClick={add_dept}
           >
             Add Department
           </button>

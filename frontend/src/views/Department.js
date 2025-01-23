@@ -8,6 +8,7 @@ import {fetchAllDeptData} from '../controller/department.controller.js'
 function Department() {
   const [deptData, setdeptData] = useState([]);  // Initialize with an empty array
   const [d_id, setd_id] = useState("");  // Initialize with an empty array
+  const [d_name, setd_name] = useState("");  // Initialize with an empty array
 
   // Fetch data using useEffect
   useEffect(() => {
@@ -30,8 +31,8 @@ function Department() {
     <div>
       <Navbar />
 
-      <div className="flex w-full pt-16">
-        <DEPT_aside deptData ={deptData} d_id={d_id} setdeptData={setdeptData} />
+      <div className="flex w-full">
+        <DEPT_aside deptData ={deptData} d_id={d_id} d_name={d_name} setdeptData={setdeptData} />
 
         <main className="w-2/3">
           <Dept_Table className="flex" data={deptData} setd_id={setd_id} d_id={d_id}  />
