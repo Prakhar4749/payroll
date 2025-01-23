@@ -45,7 +45,7 @@ async function get_d_id_details(req, res) {
 
 
 async function delete_d_id(req, res) {
-  const { d_id }= req.body;
+  const { d_id }= req.params;
     try {
        
 

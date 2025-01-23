@@ -38,7 +38,7 @@ route.get("/:d_id",get_d_id_details);
  *    "d_id": "D001"
  *  }
  */
-route.delete("/delete_d_id" , delete_d_id);
+route.delete("/delete_d_id/:d_id" , delete_d_id);
 
 
 /**
