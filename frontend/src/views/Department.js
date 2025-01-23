@@ -21,7 +21,7 @@ export default function Department() {
     }
 
     getDeptData();
-  }, [deptData]);
+  }, []);
 
   function onRowSelect(dId) {
     setd_id(dId);

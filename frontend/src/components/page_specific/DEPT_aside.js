@@ -6,6 +6,7 @@ import {removeFromDept} from "../../controller/department.controller"
 
 
 const DEPT_aside = ({ deptData, deptDatacopy, setdeptDatacopy, d_id ,setdeptData ,setd_id }) => {
+
   const navigate = useNavigate();
   const [dId, setdID] = useState("");
   const [dName, setdName] = useState("");
@@ -29,8 +30,15 @@ async  function remove() {
         const remove= await removeFromDept(d_id)
         alert(`${d_id} is successfully deleted ...`)
         setd_id("")
+        const updatedDeptData = deptDatacopy.filter((dept) => dept.d_id !== d_id);
+        setdeptData(updatedDeptData);
+         // Update state
+        const updatedDeptDatacopy = deptDatacopy.filter((dept) => dept.d_id !== d_id);
+        setdeptDatacopy(updatedDeptDatacopy); // Update state
+        
+        // Clear selected department ID after removal
+        setd_id("");
 
-        setdeptData([])
 
       }
     }
