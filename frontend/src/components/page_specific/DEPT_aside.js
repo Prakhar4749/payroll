@@ -6,12 +6,23 @@ const DEPT_aside = ({ deptData, setdeptData, d_id , d_name}) => {
   const [dId, setdID] = useState("");
   const [dName, setdName] = useState("");
 
+  function remove() {
+    if(d_id){
+      const confirmDelete = window.confirm(`Are you sure you want to remove department ID: ${d_id}?`);
+    
+      if (confirmDelete) {
+        alert(`Department ID: ${d_id} has been removed successfully.`);
+      }
+    }
+    
+  }
+
   function add_dept(){
     navigate("/department/add_form");
   }
 
   function update() {
-    const d = { d_id: d_id, d_name: 'it' };
+    const d = { d_id: d_id, d_name: d_name };
 
     if (d_id) {
       navigate("/department/update_form", { state: d });
@@ -46,6 +57,7 @@ const DEPT_aside = ({ deptData, setdeptData, d_id , d_name}) => {
           </button>
           <button
             className={`${class_for_btn} text-white font-bold py-2 px-4 rounded-full w-9/12 text-xl my-3`}
+            onClick={remove}
           >
             Remove Department
           </button>

@@ -35,7 +35,7 @@ function Department() {
         <DEPT_aside deptData ={deptData} d_id={d_id} d_name={d_name} setdeptData={setdeptData} />
 
         <main className="w-2/3">
-          <Dept_Table className="flex" data={deptData} setd_id={setd_id} d_id={d_id}  />
+          <Dept_Table className="flex" data={deptData} setd_id={setd_id} setd_name={setd_name} d_id={d_id}  />
         </main>
       </div>
     </div>

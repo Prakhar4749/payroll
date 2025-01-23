@@ -23,6 +23,16 @@ const DeptUpdateForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (dId[0] !== 'D') {
+      alert("Department ID should start with letter 'D'.");
+      return;
+    }
+
+    if (!/^\d{3}$/.test(dId.slice(-3))) {
+      alert("Department ID's Last three characters should be numeric.");
+      return;
+    }
+
     const result = await checkDepartment(dId, dName);
     if (result.d_name === false && dId[0] !='D') {
       const set = {
@@ -34,10 +44,7 @@ const DeptUpdateForm = () => {
       const set_update = await updateDepartment(set);
       navigate("/department");
     }
-    else if(dId[0] !='D'){
-      alert(`Department ID start with latter -> D`);
-
-    }
+    
      else {
       // Handle case where department exists
       setDId(data.d_id.toUpperCase())
