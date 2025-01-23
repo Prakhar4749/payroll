@@ -1,53 +1,75 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
-const EMP_aside = ({ empData, setEMPData }) => {
+const EMP_aside = ({ empData, setEMPData, selected_e_id }) => {
   const [e_id, sete_id] = useState("");
   const [e_name, sete_name] = useState("");
   const [eMob, setEMob] = useState("");
 
   // Apply filter function
   function apply() {
-    // Filter the employee data based on the entered filter values
-    let filteredData = empData.filter((employee) => {
-      const idMatch = e_id ? employee.e_id.toLowerCase().includes(e_id.toLowerCase()) : true;
-      const nameMatch = e_name ? employee.e_name.toLowerCase().includes(e_name.toLowerCase()) : true;
-      const mobMatch = eMob ? employee.e_mobile_number.includes(eMob) : true;
+    const filteredData = empData.filter((employee) => {
+      const idMatch = e_id
+        ? employee.e_id.toLowerCase().includes(e_id.toLowerCase())
+        : true;
+      const nameMatch = e_name
+        ? employee.e_name.toLowerCase().includes(e_name.toLowerCase())
+        : true;
+      const mobMatch = eMob
+        ? employee.e_mobile_number.includes(eMob)
+        : true;
       return idMatch && nameMatch && mobMatch;
     });
-    
-    // Update the state with the filtered data
     setEMPData(filteredData);
   }
 
   // Clear all filters
   function clearFilter() {
-    // Reset filter values
     sete_id("");
     sete_name("");
     setEMob("");
-
-    // Reset the employee data (show all)
-    setEMPData(empData);
+    setEMPData(empData); // Reset to original data
   }
 
   return (
-    <aside className="w-full bg-white shadow-lg rounded-md p-6 mx-auto flex-wrap-reverse flex-col gap-6">
+    <aside className="w-full bg-white shadow-lg rounded-md p-6 mx-auto flex flex-col gap-6">
       {/* Sidebar Buttons */}
       <div className="flex flex-col items-center gap-4">
-        <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full w-full text-center text-lg">
+        <button className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg text-center text-lg transition-transform transform active:scale-95">
           Add Employee
         </button>
-        <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full w-full text-center text-lg">
+        <button
+          className={`w-full font-bold py-2 px-4 rounded-lg text-center text-lg transition-transform transform active:scale-95 ${
+            selected_e_id
+              ? "bg-purple-500 hover:bg-purple-600 text-white"
+              : "bg-gray-400 text-gray-200 cursor-not-allowed"
+          }`}
+          disabled={!selected_e_id}
+        >
           Update Employee
         </button>
-        <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full w-full text-center text-lg">
+        <button
+          className={`w-full font-bold py-2 px-4 rounded-lg text-center text-lg transition-transform transform active:scale-95 ${
+            selected_e_id
+            
+              ? "bg-red-500 hover:bg-red-600 text-white"
+              : "bg-gray-400 text-gray-200 cursor-not-allowed"
+          }`}
+          disabled={!selected_e_id}
+        >
           Remove Employee
         </button>
-        <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full w-full text-center text-lg">
+        <button
+          className={`w-full font-bold py-2 px-4 rounded-lg text-center text-lg transition-transform transform active:scale-95 ${
+            selected_e_id
+              ? "bg-blue-500 hover:bg-blue-600 text-white"
+              : "bg-gray-400 text-gray-200 cursor-not-allowed"
+          }`}
+          disabled={!selected_e_id}
+        >
           View Employee
         </button>
       </div>
-  
+
       {/* Filter Section */}
       <div className="mt-6">
         <h1 className="text-2xl font-semibold underline text-gray-700">Filter</h1>
@@ -89,14 +111,17 @@ const EMP_aside = ({ empData, setEMPData }) => {
             />
           </div>
         </div>
-  
+
         {/* Buttons */}
         <div className="flex gap-4 mt-6">
-          <button className="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-md" onClick={clearFilter}>
+          <button
+            className="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-md transition-transform transform active:scale-95"
+            onClick={clearFilter}
+          >
             Clear Filter
           </button>
           <button
-            className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md"
+            className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md transition-transform transform active:scale-95"
             onClick={apply}
           >
             Apply
@@ -105,6 +130,6 @@ const EMP_aside = ({ empData, setEMPData }) => {
       </div>
     </aside>
   );
-}
+};
 
 export default EMP_aside;

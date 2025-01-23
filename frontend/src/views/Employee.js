@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Navbar from "../components/layout/Navbar";
 import { useState } from "react";
 import EMP_aside from "../components/page_specific/EMP_aside";
@@ -66,10 +66,16 @@ export default function Employee() {
   ];
 
   const [empData,setEMPData] = useState(emp);
+  const [selected_e_id , setselected_e_id] = useState("");
 
   const handleRowSelection = (selectedId) => {
-    console.log("Selected Employee ID:", selectedId);
+    
+      setselected_e_id(selectedId);
+      
   };
+  useEffect( ()=>{
+    console.log(selected_e_id)
+  },[selected_e_id])
   return (
     <>
       {/* Navbar */}
@@ -78,7 +84,7 @@ export default function Employee() {
       <div className="flex flex-col lg:flex-row w-full bg-blue-50 min-h-screen">
         {/* Sidebar */}
         <div className="w-full lg:w-1/4 bg-white shadow-md">
-          <EMP_aside empData={emp} setEMPData={setEMPData} />
+          <EMP_aside empData={emp} setEMPData={setEMPData} selected_e_id={selected_e_id}  />
         </div>
   
         {/* Main Content */}
