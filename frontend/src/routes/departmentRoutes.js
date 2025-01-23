@@ -1,7 +1,7 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
 import Department from '../views/Department';
-import Dept_update_form from '../components/page_specific/dept_update_form';
+import Dept_update_form from '../components/page_specific/Dept_update_form';
 
 const departmentRoutes = [
   <Route key="department" path="/department" element={<Department />} />,

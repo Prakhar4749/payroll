@@ -3,69 +3,29 @@ import Navbar from "../components/layout/Navbar";
 import { useState } from "react";
 import EMP_aside from "../components/page_specific/EMP_aside";
 import Emp_Table from "../components/page_specific/Emp_Table";
+import { all_emp_data } from "../controller/empController";
 
 export default function Employee() {
+  const [alldata,setalldata] = useState([]);
+  const [empData,setempData] = useState([]);
+  useEffect(() => {
 
-  const emp= [
-    {
-      e_id: "1",
-      e_name: "John Doe",
-      e_mobile_number: "1234567890",
-      e_email: "john@example.com",
-      e_designation: "Manager",
-      e_address: "123 Main St",
-    },
-    {
-      e_id: "7",
-      e_name: "John Doe",
-      e_mobile_number: "1234567890",
-      e_email: "john@example.com",
-      e_designation: "Manager",
-      e_address: "123 Main St",
-    },
-    {
-      e_id: "6",
-      e_name: "John Doe",
-      e_mobile_number: "1234567890",
-      e_email: "john@example.com",
-      e_designation: "Manager",
-      e_address: "123 Main St",
-    },
-    {
-      e_id: "5",
-      e_name: "John Doe",
-      e_mobile_number: "1234567890",
-      e_email: "john@example.com",
-      e_designation: "Manager",
-      e_address: "123 Main St",
-    },
-    {
-      e_id: "4",
-      e_name: "John Doe",
-      e_mobile_number: "1234567890",
-      e_email: "john@example.com",
-      e_designation: "Manager",
-      e_address: "123 Main St",
-    },
-    {
-      e_id: "3",
-      e_name: "John Doe",
-      e_mobile_number: "1234567890",
-      e_email: "john@example.com",
-      e_designation: "Manager",
-      e_address: "123 Main St",
-    },
-    {
-      e_id: "2",
-      e_name: "John Doe",
-      e_mobile_number: "1234567890",
-      e_email: "john@example.com",
-      e_designation: "Manager",
-      e_address: "123 Main St",
+    async function getallempData() {
+      try {
+        const data = await all_emp_data();
+        setalldata(data);
+        console.log("fetched data", alldata)  // Await the async function
+        setempData(data);  // Update state with resolved data
+        
+      } catch (error) {
+        console.error("Error fetching employee data:", error);
+      }
     }
-  ];
 
-  const [empData,setEMPData] = useState(emp);
+    getallempData();
+  
+  },[]);
+
   const [selected_e_id , setselected_e_id] = useState("");
 
   const handleRowSelection = (selectedId) => {
@@ -84,7 +44,7 @@ export default function Employee() {
       <div className="flex flex-col lg:flex-row w-full bg-blue-50 min-h-screen">
         {/* Sidebar */}
         <div className="w-full lg:w-1/4 bg-white shadow-md">
-          <EMP_aside empData={emp} setEMPData={setEMPData} selected_e_id={selected_e_id}  />
+          <EMP_aside empData={empData} alldata={alldata} setempData={setempData} selected_e_id={selected_e_id}  />
         </div>
   
         {/* Main Content */}

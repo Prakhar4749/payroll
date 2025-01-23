@@ -1,33 +1,37 @@
 import React, { useState } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
 
-const EMP_aside = ({ empData, setEMPData, selected_e_id }) => {
+const EMP_aside = ({ empData,alldata, setempData, selected_e_id }) => {
   const [e_id, sete_id] = useState("");
   const [e_name, sete_name] = useState("");
-  const [eMob, setEMob] = useState("");
+  const [e_mob, sete_mob] = useState("");
+
+  const navigate = useNavigate()
 
   // Apply filter function
   function apply() {
-    const filteredData = empData.filter((employee) => {
+    const filteredData = alldata.filter((employee) => {
       const idMatch = e_id
         ? employee.e_id.toLowerCase().includes(e_id.toLowerCase())
         : true;
       const nameMatch = e_name
         ? employee.e_name.toLowerCase().includes(e_name.toLowerCase())
         : true;
-      const mobMatch = eMob
-        ? employee.e_mobile_number.includes(eMob)
+        const mobMatch = e_mob 
+        ? String(employee.e_mobile_number).includes(e_mob)
         : true;
       return idMatch && nameMatch && mobMatch;
     });
-    setEMPData(filteredData);
+    setempData(filteredData);
   }
 
   // Clear all filters
   function clearFilter() {
+    setempData(alldata);
     sete_id("");
     sete_name("");
-    setEMob("");
-    setEMPData(empData); // Reset to original data
+    sete_mob("");
+    
   }
 
   return (
@@ -99,14 +103,14 @@ const EMP_aside = ({ empData, setEMPData, selected_e_id }) => {
             />
           </div>
           <div className="flex flex-col">
-            <label className="text-lg font-medium text-gray-700" htmlFor="eMob">
+            <label className="text-lg font-medium text-gray-700" htmlFor="e_mob">
               E_Mob
             </label>
             <input
               type="text"
-              id="eMob"
-              value={eMob}
-              onChange={(e) => setEMob(e.target.value)}
+              id="e_mob"
+              value={e_mob}
+              onChange={(e) => sete_mob(e.target.value)}
               className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>

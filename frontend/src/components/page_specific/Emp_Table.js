@@ -1,8 +1,12 @@
 import React, { useState } from "react";
 
 const Emp_Table = ({ data, onRowSelect }) => {
+  console.log(data)
   const [selectedId, setSelectedId] = useState(null);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
+  if (!Array.isArray(data)) {
+    return <h1>No data available.</h1>;
+}
 
   const handleRowClick = (id) => {
     const newSelectedId = selectedId === id ? null : id;
@@ -30,11 +34,11 @@ const Emp_Table = ({ data, onRowSelect }) => {
   };
 
   return (
-    <div className="overflow-x-auto bg-white shadow-lg rounded-md p-6">
+    <div className="overflow-x-auto bg-white shadow-lg rounded-md p-2 ">
       <table className="table-auto w-full border-collapse border border-gray-300">
         <thead className="bg-blue-600 text-white">
           <tr>
-            <th className="border px-4 py-2 text-left cursor-pointer">Select</th>
+            <th className="border px-2 py-2 text-left cursor-pointer">Select</th>
             <th
               className="border px-4 py-2 text-left cursor-pointer"
               onClick={() => handleSort("e_id")}
@@ -42,13 +46,13 @@ const Emp_Table = ({ data, onRowSelect }) => {
               E_ID {getSortIndicator("e_id")}
             </th>
             <th
-              className="border px-4 py-2 text-left cursor-pointer"
+              className="border px-8 py-2 text-left cursor-pointer"
               onClick={() => handleSort("e_name")}
             >
               E_Name {getSortIndicator("e_name")}
             </th>
             <th
-              className="border px-4 py-2 text-left cursor-pointer"
+              className="border px-6 py-2 text-left cursor-pointer"
               onClick={() => handleSort("e_mobile_number")}
             >
               E_Mob {getSortIndicator("e_mobile_number")}
@@ -73,34 +77,34 @@ const Emp_Table = ({ data, onRowSelect }) => {
             </th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="overflow-y-auto max-h-screen">
           {data.map((row) => (
             <tr
               key={row.e_id}
-              className={`cursor-pointer transition duration-300 ${
+              className={`cursor-pointer transition duration-300 text-sm  ${
                 selectedId === row.e_id
                   ? "bg-green-100"
                   : "hover:bg-gray-100"
               }`}
               onClick={() => handleRowClick(row.e_id)}
             >
-              <td className="border px-4 py-2 text-center">
+              <td className="border px-2 py-2 text-center">
                 <input
                   type="checkbox"
                   checked={selectedId === row.e_id}
                   readOnly
                 />
               </td>
-              <td className="border px-4 py-2 text-gray-600">{row.e_id}</td>
-              <td className="border px-4 py-2 text-gray-600">{row.e_name}</td>
-              <td className="border px-4 py-2 text-gray-600">
+              <td className="border px-2 py-2 text-gray-600">{row.e_id}</td>
+              <td className="border px-2 py-2 text-gray-600">{row.e_name}</td>
+              <td className="border px-2 py-2 text-gray-600">
                 {row.e_mobile_number}
               </td>
-              <td className="border px-4 py-2 text-gray-600">{row.e_email}</td>
-              <td className="border px-4 py-2 text-gray-600">
+              <td className="border px-2 py-2 text-gray-600">{row.e_email}</td>
+              <td className="border px-2 py-2 text-gray-600">
                 {row.e_designation}
               </td>
-              <td className="border px-4 py-2 text-gray-600">{row.e_address}</td>
+              <td className="border px-2 py-2 text-gray-600">{row.e_address}</td>
             </tr>
           ))}
         </tbody>
