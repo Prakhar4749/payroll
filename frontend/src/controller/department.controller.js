@@ -26,4 +26,16 @@ const checkDepartment = async (d_id, d_name) => {
 };
 
 
-export { fetchAllDeptData ,checkDepartment };
+const updateDepartment=async (newData)=>{
+  try {
+    const response = await axios.put("http://localhost:5000/dept/update_d_id", newData );
+    // console.log(response.data);
+    return response.data;  
+  } catch (err) {
+    console.error("Error checking department:", err);
+    throw err;  
+  }
+}
+
+
+export { fetchAllDeptData ,checkDepartment ,updateDepartment };

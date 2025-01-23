@@ -1,57 +1,64 @@
-import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useState } from "react";
+import { useNavigate , useLocation } from "react-router-dom";
 import Navbar from "../layout/Navbar";
-import {checkDepartment} from "../../controller/department.controller"
+import { checkDepartment, updateDepartment } from "../../controller/department.controller";
 
-const DeptUpdateForm = (d_id,d_name) => {
+const DeptUpdateForm = () => {
   // State for the form fields
-  const [dId, setDId] = useState(d_id);
-  const [dName, setDName] = useState(d_name);
+  const location = useLocation();
+  const data = location.state;
+  console.log(data)
+  const [dId, setDId] = useState(data.d_id.toUpperCase());
+  const [dName, setDName] = useState(data.d_name);
+
+  const navigate = useNavigate();
 
   // Reset form fields
   const clearForm = () => {
-    setDId('');
-    setDName('');
+    setDId("");
+    setDName("");
   };
 
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-     const result = await checkDepartment(dId, dName)
-     console.log('ewdwedewd')
-     console.log(result)
+    const result = await checkDepartment(dId, dName);
+    if (result.d_name === false) {
+      const set = {
+        d_id: data.d_id.toUpperCase(),
+        new_d_id: dId,
+        new_d_name: dName,
+      };
 
-     if(result.d_id === false && result.d_name===false){
+      const set_update = await updateDepartment(set);
+      navigate("/department");
+    } else {
+      // Handle case where department exists
+      setDId(data.d_id.toUpperCase())
+      setDName(data.d_name)
+      console.log("Department already exists");
+      alert("Department Name already exists");
+    }
 
-     }
 
-    // Assuming you want to send the updated department info to an API
-    const updatedDepartment = {
-      d_id: dId,
-      d_name: dName,
-    };
 
-    console.log("Updated Department: ", updatedDepartment);
-    
-    // Reset the form after submission
-    clearForm();
   };
 
   return (
     <>
       <Navbar />
-
       <div className="container mx-auto p-4">
         <h1 className="text-xl font-semibold mb-4">Update Department</h1>
-        
+
         <form onSubmit={handleSubmit}>
           {/* Department ID Field */}
           <div className="mb-4">
-            <label htmlFor="d_id" className="block text-sm font-medium">Department ID</label>
+            <label htmlFor="d_id" className="block text-sm font-medium">
+              Department ID
+            </label>
             <input
-              maxlength="4"
-              size="4"
+              maxLength="4"
               type="text"
               id="d_id"
               value={dId}
@@ -63,7 +70,9 @@ const DeptUpdateForm = (d_id,d_name) => {
 
           {/* Department Name Field */}
           <div className="mb-4">
-            <label htmlFor="d_name" className="block text-sm font-medium">Department Name</label>
+            <label htmlFor="d_name" className="block text-sm font-medium">
+              Department Name
+            </label>
             <input
               type="text"
               id="d_name"
