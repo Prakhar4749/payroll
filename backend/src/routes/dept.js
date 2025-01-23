@@ -76,7 +76,7 @@ route.put('/update_d_id',update_dept);
 
 // chk for the db that d_id and d_name  not same 
 
-
+// if this give "false" it means that youcan add it data is not present
 route.post('/chk/1' , chk_isit_present)
 
 export default route;
