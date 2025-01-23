@@ -101,6 +101,42 @@ async function update_dept(req, res) {
 
 
 
-export {
-    get_all_dept_details , get_d_id_details , delete_d_id , add_new_dept, update_dept
+async function chk_isit_present(req, res) {
+  let { d_id, d_name } = req.body;  // Destructure incoming data
+  console.log("Received data:", req.body);
+
+  // Remove spaces and convert to uppercase
+  d_id = d_id.replace(/\s/g, "").toUpperCase();
+  d_name = d_name.replace(/\s/g, "").toUpperCase();
+
+  try {
+    const sql = `
+      SELECT COUNT(*) AS d_id_count FROM dept_details WHERE UPPER(REPLACE(d_id, ' ', '')) = ?;
+      SELECT COUNT(*) AS d_name_count FROM dept_details WHERE UPPER(REPLACE(d_name, ' ', '')) = ?;
+    `;
+
+    const [results] = await pool.query(sql, [d_id, d_name]);
+
+    // Accessing the correct structure based on query execution
+    const d_id_exists = results[0][0].d_id_count > 0;
+    const d_name_exists = results[1][0].d_name_count > 0;
+
+    res.json({
+      d_id: d_id_exists,
+      d_name: d_name_exists,
+      message: `D_ID exists: ${d_id_exists}, D_Name exists: ${d_name_exists}`
+    });
+
+  } catch (err) {
+    console.error("Error executing query:", err);
+    res.status(500).json({ error: "Database query failed", details: err.message });
+  }
 }
+
+
+
+
+
+export {
+    get_all_dept_details , get_d_id_details , delete_d_id , add_new_dept, update_dept , chk_isit_present
+}  

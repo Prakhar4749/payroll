@@ -1,5 +1,5 @@
 import express from 'express'
-import {get_all_dept_details ,get_d_id_details , delete_d_id ,add_new_dept, update_dept } from '../controller/dept.js'
+import {chk_isit_present, get_all_dept_details ,get_d_id_details , delete_d_id ,add_new_dept, update_dept } from '../controller/dept.js'
 
 
 const route = express.Router();
@@ -73,5 +73,10 @@ route.post('/add_dept' , add_new_dept);
  */
 route.put('/update_d_id',update_dept);
 
+
+// chk for the db that d_id and d_name  not same 
+
+
+route.post('/chk/1' , chk_isit_present)
 
 export default route;
