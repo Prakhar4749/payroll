@@ -1,6 +1,6 @@
-// Login.js
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { Eye, EyeOff } from 'lucide-react';
 import { loginUser } from '../controller/authController';
 
 export default function Login() {
@@ -31,60 +31,86 @@ export default function Login() {
   }, [navigate]);
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gradient-to-r from-blue-100 to-blue-300">
-      <div className="w-full max-w-md p-8 space-y-6 bg-white shadow-lg rounded-lg border border-gray-200">
-        <h2 className="text-3xl font-semibold text-center text-gray-800">Login</h2>
-        
-        {error && <p className="text-red-500 text-sm">{error}</p>}
-        
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700" htmlFor="user">
-              User Name
-            </label>
-            <input
-              type="text"
-              id="user"
-              value={user_name}
-              onChange={(e) => setUserName(e.target.value)}
-              required
-              className="w-full px-4 py-3 mt-1 text-gray-900 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-emerald-600 via-teal-600 to-sky-600 py-6 sm:py-8 md:py-12 px-4 sm:px-6 lg:px-8">
+      <div className="w-full max-w-[90%] sm:max-w-md">
+        <div className="bg-white rounded-xl sm:rounded-2xl shadow-xl p-6 sm:p-8 space-y-4 sm:space-y-6">
+          {/* Header */}
+          <div className="text-center">
+            <h2 className="text-2xl sm:text-3xl font-bold text-slate-800">Welcome Back</h2>
+            <p className="mt-2 text-xs sm:text-sm text-slate-600">Sign in to access your college payslip portal</p>
           </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700" htmlFor="password">
-              Password
-            </label>
-            <div className="relative">
-              <input
-                type={showPassword ? "text" : "password"}
-                id="password"
-                value={user_password}
-                onChange={(e) => setUserPassword(e.target.value)}
-                required
-                className="w-full px-4 py-3 mt-1 text-gray-900 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 flex items-center px-2 text-gray-600 focus:outline-none"
-              >
-                {showPassword ? "🙈" : "👁️"}
-              </button>
+
+          {/* Error Message */}
+          {error && (
+            <div className="bg-red-50 border-l-4 border-red-500 p-3 sm:p-4 rounded-md">
+              <p className="text-xs sm:text-sm text-red-700">{error}</p>
             </div>
+          )}
+
+          {/* Login Form */}
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+            <div>
+              <label className="block text-sm font-medium text-slate-700" htmlFor="user">
+                Username
+              </label>
+              <input
+                type="text"
+                id="user"
+                value={user_name}
+                onChange={(e) => setUserName(e.target.value)}
+                required
+                className="mt-1 block w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 text-sm placeholder-slate-400
+                focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-colors duration-200"
+                placeholder="Enter your username"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-700" htmlFor="password">
+                Password
+              </label>
+              <div className="relative mt-1">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  value={user_password}
+                  onChange={(e) => setUserPassword(e.target.value)}
+                  required
+                  className="block w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 text-sm placeholder-slate-400
+                  focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-colors duration-200"
+                  placeholder="Enter your password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none"
+                >
+                  {showPassword ? (
+                    <EyeOff className="w-4 h-4 sm:w-5 sm:h-5" />
+                  ) : (
+                    <Eye className="w-4 h-4 sm:w-5 sm:h-5" />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              className="w-full px-4 py-2.5 sm:py-3 text-white bg-gradient-to-r from-emerald-600 to-teal-600 rounded-lg hover:from-emerald-700 hover:to-teal-700 
+              focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transform transition-all duration-200 hover:scale-[1.02] text-sm sm:text-base font-medium"
+            >
+              Sign In
+            </button>
+          </form>
+
+          {/* Footer */}
+          <div className="text-center">
+            <p className="text-xs sm:text-sm text-slate-600">
+              Need help? Contact your department administrator
+            </p>
           </div>
-          
-          <button
-            type="submit"
-            className="w-full px-4 py-3 text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            Log In
-          </button>
-          
-        </form>
+        </div>
       </div>
     </div>
   );
-  
 }

@@ -30,7 +30,7 @@ function Department() {
     <div>
       <Navbar />
 
-      <div className="flex w-full">
+      <div className="flex w-full pt-16">
         <DEPT_aside deptData ={deptData} d_id={d_id} setdeptData={setdeptData} />
 
         <main className="w-2/3">

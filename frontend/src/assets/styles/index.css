@@ -11,6 +11,31 @@ body {
   -moz-osx-font-smoothing: grayscale;
    
 }
+/* Custom scrollbar styles */
+@layer utilities {
+  .custom-scrollbar {
+    @apply scrollbar-thin scrollbar-track-transparent scrollbar-thumb-emerald-200 hover:scrollbar-thumb-emerald-300;
+  }
+}
+
+/* Webkit scrollbar styles */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #a7f3d0;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #6ee7b7;
+}
 /* Scrollbar container */
 body::-webkit-scrollbar {
   width: 10px; /* Width of the vertical scrollbar */
