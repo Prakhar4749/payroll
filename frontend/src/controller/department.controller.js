@@ -1,8 +1,10 @@
 import axios from "axios";
 
+const ip="http://localhost:5000"
+
 async function fetchAllDeptData() {
   try {
-    const response = await axios.get("http://localhost:5000/dept");
+    const response = await axios.get(`${ip}/dept`);
     // console.log(response.data);
     return response.data; // Update state with API response
   } catch (error) {
@@ -13,7 +15,7 @@ async function fetchAllDeptData() {
 
 const checkDepartment = async (d_id, d_name) => {
   try {
-    const response = await axios.post("http://localhost:5000/dept/chk/1", {
+    const response = await axios.post(`${ip}/dept/chk/1`, {
       d_id: d_id,
       d_name: d_name,
     });
@@ -28,7 +30,7 @@ const checkDepartment = async (d_id, d_name) => {
 
 const updateDepartment=async (newData)=>{
   try {
-    const response = await axios.put("http://localhost:5000/dept/update_d_id", newData );
+    const response = await axios.put(`${ip}/dept/update_d_id`, newData );
     // console.log(response.data);
     return response.data;  
   } catch (err) {
@@ -37,5 +39,16 @@ const updateDepartment=async (newData)=>{
   }
 }
 
+const addToDepartment = async (to_add)=>{
+    try{
+      const response = axios.post(`${ip}/dept/add_dept` , to_add)
 
-export { fetchAllDeptData ,checkDepartment ,updateDepartment };
+      return response;
+    }catch(err){
+      console.error("Error checking department:", err);
+    throw err;
+    }
+}
+
+
+export { fetchAllDeptData ,checkDepartment ,updateDepartment ,addToDepartment};
