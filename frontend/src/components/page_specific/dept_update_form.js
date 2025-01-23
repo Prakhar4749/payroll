@@ -34,7 +34,8 @@ const DeptUpdateForm = () => {
     }
 
     const result = await checkDepartment(dId, dName);
-    if (result.d_name === false && dId[0] !='D') {
+
+    if (result.d_name === false) {
       const set = {
         d_id: data.d_id.toUpperCase(),
         new_d_id: dId,
@@ -50,6 +51,7 @@ const DeptUpdateForm = () => {
       setDId(data.d_id.toUpperCase())
       setDName(data.d_name)
       console.log("Department already exists");
+      console.log(result)
       alert("Department Name already exists");
     }
 

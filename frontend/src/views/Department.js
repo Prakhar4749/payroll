@@ -1,45 +1,47 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "../components/layout/Navbar";
-import Dept_Table from "../components/page_specific/Dept_Table";
 import DEPT_aside from "../components/page_specific/DEPT_aside";
-import axios from "axios";
-import {fetchAllDeptData} from '../controller/department.controller.js'
+import Dept_Table from "../components/page_specific/Dept_Table";
+import { fetchAllDeptData } from "../controller/department.controller.js";
 
-function Department() {
-  const [deptData, setdeptData] = useState([]);  // Initialize with an empty array
-  const [d_id, setd_id] = useState("");  // Initialize with an empty array
-  const [d_name, setd_name] = useState("");  // Initialize with an empty array
+export default function Department() {
+  const [deptData, setdeptData] = useState([]);
+  const [deptDatacopy, setdeptDatacopy] = useState([]);
+  const [d_id, setd_id] = useState("");
 
-  // Fetch data using useEffect
   useEffect(() => {
-
     async function getDeptData() {
       try {
-        const data = await fetchAllDeptData();  // Await the async function
-        setdeptData(data);  // Update state with resolved data
-        console.log("Fetched Data:", data);
+        const data = await fetchAllDeptData();
+        setdeptData(data);
+        setdeptDatacopy(data);
       } catch (error) {
         console.error("Error fetching department data:", error);
       }
     }
 
     getDeptData();
-  
-  },[]);  // Empty dependency array to run effect only once on mount
+  }, [deptData]);
+
+  function onRowSelect(dId) {
+    setd_id(dId);
+  }
 
   return (
     <div>
       <Navbar />
 
       <div className="flex w-full pt-16">
-        <DEPT_aside deptData ={deptData} d_id={d_id} d_name={d_name} setdeptData={setdeptData} />
+        <div className="w-1/4  bg-white shadow-lg min-h-[calc(100vh-4rem)]">
+          <DEPT_aside deptData={deptData} deptDatacopy={deptDatacopy} d_id={d_id} setdeptDatacopy={setdeptDatacopy} setdeptData={setdeptData} setd_id={setd_id} />
+        </div>
 
-        <main className="w-2/3">
-          <Dept_Table className="flex" data={deptData} setd_id={setd_id} setd_name={setd_name} d_id={d_id}  />
+        <main className="w-3/4 p-6 bg-gray-50">
+          <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+            <Dept_Table data={deptDatacopy} onRowSelect={onRowSelect} />
+          </div>
         </main>
       </div>
     </div>
   );
 }
-
-export default Department;
