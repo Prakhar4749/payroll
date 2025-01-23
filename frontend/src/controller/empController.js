@@ -10,6 +10,16 @@ const all_emp_data = async () => {
 
 }
 
+const add_emp_details = async (e_id) => {
+  try {
+    const response = await axios.get(`http://localhost:5000/emp/${e_id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Axios request failed:", error.message);
+  }
+};
+
+
 const view_emp_by_id = async (e_id) => {
   try {
     const response = await axios.get(`http://localhost:5000/emp/${e_id}`);
@@ -18,6 +28,8 @@ const view_emp_by_id = async (e_id) => {
     console.error("Axios request failed:", error.message);
   }
 };
+
+
 export {
   all_emp_data, view_emp_by_id,
 }

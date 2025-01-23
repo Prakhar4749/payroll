@@ -18,10 +18,10 @@ route.delete("/:e_id" , delete_e_id);
 
 // to add new emp to database ini tables (emp_details, emp_bank_details,emp_deduction_details ,emp_earning_details) 
 // post should be in formate { "emp_details": {...} , "emp_deduction_details": {...} ..... }
-route.post('/' , add_new_emp);
+route.post('/add_emp' , add_new_emp);
 
 // for updating the data of emp
-route.put('/',update_emp);
+route.put('/update_emp',update_emp);
 
 
 // route.get('/chk/1', (req, res) => {
