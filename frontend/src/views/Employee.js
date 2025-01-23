@@ -7,35 +7,88 @@ import Emp_Table from "../components/page_specific/Emp_Table";
 export default function Employee() {
 
   const emp= [
-    { id: '1', name: 'jkhkdjfsgh', mob: 28 , email: "ghjfjghfjhgf", state: "tytguytujytuy", title: "fghhrtjty"},
-    { id: '11', name: 'a', mob: 34,  email: "ghjfjghfjtgrewwfiudjghdkiu", state: "tytguytujytuy", title: "fghhrtjty" },
-    { id: '2', name: 'a', mob: 45,  email: "ghjfjghfjhgf", state: "tytguytujytuy", title: "fghhrtjty" },
-    { id: '3', name: 'agsdfs', mob: 34,  email: "ghjfjghfjtgreikgufdghgf", state: "tytguytujytuy", title: "fghhrtjty" },
-    { id: '4', name: 'agsfs', mob: 45,  email: "ghjfjghfjhgf", state: "tytguytujytuy", title: "fghhrtjty" },
-    { id: '112', name: 'agsdfs', mob: 34,  email: "ghjfjghfjtgrewgufdghgf", state: "tytguytujytuy", title: "fghhrtjty" },
-    { id: '102', name: 'a', mob: 45,  email: "ghjfjghfjhgf", state: "tytguytujytuy", title: "fghhrtjty" },
-    { id: '8', name: 'agsdfs', mob: 34,  email: "ghjfdkiugdksiughdghgf", state: "tytguytujytuy", title: "fghhrtjty" },
-    { id: '9', name: 'agsfs', mob: 45,  email: "ghjfjghfjhgf", state: "tytguytujytuy", title: "fghhrtjty" },
+    {
+      e_id: "1",
+      e_name: "John Doe",
+      e_mobile_number: "1234567890",
+      e_email: "john@example.com",
+      e_designation: "Manager",
+      e_address: "123 Main St",
+    },
+    {
+      e_id: "7",
+      e_name: "John Doe",
+      e_mobile_number: "1234567890",
+      e_email: "john@example.com",
+      e_designation: "Manager",
+      e_address: "123 Main St",
+    },
+    {
+      e_id: "6",
+      e_name: "John Doe",
+      e_mobile_number: "1234567890",
+      e_email: "john@example.com",
+      e_designation: "Manager",
+      e_address: "123 Main St",
+    },
+    {
+      e_id: "5",
+      e_name: "John Doe",
+      e_mobile_number: "1234567890",
+      e_email: "john@example.com",
+      e_designation: "Manager",
+      e_address: "123 Main St",
+    },
+    {
+      e_id: "4",
+      e_name: "John Doe",
+      e_mobile_number: "1234567890",
+      e_email: "john@example.com",
+      e_designation: "Manager",
+      e_address: "123 Main St",
+    },
+    {
+      e_id: "3",
+      e_name: "John Doe",
+      e_mobile_number: "1234567890",
+      e_email: "john@example.com",
+      e_designation: "Manager",
+      e_address: "123 Main St",
+    },
+    {
+      e_id: "2",
+      e_name: "John Doe",
+      e_mobile_number: "1234567890",
+      e_email: "john@example.com",
+      e_designation: "Manager",
+      e_address: "123 Main St",
+    }
   ];
 
-  const [empData,setEMPData] = useState(emp)
+  const [empData,setEMPData] = useState(emp);
+
+  const handleRowSelection = (selectedId) => {
+    console.log("Selected Employee ID:", selectedId);
+  };
   return (
     <>
+      {/* Navbar */}
       <Navbar />
-
-      <div className="flex w-full ">
-        
-        <EMP_aside empData={emp} setEMPData={setEMPData} />
-        
-
-
-
-        <main className="w-2/3 ">
-        <Emp_Table className="flex w-2/3 " data = {empData}/>
-          
-          
+  
+      <div className="flex flex-col lg:flex-row w-full bg-blue-50 min-h-screen">
+        {/* Sidebar */}
+        <div className="w-full lg:w-1/4 bg-white shadow-md">
+          <EMP_aside empData={emp} setEMPData={setEMPData} />
+        </div>
+  
+        {/* Main Content */}
+        <main className="w-full lg:w-3/4 bg-white p-4 shadow-md">
+          <div className="overflow-x-auto">
+          <Emp_Table data={empData} onRowSelect={handleRowSelection} />
+          </div>
         </main>
       </div>
     </>
   );
+  
 }

@@ -1,97 +1,110 @@
 import React, { useState } from 'react';
 
-
 const EMP_aside = ({ empData, setEMPData }) => {
-    const [eId,setEID]=useState("");
-  const [eName,setEName]=useState("");
-  const [eMob,setEMob]=useState("");
+  const [e_id, sete_id] = useState("");
+  const [e_name, sete_name] = useState("");
+  const [eMob, setEMob] = useState("");
 
-  function addEmp(){
+  // Apply filter function
+  function apply() {
+    // Filter the employee data based on the entered filter values
+    let filteredData = empData.filter((employee) => {
+      const idMatch = e_id ? employee.e_id.toLowerCase().includes(e_id.toLowerCase()) : true;
+      const nameMatch = e_name ? employee.e_name.toLowerCase().includes(e_name.toLowerCase()) : true;
+      const mobMatch = eMob ? employee.e_mobile_number.includes(eMob) : true;
+      return idMatch && nameMatch && mobMatch;
+    });
+    
+    // Update the state with the filtered data
+    setEMPData(filteredData);
+  }
 
-  
-  }
-  function updateEmp(){
-  
-  
-  }
-  function removeEmp(){
-  
-  
-  }
-  function viewEmp(){
-  
-  
-  }
-  function apply( ){
-  
-    let a = empData.filter(employee => employee.id.slice(0,eId.length) === eId  && employee.name.slice(0,eName.length) === eName);
-    console.log(empData)
-    console.log(eId)
-    console.log(a)
+  // Clear all filters
+  function clearFilter() {
+    // Reset filter values
+    sete_id("");
+    sete_name("");
+    setEMob("");
 
-
-    setEMPData(a);
-
+    // Reset the employee data (show all)
+    setEMPData(empData);
   }
-  function clearFilter(){
-  
-  
-  }
+
   return (
-    <>
-    <aside className="w-1/3  bg-blue-300 flex  flex-col  mx-auto ">
-          {" "}
-          {/* this aside is for sidebar */}
-          <div className="flex flex-col items-center justify-center">
-            <button className="bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-full w-9/12 text-xl my-3 mt-4  sm:w-2/3  truncate">
-              Add Employee
-            </button>
-            <button className="bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-full w-9/12 text-xl my-3  truncate">
-              Update Employee
-            </button>
-            <button className="bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-full w-9/12 text-xl my-3">
-              Remove Employee
-            </button>
-            <button className="bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-full w-9/12 text-xl my-3">
-              View Employee
-            </button>
+    <aside className="w-full bg-white shadow-lg rounded-md p-6 mx-auto flex-wrap-reverse flex-col gap-6">
+      {/* Sidebar Buttons */}
+      <div className="flex flex-col items-center gap-4">
+        <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full w-full text-center text-lg">
+          Add Employee
+        </button>
+        <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full w-full text-center text-lg">
+          Update Employee
+        </button>
+        <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full w-full text-center text-lg">
+          Remove Employee
+        </button>
+        <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full w-full text-center text-lg">
+          View Employee
+        </button>
+      </div>
+  
+      {/* Filter Section */}
+      <div className="mt-6">
+        <h1 className="text-2xl font-semibold underline text-gray-700">Filter</h1>
+        <div className="flex flex-col gap-4 mt-4">
+          <div className="flex flex-col">
+            <label className="text-lg font-medium text-gray-700" htmlFor="e_id">
+              E_ID
+            </label>
+            <input
+              type="text"
+              id="e_id"
+              value={e_id}
+              onChange={(e) => sete_id(e.target.value)}
+              className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
           </div>
-            <h1 className="text-3xl underline mt-4 mx-5 ">filter</h1>
-          <div className="flex  mx-auto  flex-col">
-
-            <div className="flex flex-col items-end justify-center">
-              <span className="  my-1 mt-5 mx-2">
-                <label className="text-2xl " >E_ID: </label>
-                <input type="text" value={eId} onChange={(e)=> setEID(e.target.value)} />
-              </span>
-              <span className=" my-1  mx-2">
-                <label className=" text-2xl ">E_Name: </label>
-                <input type="text"  value={eName} onChange={(e)=> setEName(e.target.value)} />
-              </span>
-              <span className=" my-1 mx-2">
-                <label className=" text-2xl ">E_Mob: </label>
-                <input type="text" value={eMob} onChange={(e)=> setEMob(e.target.value)} />
-              </span>
-              {/* <span className="  my-1 mx-2">
-                <label className=" text-2xl ">E_ID: </label>
-                <input type="text" />
-              </span> */}
-            </div>
-
-            <div className="flex-row my-5">
-              <div className="flex items-center justify-evenly">
-                <button className="bg-gray-700 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full  text-xl">
-                  Clear filter
-                </button>
-                <button className="bg-gray-700 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full  text-xl  text-center " onClick={apply}>
-                  Apply
-                </button>
-              </div>
-            </div>
+          <div className="flex flex-col">
+            <label className="text-lg font-medium text-gray-700" htmlFor="e_name">
+              E_Name
+            </label>
+            <input
+              type="text"
+              id="e_name"
+              value={e_name}
+              onChange={(e) => sete_name(e.target.value)}
+              className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
           </div>
-        </aside>
-    </>
-  )
+          <div className="flex flex-col">
+            <label className="text-lg font-medium text-gray-700" htmlFor="eMob">
+              E_Mob
+            </label>
+            <input
+              type="text"
+              id="eMob"
+              value={eMob}
+              onChange={(e) => setEMob(e.target.value)}
+              className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+        </div>
+  
+        {/* Buttons */}
+        <div className="flex gap-4 mt-6">
+          <button className="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-md" onClick={clearFilter}>
+            Clear Filter
+          </button>
+          <button
+            className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md"
+            onClick={apply}
+          >
+            Apply
+          </button>
+        </div>
+      </div>
+    </aside>
+  );
 }
 
-export default EMP_aside
+export default EMP_aside;
