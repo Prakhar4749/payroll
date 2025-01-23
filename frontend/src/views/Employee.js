@@ -39,7 +39,6 @@ export default function Employee() {
           <div className="w-full lg:w-1/4 bg-white shadow-lg lg:min-h-[calc(100vh-4rem)]">
             <div className="sticky top-16 overflow-auto max-h-[calc(100vh-4rem)]">
               <EMP_aside
-                empData={empData}
                 alldata={alldata}
                 setempData={setempData}
                 selected_e_id={selected_e_id}
