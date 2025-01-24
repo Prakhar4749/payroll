@@ -98,12 +98,49 @@ export default function CreatePayslipPdf() {
   const netPayable = totalEarnings - totalDeductions;
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100 ">
-      <div className="bg-white rounded-xl shadow-lg w-full max-w-4xl">
-        <h3 className="text-center mt-0 text-lg font-semibold text-gray-800 ">
+    <div className="bg-gray-100">
+      <div className="bg-white border mx-auto max-w-[800px] print:max-w-full print:shadow-none print:border-none">
+       {/* Print-specific styling */}
+       <style>
+          {`
+            @media print {
+              @page {
+                size: A4;
+                margin: 0;
+              }
+              body {
+                margin: 20px;
+                padding: 0;
+                font-family: Arial, sans-serif;
+                font-size: 14px;
+                font-weight: 400;
+              }
+              .payslip {
+                width: 100%;
+                padding: 0;
+                margin: 0;
+                page-break-inside: avoid;
+                font-size: 14px;
+                font-weight: bold;
+              }
+              table {
+                width: 100%;
+                border-collapse: collapse;
+              }
+              th, td {
+                padding: 8px;
+                font-size: 14px;
+                font-weight: bold;
+                border: 1px solid black;
+              }
+            }
+          `}
+        </style>
+
+        <h3 className="text-center text-xl font-semibold text-gray-800 ">
           University Institute of Technology
         </h3>
-        <h3 className="text-center text-lg font-semibold text-gray-800 ">
+        <h3 className="text-center text-xl font-semibold text-gray-800">
           Rajiv Gandhi Proudyogiki Viswavidyalaya
         </h3>
         <h2 className="text-center mt-2 text-xl font-semibold text-gray-800">
@@ -361,13 +398,11 @@ export default function CreatePayslipPdf() {
           </tbody>
         </table>
 
-        <div className="text-right mt-20">
-          <p className="font-bold text-3xl">Account Section</p>
-        </div>
-
-        <p className="text-left text-sm text-gray-600 mt-6">
+       
+          <p className="text-right text-xl font-bold mt-8">Account Section</p>
+          <p className="text-left text-sm text-gray-600 mt-2">
           In case of any discrepancy, please inform us immediately.
-        </p>
+          </p>
       </div>
     </div>
   );
