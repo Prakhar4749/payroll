@@ -1,5 +1,5 @@
 const emp_data_model = {"emp_details": {
-        
+        "e_id": "",
         "e_name": "",
         "e_mobile_number": null,
         "e_gender": "",
@@ -9,7 +9,7 @@ const emp_data_model = {"emp_details": {
         "d_id": "",
         "e_designation": "",
         "e_group": "",
-        "": "",
+        "e_date_of_joining": "",
         "e_DOB": ""
     },
     "emp_bank_details": {
