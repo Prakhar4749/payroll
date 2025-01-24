@@ -31,20 +31,18 @@ const BackButton = ({
     <button
       onClick={handleClick}
       className={`
-        group inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium
+        group inline-flex items-center px-4 py-2 rounded-lg text-sm bg-white text-emerald-600 font-medium
         transition-all duration-200
         ${scrolled
-          ? 'text-white bg-emerald-600'
-          : 'text-white bg-emerald-600'
+          ? 'text-emerald-600 hover:bg-emerald-50'
+          : 'text-emerald-600 hover:bg-emerald-50'
         }
         
       `}
     >
-      <ArrowLeft className={`
-        h-5 w-5 mr-2 transition-transform duration-200
-        group-hover:-translate-x-1
-        ${scrolled ? 'text-emerald-600' : 'text-white/90'}
-      `} />
+      <ArrowLeft className=
+        {`h-5 w-5 mr-2 transition-transform duration-200 group-hover:-translate-x-1
+        text-emerald-600`} />
       {label}
     </button>
   );
