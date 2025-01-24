@@ -109,8 +109,8 @@ export default function CreatePayslipPdf() {
                 margin: 0;
               }
               body {
-                margin: 20px;
-                padding: 0;
+                margin: 18px;
+                padding: 2px;
                 font-family: Arial, sans-serif;
                 font-size: 14px;
                 font-weight: 400;
