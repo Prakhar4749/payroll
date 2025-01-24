@@ -1,5 +1,5 @@
 import express from 'express'
-import {get_all_basic__emp_details ,get_all_e_id_emp_details , delete_e_id ,add_new_emp, update_emp ,check_for_data } from '../controller/emp.js'
+import {get_all_basic__emp_details ,get_all_e_id_emp_details , delete_e_id ,add_new_emp, update_emp ,check_for_data , chk_for_update } from '../controller/emp.js'
 
 
 const route = express.Router();
@@ -23,6 +23,9 @@ route.post('/add_emp' , add_new_emp);
 // for updating the data of emp
 route.put('/update_emp',update_emp);
 
+// chk for update input 
+route.put("/chk_for_update" , chk_for_update)
+
 
 // route.get('/chk/1', (req, res) => {
 //     console.log("CHK route hit");
@@ -30,7 +33,7 @@ route.put('/update_emp',update_emp);
 // });
 
 // this it for checking that the data is unique of not in the DB (if it gives false it means that its data is already present , you have to change the values)
-route.get("/chk/1", check_for_data )
+route.put("/chk/1", check_for_data )
 
 
 export default route;
