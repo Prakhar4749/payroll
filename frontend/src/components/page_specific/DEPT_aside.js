@@ -71,7 +71,7 @@ async  function remove() {
       const matchesName = dNamec
         ? dept.d_name.toLowerCase().includes(dNamec.toLowerCase()) // Case-insensitive matching for the department name
         : true;
-  
+        setd_id("")
       // Return departments that match both criteria (if provided)
       return matchesId && matchesName;
     });
