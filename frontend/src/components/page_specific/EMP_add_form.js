@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { add_emp_details } from "../../controller/empController";
 import { emp_data_model } from "../../models/EmpModel";
-import { User, Mail, Phone, MapPin, Briefcase, Building2, Calendar, CreditCard, Building, DollarSign, Wallet, FileText, BanknoteIcon as BanknotesIcon, Calculator, MinusCircle, Save, File, UserRoundPen, FilterX, Eraser } from 'lucide-react';
+import { User, Building, DollarSign,  BanknoteIcon as BanknotesIcon,MinusCircle, Save,  UserRoundPen, Eraser } from 'lucide-react';
 import Navbar from "../layout/Navbar"
 import { BackButton } from "../common/backButton";
 

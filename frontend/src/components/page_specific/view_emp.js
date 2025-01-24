@@ -1,150 +1,617 @@
-import React from 'react';
-import { useLocation } from 'react-router-dom';
+
+import { useState } from 'react';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
+import Navbar from '../layout/Navbar';
+import { User, Building, DollarSign, BanknoteIcon as BanknotesIcon, MinusCircle, Save, UserRoundPen, Eraser } from 'lucide-react';
+import { BackButton } from "../common/backButton";
 
 const ViewEmployee = () => {
     const location = useLocation();
+    const Navigate = useNavigate();
     console.log(location.state.data)
-    const { emp_details, emp_bank_details, emp_deduction_details, emp_earning_details } = location.state.data;
+    const data = location.state.data;
+    const [scrolled, setScrolled] = useState(false);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        Navigate(-1)
+        
+      };
 
     return (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            {/* Employee Photo and Name */}
-            <div className="flex items-center space-x-4 mb-6">
-                <div className="w-24 h-24 bg-gray-200 rounded-full overflow-hidden">
-                    {emp_details.e_photo ? (
-                        <img
-                            src={emp_details.e_photo}
-                            alt={emp_details.e_name}
-                            className="w-full h-full object-cover"
-                        />
-                    ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-gray-300 text-gray-500">
-                            No Photo
+
+        <div className="min-h-screen flex flex-col bg-gray-50 ">
+            <Navbar />
+            <div className="w-full lg:max-w-[1215px] mx-auto mt-20 px-4 sm:px-6 lg:px-8 lg:max-w-7xl mx-auto mt-20  sm:px-6 lg:px-8">
+                <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+                    {/* Form Header */}
+                    <div className="px-6 py-8 bg-gradient-to-r from-emerald-600 via-teal-600 to-sky-600"
+                    >
+                        <BackButton />
+                        <h1 className={`text-2xl mt-2 font-bold transition-colors duration-300 ${scrolled ? 'text-emerald-600' : 'text-white'
+                            }`}>
+                            view Employee Details
+                        </h1>
+                        <p className={`mt-2 transition-colors duration-300 ${scrolled ? 'text-gray-600' : 'text-white/90'
+                            }`}>
+                            Have a look of all the details of your employee
+                        </p>
+                    </div>
+
+                    <form className="px-6 py-8 space-y-8" onSubmit={handleSubmit}>
+                        {/* Employee Details Section */}
+                        <div className="space-y-6">
+                            <div className="flex items-center">
+                                <User className="h-5 w-5 text-emerald-600 mr-2" />
+                                <h2 className="text-lg font-semibold text-gray-800">Employee Details</h2>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {/* id */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">ID</label>
+                                    <input
+                                        type="text"
+                                        value={data.emp_details.e_id}
+                                        disabled
+                                        className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+
+                                    />
+                                </div>
+
+                                {/* Name */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Name</label>
+                                    <input
+                                        type="text"
+                                        value={data.emp_details.e_name}
+                                        className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+                                        disabled
+                                    />
+                                </div>
+
+                                {/* Mobile Number */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Mobile Number</label>
+                                    <input
+                                        type="tel"
+                                        value={data.emp_details.e_mobile_number}
+                                        disabled
+                                        className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+                                        required
+                                    />
+                                </div>
+
+                                {/* Gender */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Gender</label>
+                                    <select
+                                        value={data.emp_details.e_gender}
+                                        disabled
+                                        className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+                                        required
+                                    >
+                                        <option value="">Select Gender</option>
+                                        <option value="male">Male</option>
+                                        <option value="female">Female</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+
+                                {/* Email */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Email</label>
+                                    <input
+                                        type="email"
+                                        value={data.emp_details.e_email}
+                                        disabled
+                                        className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+
+                                    />
+                                </div>
+
+
+                                {/* Address */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Address</label>
+                                    <input
+                                        type="text"
+                                        value={data.emp_details.e_address}
+                                        disabled
+                                        className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+
+                                    />
+                                </div>
+
+                                {/* Department ID */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Department ID</label>
+                                    <input
+                                        type="text"
+                                        value={data.emp_details.d_id}
+                                        disabled
+                                        className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+
+                                    />
+                                </div>
+
+                                {/* Designation */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Designation</label>
+                                    <input
+                                        type="text"
+                                        value={data.emp_details.e_designation}
+                                        disabled
+                                        className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+
+                                    />
+                                </div>
+
+                                {/* Group */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Group</label>
+                                    <input
+                                        type="text"
+                                        value={data.emp_details.e_group}
+                                        disabled
+                                        className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+                                        required
+                                    />
+                                </div>
+
+                                {/* date of joining */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Date of joining</label>
+                                    <input
+                                        type="date"
+                                        value={data.emp_details.e_date_of_joining}
+                                        disabled
+                                        className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+
+                                    />
+                                </div>
+
+
+                                {/* Date of Birth */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Date of Birth</label>
+                                    <input
+                                        type="date"
+                                        value={data.emp_details.e_DOB}
+                                        disabled
+                                        className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+
+                                    />
+                                </div>
+                            </div>
                         </div>
-                    )}
+
+
+                        {/* Bank Details Section */}
+                        <div className="space-y-6 pt-6 border-t border-gray-200">
+                            <div className="flex items-center">
+                                <Building className="h-5 w-5 text-emerald-600 mr-2" />
+                                <h2 className="text-lg font-semibold text-gray-800">Bank Details</h2>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {/* Bank fields following the same pattern */}
+
+                                {/* Bank Name */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Bank Name</label>
+                                    <input
+                                        type="text"
+                                        value={data.emp_bank_details.e_bank_name}
+                                        disabled
+                                        className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+
+                                    />
+                                </div>
+
+                                {/* Bank Account Number */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Bank Account Number</label>
+                                    <input
+                                        type="tel"
+                                        value={data.emp_bank_details.e_bank_acc_number || ""}
+                                        disabled
+                                        className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+
+                                    />
+                                </div>
+
+                                {/* PAN Number */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">PAN Number</label>
+                                    <input
+                                        type="text"
+                                        value={data.emp_bank_details.e_pan_number}
+                                        disabled
+                                        className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+
+                                    />
+                                </div>
+
+                                {/* Bank IFSC Code */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Bank IFSC Code</label>
+                                    <input
+                                        type="text"
+                                        value={data.emp_bank_details.e_bank_IFSC}
+                                        disabled
+                                        className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+
+                                    />
+                                </div>
+
+                                {/* CPF/GPF Number */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">CPF/GPF Number</label>
+                                    <input
+                                        type="tel"
+                                        value={data.emp_bank_details.e_cpf_or_gpf_number || ""}
+                                        disabled
+                                        className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+                                    />
+                                </div>
+
+
+                                {/* ... */}
+                            </div>
+                        </div>
+
+                        {/* Earning Details Section */}
+                        <div className="space-y-6 pt-6 border-t border-gray-200">
+                            <div className="flex items-center">
+                                <DollarSign className="h-5 w-5 text-emerald-600 mr-2" />
+                                <h2 className="text-lg font-semibold text-gray-800">Earning Details</h2>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {/* Earning fields following the same pattern */}
+
+
+                                {/* Basic Salary */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Basic Salary</label>
+                                    <input
+                                        type="tel"
+                                        value={data.emp_earning_details.basic_salary || ""}
+                                        disabled
+                                        className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+                                    />
+                                </div>
+
+                                {/* Special Pay */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Special Pay</label>
+                                    <input
+                                        type="tel"
+                                        value={data.emp_earning_details.special_pay || ""}
+                                        disabled
+                                        className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+                                    />
+                                </div>
+
+                                {/* Dearness Allowance */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Dearness Allowance</label>
+                                    <input
+                                        type="tel"
+                                        value={data.emp_earning_details.dearness_allowance || ""}
+                                        disabled
+                                        className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+                                    />
+                                </div>
+
+                                {/* DA */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">DA</label>
+                                    <input
+                                        type="tel"
+                                        value={data.emp_earning_details.DA || ""}
+                                        disabled
+                                        className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+                                    />
+                                </div>
+
+                                {/* ADA */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">ADA</label>
+                                    <input
+                                        type="tel"
+                                        value={data.emp_earning_details.ADA || ""}
+                                        disabled
+                                        className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+                                    />
+                                </div>
+
+                                {/* Interim Relief */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Interim Relief</label>
+                                    <input
+                                        type="tel"
+                                        value={data.emp_earning_details.interim_relief || ""}
+                                        disabled
+                                        className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+                                    />
+                                </div>
+
+                                {/* HRA */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">HRA</label>
+                                    <input
+                                        type="tel"
+                                        value={data.emp_earning_details.HRA || ""}
+                                        disabled
+                                        className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+                                    />
+                                </div>
+
+                                {/* CCA */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">CCA</label>
+                                    <input
+                                        type="tel"
+                                        value={data.emp_earning_details.CCA || ""}
+                                        disabled
+                                        className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+                                    />
+                                </div>
+
+                                {/* Conveyance */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Conveyance</label>
+                                    <input
+                                        type="tel"
+                                        value={data.emp_earning_details.conveyance || ""}
+                                        disabled
+                                        className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+                                    />
+                                </div>
+
+                                {/* Medical */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Medical</label>
+                                    <input
+                                        type="tel"
+                                        value={data.emp_earning_details.medical || ""}
+                                        disabled
+                                        className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+                                    />
+                                </div>
+
+                                {/* Washing Allowance */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Washing Allowance</label>
+                                    <input
+                                        type="tel"
+                                        value={data.emp_earning_details.washing_allowance || ""}
+                                        disabled
+                                        className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+                                    />
+                                </div>
+
+                                {/* BDP */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">BDP</label>
+                                    <input
+                                        type="tel"
+                                        value={data.emp_earning_details.BDP || ""}
+                                        disabled
+                                        className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+                                    />
+                                </div>
+
+                                {/* Arrears */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Arrears</label>
+                                    <input
+                                        type="tel"
+                                        value={data.emp_earning_details.arrears || ""}
+                                        disabled
+                                        className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+                                    />
+                                </div>
+
+                                {/* ... */}
+                            </div>
+                        </div>
+
+                        {/* Deduction Details Section */}
+                        <div className="space-y-6 pt-6 border-t border-gray-200">
+                            <div className="flex items-center">
+                                <MinusCircle className="h-5 w-5 text-emerald-600 mr-2" />
+                                <h2 className="text-lg font-semibold text-gray-800">Deduction Details</h2>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {/* Deduction fields following the same pattern */}
+
+
+                                {/* Deduction CPF */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Deduction CPF</label>
+                                    <input
+                                        type="tel"
+                                        value={data.emp_deduction_details.deduction_CPF || ""}
+                                        disabled
+                                        className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+                                    />
+                                </div>
+
+                                {/* GIS */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">GIS</label>
+                                    <input
+                                        type="tel"
+                                        value={data.emp_deduction_details.GIS || ""}
+                                        disabled
+                                        className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+                                    />
+                                </div>
+
+                                {/* House Rent */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">House Rent</label>
+                                    <input
+                                        type="tel"
+                                        value={data.emp_deduction_details.house_rent || ""}
+                                        disabled
+                                        className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+                                    />
+                                </div>
+
+                                {/* Water Charges */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Water Charges</label>
+                                    <input
+                                        type="tel"
+                                        value={data.emp_deduction_details.water_charges || ""}
+                                        disabled
+                                        className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+                                    />
+                                </div>
+
+                                {/* Electricity Charges */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Electricity Charges</label>
+                                    <input
+                                        type="tel"
+                                        value={data.emp_deduction_details.electricity_charges || ""}
+                                        disabled
+                                        className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+                                    />
+                                </div>
+
+                                {/* Vehicle Deduction */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Vehicle Deduction</label>
+                                    <input
+                                        type="tel"
+                                        value={data.emp_deduction_details.vehicle_deduction || ""}
+                                        disabled
+                                        className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+                                    />
+                                </div>
+
+                                {/* HB Loan */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">HB Loan</label>
+                                    <input
+                                        type="tel"
+                                        value={data.emp_deduction_details.HB_loan || ""}
+                                        disabled
+                                        className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+                                    />
+                                </div>
+
+                                {/* GPF Loan */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">GPF Loan</label>
+                                    <input
+                                        type="tel"
+                                        value={data.emp_deduction_details.GPF_loan || ""}
+                                        disabled
+                                        className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+                                    />
+                                </div>
+
+                                {/* Festival Loan */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Festival Loan</label>
+                                    <input
+                                        type="tel"
+                                        value={data.emp_deduction_details.festival_loan || ""}
+                                        disabled
+                                        className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+                                    />
+                                </div>
+
+                                {/* Grain Charges */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Grain Charges</label>
+                                    <input
+                                        type="tel"
+                                        value={data.emp_deduction_details.grain_charges || ""}
+                                        disabled
+                                        className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+                                    />
+                                </div>
+
+                                {/* Bank Advance */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Bank Advance</label>
+                                    <input
+                                        type="tel"
+                                        value={data.emp_deduction_details.bank_advance || ""}
+                                        disabled
+                                        className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+                                    />
+                                </div>
+
+                                {/* Advance */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Advance</label>
+                                    <input
+                                        type="tel"
+                                        value={data.emp_deduction_details.advance || ""}
+                                        disabled
+                                        className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+                                    />
+                                </div>
+
+                                {/* RGPV Advance */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">RGPV Advance</label>
+                                    <input
+                                        type="tel"
+                                        value={data.emp_deduction_details.RGPV_advance || ""}
+                                        disabled
+                                        className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+                                    />
+                                </div>
+
+                                {/* Income Tax */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Income Tax</label>
+                                    <input
+                                        type="tel"
+                                        value={data.emp_deduction_details.income_tax || ""}
+                                        disabled
+                                        className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+                                    />
+                                </div>
+
+                                {/* Professional Tax */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Professional Tax</label>
+                                    <input
+                                        type="tel"
+                                        value={data.emp_deduction_details.professional_tax || ""}
+                                        className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+                                    />
+                                </div>
+
+                                {/* ... */}
+                            </div>
+                        </div>
+                        <div className="flex flex-col md:flex-row gap-4 mt-6 py-6 items-center justify-around">
+                            
+                            {/* done Button */}
+                            <button
+                                type="submit"
+                                className=" w-full  lg:max-w-2xl px-8 py-3 border border-transparent rounded-lg shadow-lg text-base font-semibold text-white bg-gradient-to-r from-emerald-500 via-teal-500 to-sky-500 hover:from-emerald-600 hover:via-teal-600 hover:to-sky-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all duration-200 flex items-center justify-center gap-3"
+                            >
+                                <Save className="h-6 w-6" />
+                                DONE
+                            </button>
+                        </div>
+
+                    </form>
                 </div>
-                <div>
-                    <h1 className="text-2xl font-bold text-emerald-600">{emp_details.e_name}</h1>
-                    <p className="text-gray-500">{emp_details.e_designation}</p>
-                </div>
-            </div>
-
-            {/* Employee Details */}
-            <div className="bg-white shadow-md rounded-lg p-6 mb-6">
-                <h2 className="text-lg font-semibold text-emerald-600 mb-4">Employee Details</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <div><p className="text-sm text-gray-500">Employee ID</p><p className="text-base text-gray-700">{emp_details.e_id ?? 'N/A'}</p></div>
-                    <div><p className="text-sm text-gray-500">Mobile Number</p><p className="text-base text-gray-700">{emp_details.e_mobile_number ?? 'N/A'}</p></div>
-                    <div><p className="text-sm text-gray-500">Gender</p><p className="text-base text-gray-700">{emp_details.e_gender ?? 'N/A'}</p></div>
-                    <div><p className="text-sm text-gray-500">Email</p><p className="text-base text-gray-700">{emp_details.e_email ?? 'N/A'}</p></div>
-                    <div><p className="text-sm text-gray-500">Address</p><p className="text-base text-gray-700">{emp_details.e_address ?? 'N/A'}</p></div>
-                    <div><p className="text-sm text-gray-500">Designation</p><p className="text-base text-gray-700">{emp_details.e_designation ?? 'N/A'}</p></div>
-                    <div><p className="text-sm text-gray-500">Group</p><p className="text-base text-gray-700">{emp_details.e_group ?? 'N/A'}</p></div>
-                    <div><p className="text-sm text-gray-500">Date of Joining</p><p className="text-base text-gray-700">{emp_details.e_date_of_joining ?? 'N/A'}</p></div>
-                    <div><p className="text-sm text-gray-500">Date of Birth</p><p className="text-base text-gray-700">{emp_details.e_DOB ?? 'N/A'}</p></div>
-                </div>
-            </div>
-
-            {/* Bank Details */}
-            <div className="bg-white shadow-md rounded-lg p-6 mb-6">
-                <h2 className="text-lg font-semibold text-emerald-600 mb-4">Bank Details</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <div><p className="text-sm text-gray-500">Bank Name</p><p className="text-base text-gray-700">{emp_bank_details.e_bank_name ?? 'N/A'}</p></div>
-                    <div><p className="text-sm text-gray-500">Account Number</p><p className="text-base text-gray-700">{emp_bank_details.e_bank_acc_number ?? 'N/A'}</p></div>
-                    <div><p className="text-sm text-gray-500">PAN Number</p><p className="text-base text-gray-700">{emp_bank_details.e_pan_number ?? 'N/A'}</p></div>
-                    <div><p className="text-sm text-gray-500">IFSC Code</p><p className="text-base text-gray-700">{emp_bank_details.e_bank_IFSC ?? 'N/A'}</p></div>
-                    <div><p className="text-sm text-gray-500">CPF/GPF Number</p><p className="text-base text-gray-700">{emp_bank_details.e_cpf_or_gpf_number ?? 'N/A'}</p></div>
-                </div>
-            </div>
-
-            {/*earning details */}
-            <div className="bg-white shadow-md rounded-lg p-6 mb-6">
-                <h2 className="text-lg font-semibold text-emerald-600 mb-4">Earning Details</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <div>
-                        <p className="text-sm text-gray-500">Basic Salary</p>
-                        <p className="text-base text-gray-700">{emp_earning_details.basic_salary ?? 'N/A'}</p>
-                    </div>
-                    <div>
-                        <p className="text-sm text-gray-500">Special Pay</p>
-                        <p className="text-base text-gray-700">{emp_earning_details.special_pay ?? 'N/A'}</p>
-                    </div>
-                    <div>
-                        <p className="text-sm text-gray-500">Dearness Allowance</p>
-                        <p className="text-base text-gray-700">{emp_earning_details.dearness_allowance ?? 'N/A'}</p>
-                    </div>
-                    <div>
-                        <p className="text-sm text-gray-500">DA</p>
-                        <p className="text-base text-gray-700">{emp_earning_details.DA ?? 'N/A'}</p>
-                    </div>
-                    <div>
-                        <p className="text-sm text-gray-500">ADA</p>
-                        <p className="text-base text-gray-700">{emp_earning_details.ADA ?? 'N/A'}</p>
-                    </div>
-                    <div>
-                        <p className="text-sm text-gray-500">Interim Relief</p>
-                        <p className="text-base text-gray-700">{emp_earning_details.interim_relief ?? 'N/A'}</p>
-                    </div>
-                    <div>
-                        <p className="text-sm text-gray-500">HRA</p>
-                        <p className="text-base text-gray-700">{emp_earning_details.HRA ?? 'N/A'}</p>
-                    </div>
-                    <div>
-                        <p className="text-sm text-gray-500">CCA</p>
-                        <p className="text-base text-gray-700">{emp_earning_details.CCA ?? 'N/A'}</p>
-                    </div>
-                    <div>
-                        <p className="text-sm text-gray-500">Conveyance</p>
-                        <p className="text-base text-gray-700">{emp_earning_details.conveyance ?? 'N/A'}</p>
-                    </div>
-                    <div>
-                        <p className="text-sm text-gray-500">Medical</p>
-                        <p className="text-base text-gray-700">{emp_earning_details.medical ?? 'N/A'}</p>
-                    </div>
-                    <div>
-                        <p className="text-sm text-gray-500">Washing Allowance</p>
-                        <p className="text-base text-gray-700">{emp_earning_details.washing_allowance ?? 'N/A'}</p>
-                    </div>
-                    <div>
-                        <p className="text-sm text-gray-500">BDP</p>
-                        <p className="text-base text-gray-700">{emp_earning_details.BDP ?? 'N/A'}</p>
-                    </div>
-                    <div>
-                        <p className="text-sm text-gray-500">Arrears</p>
-                        <p className="text-base text-gray-700">{emp_earning_details.arrears ?? 'N/A'}</p>
-                    </div>
-                </div>
-            </div>
-
-
-
-
-            {/* Deduction Details */}
-            <div className="bg-white shadow-md rounded-lg p-6 mb-6">
-                <h2 className="text-lg font-semibold text-emerald-600 mb-4">Deduction Details</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <div><p className="text-sm text-gray-500">Leave Days</p><p className="text-base text-gray-700">{emp_deduction_details.leave_days ?? 'N/A'}</p></div>
-                    <div><p className="text-sm text-gray-500">Leave Deduction Amount</p><p className="text-base text-gray-700">{emp_deduction_details.leave_deduction_amount ?? 'N/A'}</p></div>
-                    <div><p className="text-sm text-gray-500">Deduction CPF</p><p className="text-base text-gray-700">{emp_deduction_details.deduction_CPF ?? 'N/A'}</p></div>
-                    <div><p className="text-sm text-gray-500">GIS</p><p className="text-base text-gray-700">{emp_deduction_details.GIS ?? 'N/A'}</p></div>
-                    <div><p className="text-sm text-gray-500">House Rent</p><p className="text-base text-gray-700">{emp_deduction_details.house_rent ?? 'N/A'}</p></div>
-                    <div><p className="text-sm text-gray-500">Water Charges</p><p className="text-base text-gray-700">{emp_deduction_details.water_charges ?? 'N/A'}</p></div>
-                    <div><p className="text-sm text-gray-500">Electricity Charges</p><p className="text-base text-gray-700">{emp_deduction_details.electricity_charges ?? 'N/A'}</p></div>
-                    <div><p className="text-sm text-gray-500">Vehicle Deduction</p><p className="text-base text-gray-700">{emp_deduction_details.vehicle_deduction ?? 'N/A'}</p></div>
-                    <div><p className="text-sm text-gray-500">HB Loan</p><p className="text-base text-gray-700">{emp_deduction_details.HB_loan ?? 'N/A'}</p></div>
-                    <div><p className="text-sm text-gray-500">GPF Loan</p><p className="text-base text-gray-700">{emp_deduction_details.GPF_loan ?? 'N/A'}</p></div>
-                    <div><p className="text-sm text-gray-500">Festival Loan</p><p className="text-base text-gray-700">{emp_deduction_details.festival_loan ?? 'N/A'}</p></div>
-                    <div><p className="text-sm text-gray-500">Grain Charges</p><p className="text-base text-gray-700">{emp_deduction_details.grain_charges ?? 'N/A'}</p></div>
-                    <div><p className="text-sm text-gray-500">Bank Advance</p><p className="text-base text-gray-700">{emp_deduction_details.bank_advance ?? 'N/A'}</p></div>
-                    <div><p className="text-sm text-gray-500">Advance</p><p className="text-base text-gray-700">{emp_deduction_details.advance ?? 'N/A'}</p></div>
-                    <div><p className="text-sm text-gray-500">RGPV Advance</p><p className="text-base text-gray-700">{emp_deduction_details.RGPV_advance ?? 'N/A'}</p></div>
-                    <div><p className="text-sm text-gray-500">Income Tax</p><p className="text-base text-gray-700">{emp_deduction_details.income_tax ?? 'N/A'}</p></div>
-                    <div><p className="text-sm text-gray-500">Professional Tax</p><p className="text-base text-gray-700">{emp_deduction_details.professional_tax ?? 'N/A'}</p></div>
-                </div>
-            </div>
-        </div>
+            </div >
+        </div >
     );
-}
+};
+
 export {
     ViewEmployee
 }
