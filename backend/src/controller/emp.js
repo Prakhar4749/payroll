@@ -270,10 +270,12 @@ async function add_new_emp(req, res) {
         emp_bank_details: result[1][0],
         emp_deduction_details: result[2][0],
         emp_earning_details: result[3][0],
-      },
+      }
     });
   } catch (err) {
-    res.json({ err_: err });
+    res.json({  success: false,
+      message: `failed to add emmoploye`,
+      error:err});
   }
 }
 
