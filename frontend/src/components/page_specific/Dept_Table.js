@@ -48,7 +48,7 @@ const Dept_Table = ({ data, onRowSelect }) => {
         <table className="w-full border-collapse">
           <thead>
             <tr className="bg-emerald-600 text-white">
-              <th className="px-4 py-3 text-left font-medium text-sm">Select</th>
+              <th className="px-4 py-3 text-center font-medium text-sm">Select</th>
               {[
                 { key: "d_id", label: "D_ID" },
                 { key: "d_name", label: "D_Name" },
