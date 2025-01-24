@@ -1,61 +1,128 @@
 
 import { checkConnection, pool } from "../config/db.js";
 
-// to check that (e_mobile_number ,e_bank_acc_number ,e_pan_number ,d_name )  pressent or not
-async function check_for_data(req, res) {
-    console.log(" am ruming ----")
+//chk for the update 
+async function chk_for_update(req, res) {
   let result = {
     e_mobile_number: false,
     e_bank_acc_number: false,
     e_pan_number: false,
+    d_id: false,
+    d_name: false
+  };
+
+  const rawdata = req.body;
+  const { e_id } = rawdata.emp_details;
+  const data = {
+    e_mobile_number: rawdata.emp_details?.e_mobile_number || null,
+    e_bank_acc_number: rawdata.emp_bank_details?.e_bank_acc_number || null,
+    e_pan_number: rawdata.emp_bank_details?.e_pan_number || null,
+    d_id: rawdata.emp_details?.d_id || null
+  };
+
+  console.log(data);
+
+  try {
+    const sql = `
+      SELECT e_id FROM emp_details WHERE e_mobile_number = '${data.e_mobile_number}';
+      SELECT e_id FROM emp_bank_details WHERE e_bank_acc_number = '${data.e_bank_acc_number}';
+      SELECT e_id FROM emp_bank_details WHERE e_pan_number = '${data.e_pan_number}';
+      SELECT d_id, d_name FROM dept_details WHERE d_id = '${data.d_id}';
+    `;
+
+    const [SQLresult] = await pool.query(sql);
+    console.log(SQLresult);
+
+    // Check mobile number
+    if ((SQLresult[0][0]?.e_id == e_id || !SQLresult[0][0]) && data.e_mobile_number != null) 
+      result.e_mobile_number = true;
+
+    // Check bank account number
+    if ((SQLresult[1][0]?.e_id == e_id || !SQLresult[1][0]) && data.e_bank_acc_number != null) 
+      result.e_bank_acc_number = true;
+
+    // Check PAN number
+    if ((SQLresult[2][0]?.e_id == e_id || !SQLresult[2][0]) && data.e_pan_number != null) 
+      result.e_pan_number = true;
+
+    // Check if d_id exists and fetch d_name
+    if (SQLresult[3].length > 0) {
+      result.d_id = true;
+      result.d_name = SQLresult[3][0].d_name ? SQLresult[3][0].d_name : false;
+    }
+
+    console.log(result);
+    res.json(result);
+  } catch (err) {
+    console.log(err);
+    res.json({ error: "Database error occurred" });
+  }
+}
+
+
+// to check that (e_mobile_number ,e_bank_acc_number ,e_pan_number ,d_name )  pressent or not
+async function check_for_data(req, res) {
+  console.log("I am running ----");
+
+  let result = {
+    e_mobile_number: false,
+    e_bank_acc_number: false,
+    e_pan_number: false,
+    d_id: false,
     d_name: false,
   };
+
   const rawdata = req.body;
   const data = {
     e_mobile_number: rawdata.emp_details?.e_mobile_number || null,
     e_bank_acc_number: rawdata.emp_bank_details?.e_bank_acc_number || null,
     e_pan_number: rawdata.emp_bank_details?.e_pan_number || null,
-    d_name: rawdata.dept_details?.d_name || null
-  }
+    d_id: rawdata.emp_details?.d_id || null
+  };
+
   console.log(data);
 
-  try{
-      const sql=`SELECT COUNT(1)
-      FROM emp_details
-      WHERE e_mobile_number = '${data.e_mobile_number}';
+  try {
+    const sql = `
+      SELECT COUNT(1) as count FROM emp_details WHERE e_mobile_number = '${data.e_mobile_number}';
+      SELECT COUNT(1) as count FROM emp_bank_details WHERE e_bank_acc_number = '${data.e_bank_acc_number}';
+      SELECT COUNT(1) as count FROM emp_bank_details WHERE e_pan_number = '${data.e_pan_number}';
+      SELECT d_id, d_name FROM dept_details WHERE d_id = '${data.d_id}';
+    `;
 
-      SELECT COUNT(1)
-      FROM emp_bank_details
-      WHERE e_bank_acc_number = '${data.e_bank_acc_number}';
+    const [SQLresult] = await pool.query(sql);
+    console.log(SQLresult);
+    console.log(sql);
 
-      SELECT COUNT(1)
-      FROM emp_bank_details
-      WHERE e_pan_number = '${data.e_pan_number}';
+    // Check if e_mobile_number doesn't exist and data is provided
+    if (SQLresult[0][0].count == 0 && data.e_mobile_number != null) 
+      result.e_mobile_number = true;
 
-      SELECT COUNT(1)
-      FROM dept_details
-      WHERE d_name = '${data.d_name}';
-      `
+    // Check if e_bank_acc_number doesn't exist and data is provided
+    if (SQLresult[1][0].count == 0 && data.e_bank_acc_number != null) 
+      result.e_bank_acc_number = true;
 
-      const [SQLresult] = await pool.query(sql);
-      console.log(SQLresult)
-      console.log(sql)
-      
+    // Check if e_pan_number doesn't exist and data is provided
+    if (SQLresult[2][0].count == 0 && data.e_pan_number != null) 
+      result.e_pan_number = true;
 
-      if(SQLresult[0][0]['COUNT(1)']==0 && data.e_mobile_number!=null) result.e_mobile_number =true;
-      if(SQLresult[1][0]['COUNT(1)']==0 && data.e_bank_acc_number!=null) result.e_bank_acc_number =true;
-      if(SQLresult[2][0]['COUNT(1)']==0 && data.e_pan_number!=null) result.e_pan_number =true;
-      if(SQLresult[3][0]['COUNT(1)']==0 && data.d_name!=null) result.d_name =true;
+    // Check if d_id exists and fetch d_name
+    if (SQLresult[3].length > 0) {
+      result.d_id = true;
+      result.d_name = SQLresult[3][0].d_name ? SQLresult[3][0].d_name : false;
+    } else {
+      result.d_id = false;
+      result.d_name = false;
+    }
 
-        res.json(result)
+    res.json(result);
 
-  }catch(err){
-      console.log(err)
-      res.json(err)
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Database error occurred", details: err });
   }
-
-  
 }
+
 
 // to export all emp_details
 async function get_all_basic__emp_details(req, res) {
@@ -427,5 +494,6 @@ export {
   delete_e_id,
   add_new_emp,
   update_emp,
-  check_for_data
+  check_for_data,
+  chk_for_update
 };
