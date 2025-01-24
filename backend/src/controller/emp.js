@@ -132,8 +132,8 @@ async function delete_e_id(req, res) {
   } catch (err) {
     console.error("Error executing queries:", err);
     return res.json({
-      succ: false,
-      mess: `thir is some problum in deleting the ${e_id}`,
+      success: false,
+      message: `thir is some problum in deleting the ${e_id}`,
       err: err,
     });
   }
@@ -261,11 +261,16 @@ async function add_new_emp(req, res) {
   try {
     const [result, fildes1] = await pool.query(sql_for_emp_details);
 
+    
     return res.json({
-      emp_details: result[0][0],
-      emp_bank_details: result[1][0],
-      emp_deduction_details: result[2][0],
-      emp_earning_details: result[3][0],
+      success: true,
+      message: `employee added successfull , ${new_e_id} is your E_id `,
+      result:{
+        emp_details: result[0][0],
+        emp_bank_details: result[1][0],
+        emp_deduction_details: result[2][0],
+        emp_earning_details: result[3][0],
+      },
     });
   } catch (err) {
     res.json({ err_: err });

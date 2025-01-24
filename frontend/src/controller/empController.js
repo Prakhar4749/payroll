@@ -10,6 +10,15 @@ const all_emp_data = async () => {
 
 }
 
+const add_emp_details = async (data) => {
+  try {
+    const response = await axios.put(`http://localhost:5000/emp/add_emp`,data);
+    return response.data;
+  } catch (error) {
+    console.error("Axios request failed:", error.message);
+  }
+};
+
 const update_emp_details = async (data) => {
   try {
     const response = await axios.put(`http://localhost:5000/emp/update_emp`,data);
