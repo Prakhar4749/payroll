@@ -42,6 +42,7 @@ export default function Employee() {
                 alldata={alldata}
                 setempData={setempData}
                 selected_e_id={selected_e_id}
+                setselected_e_id={setselected_e_id}
               />
             </div>
           </div>

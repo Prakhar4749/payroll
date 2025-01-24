@@ -3,11 +3,36 @@ import { Navigate,useNavigate } from "react-router-dom";
 import { Search, UserPlus, UserCog, UserMinus, User, FilterX, Filter } from 'lucide-react';
 import { view_emp_by_id } from "../../controller/empController";
 
-const EMP_aside = ({  alldata, setempData, selected_e_id }) => {
+const EMP_aside = ({  alldata, setempData, selected_e_id,setselected_e_id }) => {
   const [e_id, sete_id] = useState("");
   const [e_name, sete_name] = useState("");
   const [e_mob, sete_mob] = useState("");
   const navigate = useNavigate();
+
+  const updateEmp = async()=> {
+    if (!selected_e_id) {
+      console.error("No employee ID selected.");
+      return; // Avoid making the API call if no ID is selected
+    }
+  
+    try {
+      const data = await view_emp_by_id(selected_e_id); // Fetch employee data
+  
+      console.log("Employee data received:", data);
+  
+      if (data && Object.keys(data).length > 0) {
+        // Navigate to the view page with the employee data
+        navigate("/employee/updateEmployee", { state: { data } });
+      } else {
+        // If no data, navigate to a fallback page
+        console.warn("No data found for the given employee ID.");
+        navigate("/*"); // Replace `/*` with an actual fallback route if necessary
+      }
+    } catch (error) {
+      console.error("Error fetching employee data:", error.message);
+    }
+
+  }
 
   const ViewEmp = async () => {
     if (!selected_e_id) {
@@ -48,6 +73,10 @@ const EMP_aside = ({  alldata, setempData, selected_e_id }) => {
       return idMatch && nameMatch && mobMatch;
     });
     setempData(filteredData);
+
+    setselected_e_id("");
+
+
   }
 
   function clearFilter() {
@@ -73,7 +102,7 @@ const EMP_aside = ({  alldata, setempData, selected_e_id }) => {
               : "bg-gray-100 text-gray-400 cursor-not-allowed"
           }`}
           disabled={!selected_e_id}
-        >
+        onClick={updateEmp}>
           <UserCog className="w-4 h-4" />
           Update Employee
         </button>
