@@ -3,12 +3,13 @@ import { Route } from 'react-router-dom';
 import Employee from '../views/Employee';
 import { ViewEmployee } from '../components/page_specific/view_emp';
 import UpdateForm from '../components/page_specific/EMP_update_form';
+import AddForm from '../components/page_specific/EMP_add_form';
 
 const employeeRoutes = [
   <Route key="employee" path="/employee" element={<Employee />} />,
   <Route key="viewEmployee" path="/employee/viewEmployee" element={<ViewEmployee />} />,
   <Route key="updateEmployee" path="/employee/updateEmployee" element={<UpdateForm />} />,
-  <Route key="updateEmployee" path="/employee/addEmployee" element={<addForm />} />,
+  <Route key="updateEmployee" path="/employee/addEmployee" element={<AddForm />} />,
 ];
 
 export default employeeRoutes;

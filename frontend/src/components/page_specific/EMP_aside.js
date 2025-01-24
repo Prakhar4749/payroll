@@ -9,6 +9,10 @@ const EMP_aside = ({  alldata, setempData, selected_e_id,setselected_e_id }) => 
   const [e_mob, sete_mob] = useState("");
   const navigate = useNavigate();
 
+  const addEmp = ()=> {
+    navigate("/employee/addEmployee");
+  }
+
   const updateEmp = async()=> {
     if (!selected_e_id) {
       console.error("No employee ID selected.");
@@ -91,7 +95,7 @@ const EMP_aside = ({  alldata, setempData, selected_e_id,setselected_e_id }) => 
       
 
       <div className="p-6 flex flex-col gap-4">
-        <button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 px-4 rounded-md text-sm transition-all duration-200 flex items-center justify-center gap-2" >
+        <button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 px-4 rounded-md text-sm transition-all duration-200 flex items-center justify-center gap-2" onClick={addEmp} >
           <UserPlus className="w-4 h-4" />
           Add Employee
         </button>
