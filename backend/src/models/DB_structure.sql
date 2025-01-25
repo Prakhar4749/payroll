@@ -23,7 +23,7 @@ CREATE TABLE emp_details (
     e_DOB DATE,
     PRIMARY KEY (e_id),
     UNIQUE KEY (e_mobile_number),
-    FOREIGN KEY (d_id) REFERENCES department(d_id) ON DELETE SET NULL ON UPDATE CASCADE
+    FOREIGN KEY (d_id) REFERENCES dept_details(d_id) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Create Employee Bank Details Table
@@ -128,4 +128,4 @@ CREATE TABLE salary_archive (
     total_deduction INT DEFAULT NULL,
     net_payable INT DEFAULT NULL,
     PRIMARY KEY (e_id, salary_month, salary_year)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci; 

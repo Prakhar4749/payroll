@@ -11,7 +11,8 @@ const pool=mysql2.createPool({
     connectionLimit:10,
     queueLimit:0,
     waitForConnections:true,
-    multipleStatements: true   // Enable multiple statements
+    multipleStatements: true,   // Enable multiple statements
+    port:3306
 });
 
 const checkConnection=async() => {
