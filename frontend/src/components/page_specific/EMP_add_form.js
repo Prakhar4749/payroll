@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { add_emp_details } from "../../controller/empController";
+import { add_emp_details, check_for_add_emp } from "../../controller/empController";
 import { emp_data_model } from "../../models/EmpModel";
 import { User, Building, DollarSign,  BanknoteIcon as BanknotesIcon,MinusCircle, Save,  UserRoundPen, Eraser } from 'lucide-react';
 import Navbar from "../layout/Navbar"
@@ -69,11 +69,28 @@ const AddForm = () => {
     console.log(data.emp_details.e_photo);
     try {
 
-      const result = await add_emp_details(data);
-      alert(result);
+      const check_data = await check_for_add_emp(data);
+     
+      if(check_data.e_mobile_number && check_data.e_bank_acc_number && check_data.e_pan_number && check_data.d_id){
+        try {
+
+          const result = await add_emp_details(data);
+         
+          alert(result.message);
+        } catch (err) {
+          alert(err);
+        }
+      }
+      else{
+        if(!check_data.e_mobile_number) alert("mobile number already exist");
+        else if(!check_data.d_id) alert("enter valid d_id. d_id does not exist");
+        else if(!check_data.e_bank_acc_number) alert("back account number already exist");
+        else if(!check_data.e_pan_number) alert("PAN number already exist");
+      }
     } catch (err) {
       alert(err);
     }
+   
   };
 
   // Render a loading spinner or message until data is ready
@@ -251,7 +268,7 @@ const AddForm = () => {
                       accept=".jpg, .jpeg, .pdf"
                       onChange={(e) => handleFileUpload("emp_details", "e_photo", e.target.files[0])}
                       className="absolute inset-0 opacity-0 w-full cursor-pointer"
-                      required
+                      
                     />
                   </div>
                   <p className="mt-2 text-sm text-gray-500">

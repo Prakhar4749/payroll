@@ -23,6 +23,8 @@ export default function Employee() {
     getallempData();
   }, []);
 
+  
+
   const handleRowSelection = (selectedId) => {
     setselected_e_id(selectedId);
   };
@@ -39,6 +41,7 @@ export default function Employee() {
           <div className="w-full lg:w-1/4 bg-white shadow-lg lg:min-h-[calc(100vh-4rem)]">
             <div className="sticky top-16 overflow-auto max-h-[calc(100vh-4rem)]">
               <EMP_aside
+                setalldata={setalldata}
                 alldata={alldata}
                 setempData={setempData}
                 selected_e_id={selected_e_id}
@@ -53,6 +56,8 @@ export default function Employee() {
               <Emp_Table 
                 data={empData} 
                 onRowSelect={handleRowSelection} 
+                selectedId={selected_e_id}
+                setSelectedId={setselected_e_id}
               />
             </div>
           </main>

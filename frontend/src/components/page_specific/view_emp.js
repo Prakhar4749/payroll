@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import Navbar from '../layout/Navbar';
-import { User, Building, DollarSign, BanknoteIcon as BanknotesIcon, MinusCircle, Save, UserRoundPen, Eraser } from 'lucide-react';
+import { User, Building, DollarSign, BanknoteIcon as BanknotesIcon,LaptopMinimalCheck, MinusCircle, Save, UserRoundPen, Eraser } from 'lucide-react';
 import { BackButton } from "../common/backButton";
 
 const ViewEmployee = () => {
@@ -600,7 +600,7 @@ const ViewEmployee = () => {
                                 type="submit"
                                 className=" w-full  lg:max-w-2xl px-8 py-3 border border-transparent rounded-lg shadow-lg text-base font-semibold text-white bg-gradient-to-r from-emerald-500 via-teal-500 to-sky-500 hover:from-emerald-600 hover:via-teal-600 hover:to-sky-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all duration-200 flex items-center justify-center gap-3"
                             >
-                                <Save className="h-6 w-6" />
+                                <LaptopMinimalCheck className="h-6 w-6" />
                                 DONE
                             </button>
                         </div>

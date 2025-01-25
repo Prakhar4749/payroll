@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { ArrowUpDown, Check } from "lucide-react";
 
-const Emp_Table = ({ data, onRowSelect }) => {
-  const [selectedId, setSelectedId] = useState(null);
+const Emp_Table = ({ data, onRowSelect, selectedId, setSelectedId }) => {
+
   const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
 
   if (!Array.isArray(data)) {

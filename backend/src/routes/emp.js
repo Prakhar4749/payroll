@@ -14,7 +14,7 @@ route.get("/:e_id",get_all_e_id_emp_details);
 
 
 // to delete the emp by the e_id from tables (emp_details, emp_bank_details,emp_deduction_details ,emp_earning_details)
-route.delete("/:e_id" , delete_e_id);
+route.delete("/delete/:e_id" , delete_e_id);
 
 // to add new emp to database ini tables (emp_details, emp_bank_details,emp_deduction_details ,emp_earning_details) 
 // post should be in formate { "emp_details": {...} , "emp_deduction_details": {...} ..... }

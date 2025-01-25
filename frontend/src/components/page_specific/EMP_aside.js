@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Navigate,useNavigate } from "react-router-dom";
 import { Search, UserPlus, UserCog, UserMinus, User, FilterX, Filter } from 'lucide-react';
-import { view_emp_by_id } from "../../controller/empController";
+import { view_emp_by_id, delete_emp_details, all_emp_data } from "../../controller/empController";
 
-const EMP_aside = ({  alldata, setempData, selected_e_id,setselected_e_id }) => {
+const EMP_aside = ({ setalldata, alldata, setempData, selected_e_id,setselected_e_id }) => {
   const [e_id, sete_id] = useState("");
   const [e_name, sete_name] = useState("");
   const [e_mob, sete_mob] = useState("");
@@ -13,6 +13,34 @@ const EMP_aside = ({  alldata, setempData, selected_e_id,setselected_e_id }) => 
     navigate("/employee/addEmployee");
   }
 
+  const DeleteEmp = async()=> {
+    if (!selected_e_id) {
+      console.error("No employee ID selected.");
+      return; // Avoid making the API call if no ID is selected
+    }
+  
+    try {
+
+
+      const response = await delete_emp_details(selected_e_id); // Fetch employee data
+  
+      console.log("aside", response.message);
+      alert(response.message);
+      try {
+        const data = await all_emp_data();
+        setalldata(data);
+        setempData(data);
+      } catch (error) {
+        console.error("Error fetching employee data:", error);
+      }
+
+
+  
+    } catch (error) {
+      console.error("Error fetching employee data:", error.message);
+    }
+
+  }
   const updateEmp = async()=> {
     if (!selected_e_id) {
       console.error("No employee ID selected.");
@@ -77,8 +105,10 @@ const EMP_aside = ({  alldata, setempData, selected_e_id,setselected_e_id }) => 
       return idMatch && nameMatch && mobMatch;
     });
     setempData(filteredData);
-
-    setselected_e_id("");
+    const filteredMatch = filteredData.some(
+      (employee) => employee.e_id === selected_e_id
+    );
+    if(!filteredMatch) setselected_e_id(null);
 
 
   }
@@ -116,7 +146,7 @@ const EMP_aside = ({  alldata, setempData, selected_e_id,setselected_e_id }) => 
               ? "bg-rose-600 hover:bg-rose-700 text-white"
               : "bg-gray-100 text-gray-400 cursor-not-allowed"
           }`}
-          disabled={!selected_e_id}
+          disabled={!selected_e_id} onClick={DeleteEmp}
         >
           <UserMinus className="w-4 h-4" />
           Remove Employee

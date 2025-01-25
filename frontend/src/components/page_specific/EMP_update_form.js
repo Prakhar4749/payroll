@@ -54,8 +54,9 @@ const UpdateForm = () => {
     e.preventDefault();
     try {
 
-      await update_emp_details(data);
-      alert("Employee details updated successfully!");
+      const response = await update_emp_details(data);
+      console.log("form", response.message)
+      alert(response.message);
     } catch (err) {
       alert("Failed to update details.");
     }

@@ -192,8 +192,8 @@ async function delete_e_id(req, res) {
 
     console.log("Queries executed successfully:", result);
     return res.json({
-      succ: true,
-      mess: `Queries executed successfull , ${e_id} is deleted`,
+      success: true,
+      message: ` employee details of id: ${e_id} is succesfully deleted`,
       result: result,
     });
   } catch (err) {
@@ -478,7 +478,7 @@ async function update_emp(req, res) {
 
         await pool.query(empEarningQuery, empEarningValues);
 
-        console.log("Employee data updated successfully.");
+      
         return res.json({ success: true, message: "Employee data updated successfully." });
 
     } catch (error) {
