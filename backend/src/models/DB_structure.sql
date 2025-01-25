@@ -1,6 +1,6 @@
 
 -- Create Department Table
-CREATE TABLE department (
+CREATE TABLE dept_details (
     d_id VARCHAR(4) NOT NULL,
     d_name VARCHAR(50) NOT NULL,
     PRIMARY KEY (d_id),
@@ -18,7 +18,7 @@ CREATE TABLE emp_details (
     e_photo BLOB,
     d_id VARCHAR(4),
     e_designation VARCHAR(50),
-    e_group CHAR(1) NOT NULL,
+    e_group CHAR(1) ,
     e_date_of_joining DATE NOT NULL,
     e_DOB DATE,
     PRIMARY KEY (e_id),
@@ -93,6 +93,7 @@ CREATE TABLE salary_archive (
     salary_month VARCHAR(10) NOT NULL,
     salary_year INT NOT NULL,
     e_name VARCHAR(30) NOT NULL,
+    paslip_issue_date DATETIME NOT NULL,
     basic_salary INT NOT NULL,
     special_pay INT DEFAULT NULL,
     dearness_allowance INT DEFAULT NULL,
@@ -126,6 +127,5 @@ CREATE TABLE salary_archive (
     total_earning INT DEFAULT NULL,
     total_deduction INT DEFAULT NULL,
     net_payable INT DEFAULT NULL,
-    PRIMARY KEY (e_id, salary_month, salary_year),
-    FOREIGN KEY (e_id) REFERENCES emp_details(e_id) ON DELETE CASCADE ON UPDATE CASCADE
+    PRIMARY KEY (e_id, salary_month, salary_year)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
