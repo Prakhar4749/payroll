@@ -1,35 +1,46 @@
 import React from "react";
+import { Check } from "lucide-react";
 
-export default function SuccessfullyDone({ message, onClose }) {
+
+
+function SuccessfullyDone({ message, onClose ,className }) {
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
-      <div className="bg-white p-8 rounded-lg shadow-2xl text-center max-w-md transform transition-all scale-105">
-        <div className="flex justify-center mb-4">
-          {/* New attractive SVG checkmark icon */}
-          <svg
-            className="w-24 h-24 text-green-500 animate-pulse"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-          >
-            <path
-              fillRule="evenodd"
-              d="M12 2a10 10 0 100 20 10 10 0 000-20zM9.293 11.707a1 1 0 011.414 0L11 12.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-2-2a1 1 0 010-1.414z"
-              clipRule="evenodd"
-            />
-          </svg>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="bg-white rounded-2xl shadow-2xl text-center w-full max-w-md mx-4 transform transition-all scale-in-center relative top-10">
+        <div className="relative ">
+          {/* Gradient Background Circle */}
+          <div className="absolute -top-12 left-1/2 -translate-x-1/2">
+            <div className="w-24 h-24 rounded-full bg-gradient-to-r from-emerald-600 via-teal-600 to-sky-600 flex items-center justify-center shadow-lg shadow-emerald-600/20">
+              <Check className="w-12 h-12 text-white" strokeWidth={3} />
+            </div>
+          </div>
+
+          {/* Content */}
+          <div className="px-6 pt-16 pb-6">
+            <h2 className="text-2xl font-bold text-slate-800 mt-4">{message}</h2>
+            <p className="text-slate-600 mt-2">
+              Your action was completed successfully!
+            </p>
+          </div>
+
+          {/* Button */}
+          <div className="px-6 pb-6">
+            <button
+              onClick={onClose}
+              className="w-full px-6 py-3 text-white font-medium rounded-xl
+                bg-gradient-to-r from-emerald-600 via-teal-600 to-sky-600
+                hover:from-emerald-700 hover:via-teal-700 hover:to-sky-700
+                focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2
+                transform transition-all duration-200 hover:scale-[1.02]
+                shadow-lg shadow-emerald-600/20"
+            >
+              Continue
+            </button>
+          </div>
         </div>
-        <h2 className="text-2xl font-semibold text-gray-800 mt-4">{message}</h2>
-        <p className="text-gray-600 mt-2">
-          Your action was completed successfully!
-        </p>
-        <button
-          className="mt-6 px-6 py-3 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg shadow-md focus:outline-none transition-all"
-          onClick={onClose}
-        >
-          OK
-        </button>
       </div>
     </div>
   );
 }
+
+export { SuccessfullyDone };

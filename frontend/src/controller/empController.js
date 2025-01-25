@@ -37,9 +37,11 @@ const update_emp_details = async (data) => {
   }
 };
 
-const delete_emp_details = async (d_id) => {
+const delete_emp_details = async (e_id) => {
   try {
-    const response = await axios.delete(`http://localhost:5000/emp/delete/${d_id}`);
+
+    console.log("conroller",e_id);
+    const response = await axios.delete(`http://localhost:5000/emp/delete/${e_id}`);
     console.log("conroller",response.data);
     return response.data;
   } catch (error) {

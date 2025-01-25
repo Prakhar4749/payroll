@@ -44,10 +44,10 @@ const Emp_Table = ({ data, onRowSelect, selectedId, setSelectedId }) => {
 
   return (
     <div className="overflow-hidden bg-white rounded-lg shadow-lg">
-      <div className="overflow-x-auto">
+      <div className="overflow-auto max-h-[85vh] lg:max-h-[80vh]">
         <table className="w-full border-collapse">
-          <thead>
-            <tr className="bg-emerald-600 text-white">
+        <thead className=" sticky top-0 bg-emerald-600 text-white z-10 ">
+        <tr>
               <th className="px-4 py-3 text-left font-medium text-sm">Select</th>
               {[
                 { key: "e_id", label: "E_ID" },

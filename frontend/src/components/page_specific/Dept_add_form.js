@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../layout/Navbar";
 import { checkDepartment, addToDepartment } from "../../controller/department.controller";
-import SuccessfullyDone from "../common/SuccessfullyDone";
+import {SuccessfullyDone} from "../common/SuccessfullyDone";
 
 const DeptAddForm = () => {
   const navigate = useNavigate();
@@ -53,6 +53,7 @@ const DeptAddForm = () => {
 
         // Show success message
         setShowSuccess(true);
+        console.log(showSuccess);
         console.log("Department added successfully, showing success message.");
         // Redirect after a delay
         setTimeout(() => {

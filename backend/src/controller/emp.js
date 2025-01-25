@@ -171,7 +171,7 @@ async function get_all_e_id_emp_details(req, res) {
 async function delete_e_id(req, res) {
   const e_id = req.params["e_id"];
 
-  if (!e_id || e_id.length != 4) {
+  if (!e_id || e_id.length != 5) {
     return res.json({ mess: " enter the valid e_id" });
   }
 

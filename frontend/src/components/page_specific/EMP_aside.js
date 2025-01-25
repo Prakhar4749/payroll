@@ -1,31 +1,37 @@
 import React, { useState, useEffect } from "react";
-import { Navigate,useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { Search, UserPlus, UserCog, UserMinus, User, FilterX, Filter } from 'lucide-react';
 import { view_emp_by_id, delete_emp_details, all_emp_data } from "../../controller/empController";
+import { SuccessfullyDone } from "../common/SuccessfullyDone";
 
-const EMP_aside = ({ setalldata, alldata, setempData, selected_e_id,setselected_e_id }) => {
+const EMP_aside = ({ setalldata, alldata, setempData, selected_e_id, setselected_e_id }) => {
   const [e_id, sete_id] = useState("");
   const [e_name, sete_name] = useState("");
   const [e_mob, sete_mob] = useState("");
+  const [showDeleteSuccess, setshowDeleteSuccess] = useState({
+    message: "", success: false
+  });
+
   const navigate = useNavigate();
 
-  const addEmp = ()=> {
+  const addEmp = () => {
     navigate("/employee/addEmployee");
   }
 
-  const DeleteEmp = async()=> {
+  const DeleteEmp = async () => {
     if (!selected_e_id) {
       console.error("No employee ID selected.");
       return; // Avoid making the API call if no ID is selected
     }
-  
+
     try {
 
 
+      console.log("aside", selected_e_id);
       const response = await delete_emp_details(selected_e_id); // Fetch employee data
-  
-      console.log("aside", response.message);
-      alert(response.message);
+      setshowDeleteSuccess({ message: `${response.message}`, success: response.success })
+
+      console.log("aside show", showDeleteSuccess);
       try {
         const data = await all_emp_data();
         setalldata(data);
@@ -35,23 +41,24 @@ const EMP_aside = ({ setalldata, alldata, setempData, selected_e_id,setselected_
       }
 
 
-  
+
+
     } catch (error) {
       console.error("Error fetching employee data:", error.message);
     }
 
   }
-  const updateEmp = async()=> {
+  const updateEmp = async () => {
     if (!selected_e_id) {
       console.error("No employee ID selected.");
       return; // Avoid making the API call if no ID is selected
     }
-  
+
     try {
       const data = await view_emp_by_id(selected_e_id); // Fetch employee data
-  
+
       console.log("Employee data received:", data);
-  
+
       if (data && Object.keys(data).length > 0) {
         // Navigate to the view page with the employee data
         navigate("/employee/updateEmployee", { state: { data } });
@@ -71,12 +78,12 @@ const EMP_aside = ({ setalldata, alldata, setempData, selected_e_id,setselected_
       console.error("No employee ID selected.");
       return; // Avoid making the API call if no ID is selected
     }
-  
+
     try {
       const data = await view_emp_by_id(selected_e_id); // Fetch employee data
-  
+
       console.log("Employee data received:", data);
-  
+
       if (data && Object.keys(data).length > 0) {
         // Navigate to the view page with the employee data
         navigate("/employee/viewEmployee", { state: { data } });
@@ -99,7 +106,7 @@ const EMP_aside = ({ setalldata, alldata, setempData, selected_e_id,setselected_
       const nameMatch = e_name
         ? employee.e_name.toLowerCase().includes(e_name.toLowerCase())
         : true;
-      const mobMatch = e_mob 
+      const mobMatch = e_mob
         ? String(employee.e_mobile_number).includes(e_mob)
         : true;
       return idMatch && nameMatch && mobMatch;
@@ -108,7 +115,7 @@ const EMP_aside = ({ setalldata, alldata, setempData, selected_e_id,setselected_
     const filteredMatch = filteredData.some(
       (employee) => employee.e_id === selected_e_id
     );
-    if(!filteredMatch) setselected_e_id(null);
+    if (!filteredMatch) setselected_e_id(null);
 
 
   }
@@ -121,8 +128,18 @@ const EMP_aside = ({ setalldata, alldata, setempData, selected_e_id,setselected_
   }
 
   return (
+
     <aside className="w-full bg-white shadow-lg rounded-lg overflow-hidden">
-      
+
+        {showDeleteSuccess.success && (
+      <div className="fixed inset-0 z-50">
+        <SuccessfullyDone
+          message={showDeleteSuccess.message}
+          onClose={() => setshowDeleteSuccess({ message: "", success: false })}
+        />
+        </div>
+      )}
+
 
       <div className="p-6 flex flex-col gap-4">
         <button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 px-4 rounded-md text-sm transition-all duration-200 flex items-center justify-center gap-2" onClick={addEmp} >
@@ -130,33 +147,30 @@ const EMP_aside = ({ setalldata, alldata, setempData, selected_e_id,setselected_
           Add Employee
         </button>
         <button
-          className={`w-full font-medium py-2.5 px-4 rounded-md text-sm transition-all duration-200 flex items-center justify-center gap-2 ${
-            selected_e_id
-              ? "bg-teal-600 hover:bg-teal-700 text-white"
-              : "bg-gray-100 text-gray-400 cursor-not-allowed"
-          }`}
+          className={`w-full font-medium py-2.5 px-4 rounded-md text-sm transition-all duration-200 flex items-center justify-center gap-2 ${selected_e_id
+            ? "bg-teal-600 hover:bg-teal-700 text-white"
+            : "bg-gray-100 text-gray-400 cursor-not-allowed"
+            }`}
           disabled={!selected_e_id}
-        onClick={updateEmp}>
+          onClick={updateEmp}>
           <UserCog className="w-4 h-4" />
           Update Employee
         </button>
         <button
-          className={`w-full font-medium py-2.5 px-4 rounded-md text-sm transition-all duration-200 flex items-center justify-center gap-2 ${
-            selected_e_id
-              ? "bg-rose-600 hover:bg-rose-700 text-white"
-              : "bg-gray-100 text-gray-400 cursor-not-allowed"
-          }`}
+          className={`w-full font-medium py-2.5 px-4 rounded-md text-sm transition-all duration-200 flex items-center justify-center gap-2 ${selected_e_id
+            ? "bg-rose-600 hover:bg-rose-700 text-white"
+            : "bg-gray-100 text-gray-400 cursor-not-allowed"
+            }`}
           disabled={!selected_e_id} onClick={DeleteEmp}
         >
           <UserMinus className="w-4 h-4" />
           Remove Employee
         </button>
         <button
-          className={`w-full font-medium py-2.5 px-4 rounded-md text-sm transition-all duration-200 flex items-center justify-center gap-2 ${
-            selected_e_id
-              ? "bg-sky-600 hover:bg-sky-700 text-white"
-              : "bg-gray-100 text-gray-400 cursor-not-allowed"
-          }`}
+          className={`w-full font-medium py-2.5 px-4 rounded-md text-sm transition-all duration-200 flex items-center justify-center gap-2 ${selected_e_id
+            ? "bg-sky-600 hover:bg-sky-700 text-white"
+            : "bg-gray-100 text-gray-400 cursor-not-allowed"
+            }`}
           disabled={!selected_e_id} onClick={ViewEmp}
         >
           <User className="w-4 h-4" />
@@ -167,7 +181,7 @@ const EMP_aside = ({ setalldata, alldata, setempData, selected_e_id,setselected_
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-medium text-gray-900">Filter Options</h3>
           </div>
-          
+
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="e_id">
@@ -182,7 +196,7 @@ const EMP_aside = ({ setalldata, alldata, setempData, selected_e_id,setselected_
                 placeholder="Search by ID..."
               />
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="e_name">
                 Employee Name
@@ -196,7 +210,7 @@ const EMP_aside = ({ setalldata, alldata, setempData, selected_e_id,setselected_
                 placeholder="Search by name..."
               />
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="e_mob">
                 Mobile Number
