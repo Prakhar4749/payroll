@@ -1,8 +1,22 @@
 import express from 'express'
 import {get_all_basic__emp_details ,get_all_e_id_emp_details , delete_e_id ,add_new_emp, update_emp ,check_for_data , chk_for_update } from '../controller/emp.js'
-
+import path from 'path'
+import multer from "multer";
 
 const route = express.Router();
+
+const storage = multer.diskStorage({
+    destination: function(req, file, cb){
+        return cb(null, "src/upload");  // Make sure 'src/upload' folder exists or create it
+    },
+    filename: function (req, file, cb){
+        // Save file with unique name (timestamp + original name)
+        const fileExtension = path.extname(file.originalname);
+        return cb(null, 'uploaded_file' + fileExtension);  
+    }
+});
+
+const upload = multer({ storage: storage });
 
 
 //  for geting all the emp_details
@@ -18,10 +32,10 @@ route.delete("/delete/:e_id" , delete_e_id);
 
 // to add new emp to database ini tables (emp_details, emp_bank_details,emp_deduction_details ,emp_earning_details) 
 // post should be in formate { "emp_details": {...} , "emp_deduction_details": {...} ..... }
-route.post('/add_emp' , add_new_emp);
+route.post('/add_emp' ,upload.single('e_photo'), add_new_emp);
 
 // for updating the data of emp
-route.put('/update_emp',update_emp);
+route.put('/update_emp',upload.single('e_photo'),update_emp);
 
 // chk for update input 
 route.put("/chk_for_update" , chk_for_update)

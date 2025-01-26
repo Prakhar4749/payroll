@@ -9,6 +9,7 @@ import cors from"cors";
 const PORT  = 5000
 const app = express();
 
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json())
 app.use(cors());
 app.use('/auth' , authroute)

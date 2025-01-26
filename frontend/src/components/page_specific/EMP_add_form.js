@@ -11,6 +11,9 @@ const AddForm = () => {
 
   const [scrolled, setScrolled] = useState(false);
 
+  const [file_to_sand, setFile_to_sand] = useState(null);
+
+  const[fileName,setFileName] = useState("Choose a file")
 
 
 
@@ -27,12 +30,19 @@ const AddForm = () => {
       },
     }));
   };
+
+
   const handleFileUpload = (section, field, file) => {
-    if (file && (file.type === "image/jpeg" || file.type === "png")) {
+    setFile_to_sand(file)
+    setFileName(file.name )
+    console.log(file)
+    if (file && (file.type === "image/jpeg" || file.type === "image/png")) {
       if (file.size <= 4 * 1024 ) { // Check if file size is less than or equal to 5MB
         const updatedData = { ...data };
         updatedData[section][field] = file; // Save the file in the state
-        setData(updatedData);
+        setFile_to_sand(updatedData);
+        setData(updatedData)
+
       } else {
         alert("File size exceeds 5MB. Please upload a smaller file.");
       }
@@ -44,6 +54,8 @@ const AddForm = () => {
   const handleClear = async (e) => {
     e.preventDefault();
     setData(emp_data_model)
+    setFile_to_sand(null);
+    setFileName("Choose a file")
   };
 
 
@@ -53,6 +65,7 @@ const AddForm = () => {
     
     setData((prevData) => ({
       ...prevData,
+      e_photo: file_to_sand,
       emp_bank_details: {
         ...prevData.emp_bank_details,
         e_name: prevData.emp_details.e_name,
@@ -67,6 +80,7 @@ const AddForm = () => {
       },
     }));
     console.log(data.emp_details.e_photo);
+    console.log(data)
     try {
 
       const check_data = await check_for_add_emp(data);
@@ -115,7 +129,11 @@ const AddForm = () => {
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="px-6 py-8 space-y-8">
+          <form method="POST"
+            action="emp/add_emp"
+            onSubmit={handleSubmit}
+            encType="multipart/form-data" 
+            className="px-6 py-8 space-y-8">
             {/* Employee Details Section */}
             <div className="space-y-6">
               <div className="flex items-center">
@@ -260,12 +278,13 @@ const AddForm = () => {
                       htmlFor="file-upload"
                       className="w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white cursor-pointer hover:text-emerald-600 focus:outline-none"
                     >
-                      Choose a file
+                     {fileName}
                     </label>
                     <input
                       id="file-upload"
                       type="file"
-                      accept=".jpg, .jpeg, .pdf"
+                      name="e_photo"
+                      accept=".jpg, .jpeg, .png"
                       onChange={(e) => handleFileUpload("emp_details", "e_photo", e.target.files[0])}
                       className="absolute inset-0 opacity-0 w-full cursor-pointer"
                       

@@ -1,4 +1,7 @@
 const emp_data_model = {"emp_details": {
+
+        "e_photo" :null,
+
         "e_id": "",
         "e_name": "",
         "e_mobile_number": null,

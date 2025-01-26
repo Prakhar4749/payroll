@@ -21,8 +21,12 @@ const check_for_add_emp = async (raw_data) => {
 
 const add_emp_details = async (data) => {
   try {
-    const response = await axios.post(`http://localhost:5000/emp/add_emp`,data);
-    return response.data;
+    const response = await axios.post(`http://localhost:5000/emp/add_emp`,data , {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.message;
   } catch (error) {
     console.error("Axios request failed:", error);
   }

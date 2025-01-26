@@ -129,3 +129,10 @@ CREATE TABLE salary_archive (
     net_payable INT DEFAULT NULL,
     PRIMARY KEY (e_id, salary_month, salary_year)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci; 
+
+
+-- user table
+CREATE TABLE user_login_details (
+    user_name VARCHAR(50) NOT NULL UNIQUE,
+    user_password VARCHAR() NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
