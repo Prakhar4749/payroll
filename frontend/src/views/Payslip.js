@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import Navbar from "../components/layout/Navbar";
 import { useNavigate } from "react-router-dom";
-import ConfirmDialog from "../components/common/ConfirmDialog";
-import InvalidDialog from "../components/common/InvalidDialog";
+import {ConfirmDialogue} from "../components/common/ConfirmDialogue";
+import InvalidDialogue from "../components/common/InvalidDialogue";
 import { Calendar, UserRound } from 'lucide-react';
 
 export default function Payslip() {
@@ -62,7 +62,7 @@ export default function Payslip() {
       <Navbar />
 
       {showConfirm && (
-        <ConfirmDialog
+        <ConfirmDialogue
           message="Do you want to proceed?"
           onConfirm={handleConfirm}
           onCancel={handleCancel}
@@ -70,7 +70,7 @@ export default function Payslip() {
       )}
 
       {showInvalid && (
-        <InvalidDialog message={invalidMessage} onClose={handleInvalidClose} />
+        <InvalidDialogue message={invalidMessage} onClose={handleInvalidClose} />
       )}
 
       <div className="max-w-4xl mx-auto pt-24 px-4 sm:px-6 lg:px-8 pb-12">

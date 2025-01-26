@@ -4,12 +4,15 @@ import { emp_data_model } from "../../models/EmpModel";
 import { User, Building, DollarSign,  BanknoteIcon as BanknotesIcon,MinusCircle, Save,  UserRoundPen, Eraser } from 'lucide-react';
 import Navbar from "../layout/Navbar"
 import { BackButton } from "../common/backButton";
+import { ConfirmDialogue } from "../common/ConfirmDialogue";
+import { SuccessfullyDone } from "../common/SuccessfullyDone";
+import { InvalidDialogue } from "../common/InvalidDialogue"
 
 const AddForm = () => {
 
   const [data, setData] = useState(emp_data_model); // State to store employee data
 
-  const [scrolled, setScrolled] = useState(false);
+  // const [scrolled, setScrolled] = useState(false);
 
 
 
@@ -105,12 +108,11 @@ const AddForm = () => {
           <div className="px-6 py-8 bg-gradient-to-r from-emerald-600 via-teal-600 to-sky-600"
           >
             <BackButton />
-            <h1 className={`text-2xl mt-2 font-bold transition-colors duration-300 ${scrolled ? 'text-emerald-600' : 'text-white'
-              }`}>
+            <h1 className="text-2xl mt-2 font-bold transition-colors duration-300 text-white"
+              >
               Add Employee Details
             </h1>
-            <p className={`mt-2 transition-colors duration-300 ${scrolled ? 'text-gray-600' : 'text-white/90'
-              }`}>
+            <p className="mt-2 transition-colors duration-300 text-white/90">
               Please fill in all the required information below
             </p>
           </div>
