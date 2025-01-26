@@ -32,6 +32,16 @@ const add_emp_details = async (data) => {
   }
 };
 
+const check_for_update_emp = async (raw_data) => {
+  try {
+    const response = await axios.put(`http://localhost:5000/emp/chk_for_update`,raw_data);
+    console.log(response.data)
+    return response.data;
+  } catch (error) {
+    console.error("Axios request failed:", error);
+  }
+};
+
 const update_emp_details = async (data) => {
   try {
     const response = await axios.put(`http://localhost:5000/emp/update_emp`,data);
@@ -65,5 +75,5 @@ const view_emp_by_id = async (e_id) => {
 
 
 export {
-  all_emp_data, view_emp_by_id, update_emp_details, add_emp_details, check_for_add_emp, delete_emp_details
+  all_emp_data, view_emp_by_id, update_emp_details, add_emp_details, check_for_add_emp, delete_emp_details,check_for_update_emp
 }

@@ -1,15 +1,50 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { add_emp_details, check_for_add_emp } from "../../controller/empController";
 import { emp_data_model } from "../../models/EmpModel";
-import { User, Building, DollarSign,  BanknoteIcon as BanknotesIcon,MinusCircle, Save,  UserRoundPen, Eraser } from 'lucide-react';
+import { User, Building, DollarSign, BanknoteIcon as BanknotesIcon, MinusCircle, Save, UserRoundPen, Eraser } from 'lucide-react';
 import Navbar from "../layout/Navbar"
 import { BackButton } from "../common/backButton";
+import { ConfirmDialogue } from "../common/ConfirmDialogue";
+import { SuccessfullyDone } from "../common/SuccessfullyDone";
+import { InvalidDialogue } from "../common/InvalidDialogue";
+import { useNavigate } from "react-router-dom";
+
 
 const AddForm = () => {
+  const navigate = useNavigate()
+  const today = new Date().toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD format
+  const dateInputRef = useRef(null);
+
 
   const [data, setData] = useState(emp_data_model); // State to store employee data
+  const [showAddSuccess, setshowAddSuccess] = useState({
+    message: "", success: false
+  });
+  const [showAddInvalid, setshowAddInvalid] = useState({
+    message: "", success: false
+  });
+  const [showAddConfirm, setShowAddConfirm] = useState({
+    message: "",
+    success: false,
+    onConfirm: () => { }
+  });
 
-  const [scrolled, setScrolled] = useState(false);
+  const onAddConfirm = async () => {
+    try {
+
+      const result = await add_emp_details(data);
+      console.log(result)
+
+      setshowAddSuccess({
+        message: `${result.message}`,
+        success: true
+      });
+    } catch (err) {
+      alert(err);
+    }
+
+
+  }
 
   const [file_to_sand, setFile_to_sand] = useState(null);
 
@@ -34,9 +69,9 @@ const AddForm = () => {
 
   const handleFileUpload = (section, field, file) => {
     setFile_to_sand(file)
-    setFileName(file.name )
-    console.log(file)
-    if (file && (file.type === "image/jpeg" || file.type === "image/png")) {
+    setFileName(file.name)
+    console.log(file_to_sand)
+    if (file && (file.type === "image/jpeg" || file.type === "png")) {
       if (file.size <= 4 * 1024 ) { // Check if file size is less than or equal to 5MB
         const updatedData = { ...data };
         updatedData[section][field] = file; // Save the file in the state
@@ -62,7 +97,7 @@ const AddForm = () => {
   // Submit handler
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     setData((prevData) => ({
       ...prevData,
       e_photo: file_to_sand,
@@ -84,27 +119,46 @@ const AddForm = () => {
     try {
 
       const check_data = await check_for_add_emp(data);
-     
-      if(check_data.e_mobile_number && check_data.e_bank_acc_number && check_data.e_pan_number && check_data.d_id){
-        try {
 
-          const result = await add_emp_details(data);
-         
-          alert(result.message);
-        } catch (err) {
-          alert(err);
+      if (check_data.e_mobile_number && check_data.e_bank_acc_number && check_data.e_pan_number && check_data.d_id) {
+        setShowAddConfirm({
+          message: `Are you sure you want to add the new Employee details ?`,
+          success: true,
+          onConfirm: onAddConfirm, // Pass the function reference
+        });
+
+      }
+      else {
+
+        if (!check_data.e_mobile_number) {
+          setshowAddInvalid({
+            message: "Enter valid mobile number!, Employee's mobile number already exist.", success: true
+          })
+        }
+
+        else if (!check_data.d_id) {
+          setshowAddInvalid({
+            message: "Enter valid Department ID!,  Department ID does not exist.", success: true
+          })
+        }
+        else if (!check_data.e_bank_acc_number) {
+          setshowAddInvalid({
+            message: "Enter valid bank account number!, Employee's account number already exist.", success: true
+          })
+        }
+        else if (!check_data.e_pan_number) {
+          setshowAddInvalid({
+            message: "Enter valid PAN number!, employee's PAN number already exist.", success: true
+          })
         }
       }
-      else{
-        if(!check_data.e_mobile_number) alert("mobile number already exist");
-        else if(!check_data.d_id) alert("enter valid d_id. d_id does not exist");
-        else if(!check_data.e_bank_acc_number) alert("back account number already exist");
-        else if(!check_data.e_pan_number) alert("PAN number already exist");
-      }
     } catch (err) {
-      alert(err);
+      setshowAddInvalid({
+        message: "Something went Wrong! Try again after some time.", success: true
+      })
+      navigate("/employee")
     }
-   
+
   };
 
   // Render a loading spinner or message until data is ready
@@ -114,17 +168,48 @@ const AddForm = () => {
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Navbar />
       <div className="max-w-6xl mx-auto mt-20">
+        {showAddSuccess.success && (
+          <div className="fixed inset-0 z-50">
+            <SuccessfullyDone
+              message={showAddSuccess.message}
+              onClose={() => {
+                setshowAddSuccess({ message: "", success: false })
+                navigate("/employee");
+              }}
+            />
+          </div>
+        )}
+        {showAddInvalid.success && (
+          <div className="fixed inset-0 z-50">
+            <InvalidDialogue
+              message={showAddInvalid.message}
+              onClose={() => setshowAddInvalid({ message: "", success: false })}
+            />
+          </div>
+        )}
+        {showAddConfirm.success && (
+          <div className="fixed inset-0 z-50">
+            <ConfirmDialogue
+              message={showAddConfirm.message}
+              onConfirm={() => {
+                showAddConfirm.onConfirm(); // Call the confirm callback
+                setShowAddConfirm({ message: "", success: false, onConfirm: null }); // Close the dialog
+              }}
+              onCancel={() => setShowAddConfirm({ message: "", success: false, onConfirm: null })} // Close without confirming
+            />
+          </div>
+        )}
+
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
           {/* Form Header */}
           <div className="px-6 py-8 bg-gradient-to-r from-emerald-600 via-teal-600 to-sky-600"
           >
             <BackButton />
-            <h1 className={`text-2xl mt-2 font-bold transition-colors duration-300 ${scrolled ? 'text-emerald-600' : 'text-white'
-              }`}>
+            <h1 className="text-2xl mt-2 font-bold transition-colors duration-300 text-white"
+            >
               Add Employee Details
             </h1>
-            <p className={`mt-2 transition-colors duration-300 ${scrolled ? 'text-gray-600' : 'text-white/90'
-              }`}>
+            <p className="mt-2 transition-colors duration-300 text-white/90">
               Please fill in all the required information below
             </p>
           </div>
@@ -150,6 +235,8 @@ const AddForm = () => {
                     onChange={(e) => handleInputChange("emp_details", "e_name", e.target.value)}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                     required
+                    maxLength={30}
+                    style={{ textTransform: "capitalize" }}
                   />
                 </div>
 
@@ -159,9 +246,16 @@ const AddForm = () => {
                   <input
                     type="tel"
                     value={data.emp_details.e_mobile_number}
-                    onChange={(e) => handleInputChange("emp_details", "e_mobile_number", e.target.value)}
+                    onChange={(e) => {// Allow only numerical input
+                      const value = e.target.value;
+                      if (/^\d*$/.test(value)) {
+                        handleInputChange("emp_details", "e_mobile_number", value);
+                      }
+                    }}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                     required
+                    pattern="\d*"
+                    maxLength={10}
                   />
                 </div>
 
@@ -189,7 +283,8 @@ const AddForm = () => {
                     value={data.emp_details.e_email}
                     onChange={(e) => handleInputChange("emp_details", "e_email", e.target.value)}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
-                    required
+                    maxLength={60}
+
                   />
                 </div>
 
@@ -203,6 +298,7 @@ const AddForm = () => {
                     onChange={(e) => handleInputChange("emp_details", "e_address", e.target.value)}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                     required
+                    maxLength={100}
                   />
                 </div>
 
@@ -214,7 +310,9 @@ const AddForm = () => {
                     value={data.emp_details.d_id}
                     onChange={(e) => handleInputChange("emp_details", "d_id", e.target.value)}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
-                    required
+
+                    maxLength={4}
+                    style={{ textTransform: "capitalize" }}
                   />
                 </div>
 
@@ -226,7 +324,7 @@ const AddForm = () => {
                     value={data.emp_details.e_designation}
                     onChange={(e) => handleInputChange("emp_details", "e_designation", e.target.value)}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
-                    required
+                    maxLength={50}
                   />
                 </div>
 
@@ -238,18 +336,22 @@ const AddForm = () => {
                     value={data.emp_details.e_group}
                     onChange={(e) => handleInputChange("emp_details", "e_group", e.target.value)}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
-                    required
+                    maxLength={1}
+                    style={{ textTransform: "capitalize" }}
                   />
                 </div>
 
                 {/* date of joining */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Date of joining</label>
+                <div >
+                  <label className="block text-sm font-medium text-gray-700">Date of Joining</label>
                   <input
+                    onClick={() => dateInputRef.current.focus()} // Focus the date input when clicking the container
+                    ref={dateInputRef} // Attach the ref to the input element
                     type="date"
                     value={data.emp_details.e_date_of_joining}
                     onChange={(e) => handleInputChange("emp_details", "e_date_of_joining", e.target.value)}
-                    className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+                    max={today} // Restrict dates greater than today
+                    className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500r cursor-pointer" // Remove border outline on focus
                     required
                   />
                 </div>
@@ -259,11 +361,13 @@ const AddForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Date of Birth</label>
                   <input
+                    onClick={() => dateInputRef.current.focus()} // Focus the date input when clicking the container
+                    ref={dateInputRef} // Attach the ref to the input element
                     type="date"
                     value={data.emp_details.e_DOB}
                     onChange={(e) => handleInputChange("emp_details", "e_DOB", e.target.value)}
-                    className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
-                    required
+                    max={today} // Restrict dates greater than today
+                    className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 cursor-pointer"
                   />
                 </div>
 
@@ -287,7 +391,7 @@ const AddForm = () => {
                       accept=".jpg, .jpeg, .png"
                       onChange={(e) => handleFileUpload("emp_details", "e_photo", e.target.files[0])}
                       className="absolute inset-0 opacity-0 w-full cursor-pointer"
-                      
+
                     />
                   </div>
                   <p className="mt-2 text-sm text-gray-500">
@@ -316,6 +420,7 @@ const AddForm = () => {
                     onChange={(e) => handleInputChange("emp_bank_details", "e_bank_name", e.target.value)}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                     required
+                    maxLength={50}
                   />
                 </div>
 
@@ -325,9 +430,15 @@ const AddForm = () => {
                   <input
                     type="tel"
                     value={data.emp_bank_details.e_bank_acc_number || ""}
-                    onChange={(e) => handleInputChange("emp_bank_details", "e_bank_acc_number", e.target.value)}
+                    onChange={(e) => {// Allow only numerical input
+                      const value = e.target.value;
+                      if (/^\d*$/.test(value)) {
+                        handleInputChange("emp_bank_details", "e_bank_acc_number", value);
+                      }
+                    }}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                     required
+                    maxLength={20}
                   />
                 </div>
 
@@ -340,6 +451,7 @@ const AddForm = () => {
                     onChange={(e) => handleInputChange("emp_bank_details", "e_pan_number", e.target.value)}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                     required
+                    maxLength={10}
                   />
                 </div>
 
@@ -352,6 +464,7 @@ const AddForm = () => {
                     onChange={(e) => handleInputChange("emp_bank_details", "e_bank_IFSC", e.target.value)}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                     required
+                    maxLength={11}
                   />
                 </div>
 
@@ -361,9 +474,13 @@ const AddForm = () => {
                   <input
                     type="tel"
                     value={data.emp_bank_details.e_cpf_or_gpf_number || ""}
-                    onChange={(e) =>
-                      handleInputChange("emp_bank_details", "e_cpf_or_gpf_number", e.target.value)
-                    }
+                    onChange={(e) => {// Allow only numerical input
+                      const value = e.target.value;
+                      if (/^\d*$/.test(value)) {
+                        handleInputChange("emp_bank_details", "e_cpf_or_gpf_number", value);
+                      }
+                    }}
+
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                   />
                 </div>
@@ -389,7 +506,12 @@ const AddForm = () => {
                   <input
                     type="tel"
                     value={data.emp_earning_details.basic_salary || ""}
-                    onChange={(e) => handleInputChange("emp_earning_details", "basic_salary", e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (/^\d*$/.test(value)) {
+                        handleInputChange("emp_earning_details", "basic_salary", value);
+                      }
+                    }}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                   />
                 </div>
@@ -400,7 +522,12 @@ const AddForm = () => {
                   <input
                     type="tel"
                     value={data.emp_earning_details.special_pay || ""}
-                    onChange={(e) => handleInputChange("emp_earning_details", "special_pay", e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (/^\d*$/.test(value)) {
+                        handleInputChange("emp_earning_details", "special_pay", value);
+                      }
+                    }}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                   />
                 </div>
@@ -411,7 +538,12 @@ const AddForm = () => {
                   <input
                     type="tel"
                     value={data.emp_earning_details.dearness_allowance || ""}
-                    onChange={(e) => handleInputChange("emp_earning_details", "dearness_allowance", e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (/^\d*$/.test(value)) {
+                        handleInputChange("emp_earning_details", "dearness_allowance", value);
+                      }
+                    }}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                   />
                 </div>
@@ -422,7 +554,12 @@ const AddForm = () => {
                   <input
                     type="tel"
                     value={data.emp_earning_details.DA || ""}
-                    onChange={(e) => handleInputChange("emp_earning_details", "DA", e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (/^\d*$/.test(value)) {
+                        handleInputChange("emp_earning_details", "DA", value);
+                      }
+                    }}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                   />
                 </div>
@@ -433,7 +570,12 @@ const AddForm = () => {
                   <input
                     type="tel"
                     value={data.emp_earning_details.ADA || ""}
-                    onChange={(e) => handleInputChange("emp_earning_details", "ADA", e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (/^\d*$/.test(value)) {
+                        handleInputChange("emp_earning_details", "ADA", value);
+                      }
+                    }}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                   />
                 </div>
@@ -444,7 +586,12 @@ const AddForm = () => {
                   <input
                     type="tel"
                     value={data.emp_earning_details.interim_relief || ""}
-                    onChange={(e) => handleInputChange("emp_earning_details", "interim_relief", e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (/^\d*$/.test(value)) {
+                        handleInputChange("emp_earning_details", "interim_relief", value);
+                      }
+                    }}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                   />
                 </div>
@@ -455,7 +602,12 @@ const AddForm = () => {
                   <input
                     type="tel"
                     value={data.emp_earning_details.HRA || ""}
-                    onChange={(e) => handleInputChange("emp_earning_details", "HRA", e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (/^\d*$/.test(value)) {
+                        handleInputChange("emp_earning_details", "HRA", value);
+                      }
+                    }}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                   />
                 </div>
@@ -466,7 +618,12 @@ const AddForm = () => {
                   <input
                     type="tel"
                     value={data.emp_earning_details.CCA || ""}
-                    onChange={(e) => handleInputChange("emp_earning_details", "CCA", e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (/^\d*$/.test(value)) {
+                        handleInputChange("emp_earning_details", "CCA", value);
+                      }
+                    }}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                   />
                 </div>
@@ -477,7 +634,12 @@ const AddForm = () => {
                   <input
                     type="tel"
                     value={data.emp_earning_details.conveyance || ""}
-                    onChange={(e) => handleInputChange("emp_earning_details", "conveyance", e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (/^\d*$/.test(value)) {
+                        handleInputChange("emp_earning_details", "conveyance", value);
+                      }
+                    }}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                   />
                 </div>
@@ -488,7 +650,12 @@ const AddForm = () => {
                   <input
                     type="tel"
                     value={data.emp_earning_details.medical || ""}
-                    onChange={(e) => handleInputChange("emp_earning_details", "medical", e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (/^\d*$/.test(value)) {
+                        handleInputChange("emp_earning_details", "medical", value);
+                      }
+                    }}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                   />
                 </div>
@@ -499,7 +666,12 @@ const AddForm = () => {
                   <input
                     type="tel"
                     value={data.emp_earning_details.washing_allowance || ""}
-                    onChange={(e) => handleInputChange("emp_earning_details", "washing_allowance", e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (/^\d*$/.test(value)) {
+                        handleInputChange("emp_earning_details", "washing_allowance", value);
+                      }
+                    }}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                   />
                 </div>
@@ -510,7 +682,12 @@ const AddForm = () => {
                   <input
                     type="tel"
                     value={data.emp_earning_details.BDP || ""}
-                    onChange={(e) => handleInputChange("emp_earning_details", "BDP", e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (/^\d*$/.test(value)) {
+                        handleInputChange("emp_earning_details", "BDP", value);
+                      }
+                    }}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                   />
                 </div>
@@ -521,7 +698,12 @@ const AddForm = () => {
                   <input
                     type="tel"
                     value={data.emp_earning_details.arrears || ""}
-                    onChange={(e) => handleInputChange("emp_earning_details", "arrears", e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (/^\d*$/.test(value)) {
+                        handleInputChange("emp_earning_details", "arrears", value);
+                      }
+                    }}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                   />
                 </div>
@@ -546,9 +728,12 @@ const AddForm = () => {
                   <input
                     type="tel"
                     value={data.emp_deduction_details.deduction_CPF || ""}
-                    onChange={(e) =>
-                      handleInputChange("emp_deduction_details", "deduction_CPF", e.target.value)
-                    }
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (/^\d*$/.test(value)) {
+                        handleInputChange("emp_deduction_details", "deduction_CPF", value);
+                      }
+                    }}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                   />
                 </div>
@@ -559,7 +744,12 @@ const AddForm = () => {
                   <input
                     type="tel"
                     value={data.emp_deduction_details.GIS || ""}
-                    onChange={(e) => handleInputChange("emp_deduction_details", "GIS", e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (/^\d*$/.test(value)) {
+                        handleInputChange("emp_deduction_details", "GIS", value);
+                      }
+                    }}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                   />
                 </div>
@@ -570,7 +760,12 @@ const AddForm = () => {
                   <input
                     type="tel"
                     value={data.emp_deduction_details.house_rent || ""}
-                    onChange={(e) => handleInputChange("emp_deduction_details", "house_rent", e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (/^\d*$/.test(value)) {
+                        handleInputChange("emp_deduction_details", "house_rent", value);
+                      }
+                    }}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                   />
                 </div>
@@ -581,7 +776,12 @@ const AddForm = () => {
                   <input
                     type="tel"
                     value={data.emp_deduction_details.water_charges || ""}
-                    onChange={(e) => handleInputChange("emp_deduction_details", "water_charges", e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (/^\d*$/.test(value)) {
+                        handleInputChange("emp_deduction_details", "water_charges", value);
+                      }
+                    }}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                   />
                 </div>
@@ -592,9 +792,12 @@ const AddForm = () => {
                   <input
                     type="tel"
                     value={data.emp_deduction_details.electricity_charges || ""}
-                    onChange={(e) =>
-                      handleInputChange("emp_deduction_details", "electricity_charges", e.target.value)
-                    }
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (/^\d*$/.test(value)) {
+                        handleInputChange("emp_deduction_details", "electricity_charges", value);
+                      }
+                    }}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                   />
                 </div>
@@ -605,9 +808,12 @@ const AddForm = () => {
                   <input
                     type="tel"
                     value={data.emp_deduction_details.vehicle_deduction || ""}
-                    onChange={(e) =>
-                      handleInputChange("emp_deduction_details", "vehicle_deduction", e.target.value)
-                    }
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (/^\d*$/.test(value)) {
+                        handleInputChange("emp_deduction_details", "vehicle_deduction", value);
+                      }
+                    }}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                   />
                 </div>
@@ -618,7 +824,12 @@ const AddForm = () => {
                   <input
                     type="tel"
                     value={data.emp_deduction_details.HB_loan || ""}
-                    onChange={(e) => handleInputChange("emp_deduction_details", "HB_loan", e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (/^\d*$/.test(value)) {
+                        handleInputChange("emp_deduction_details", "HB_loan", value);
+                      }
+                    }}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                   />
                 </div>
@@ -629,7 +840,12 @@ const AddForm = () => {
                   <input
                     type="tel"
                     value={data.emp_deduction_details.GPF_loan || ""}
-                    onChange={(e) => handleInputChange("emp_deduction_details", "GPF_loan", e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (/^\d*$/.test(value)) {
+                        handleInputChange("emp_deduction_details", "GPF_loan", value);
+                      }
+                    }}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                   />
                 </div>
@@ -640,7 +856,12 @@ const AddForm = () => {
                   <input
                     type="tel"
                     value={data.emp_deduction_details.festival_loan || ""}
-                    onChange={(e) => handleInputChange("emp_deduction_details", "festival_loan", e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (/^\d*$/.test(value)) {
+                        handleInputChange("emp_deduction_details", "festival_loan", value);
+                      }
+                    }}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                   />
                 </div>
@@ -651,7 +872,12 @@ const AddForm = () => {
                   <input
                     type="tel"
                     value={data.emp_deduction_details.grain_charges || ""}
-                    onChange={(e) => handleInputChange("emp_deduction_details", "grain_charges", e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (/^\d*$/.test(value)) {
+                        handleInputChange("emp_deduction_details", "grain_charges", value);
+                      }
+                    }}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                   />
                 </div>
@@ -662,7 +888,12 @@ const AddForm = () => {
                   <input
                     type="tel"
                     value={data.emp_deduction_details.bank_advance || ""}
-                    onChange={(e) => handleInputChange("emp_deduction_details", "bank_advance", e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (/^\d*$/.test(value)) {
+                        handleInputChange("emp_deduction_details", "bank_advance", value);
+                      }
+                    }}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                   />
                 </div>
@@ -673,7 +904,12 @@ const AddForm = () => {
                   <input
                     type="tel"
                     value={data.emp_deduction_details.advance || ""}
-                    onChange={(e) => handleInputChange("emp_deduction_details", "advance", e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (/^\d*$/.test(value)) {
+                        handleInputChange("emp_deduction_details", "advance", value);
+                      }
+                    }}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                   />
                 </div>
@@ -684,7 +920,12 @@ const AddForm = () => {
                   <input
                     type="tel"
                     value={data.emp_deduction_details.RGPV_advance || ""}
-                    onChange={(e) => handleInputChange("emp_deduction_details", "RGPV_advance", e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (/^\d*$/.test(value)) {
+                        handleInputChange("emp_deduction_details", "RGPV_advance", value);
+                      }
+                    }}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                   />
                 </div>
@@ -695,7 +936,12 @@ const AddForm = () => {
                   <input
                     type="tel"
                     value={data.emp_deduction_details.income_tax || ""}
-                    onChange={(e) => handleInputChange("emp_deduction_details", "income_tax", e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (/^\d*$/.test(value)) {
+                        handleInputChange("emp_deduction_details", "income_tax", value);
+                      }
+                    }}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                   />
                 </div>
@@ -706,7 +952,12 @@ const AddForm = () => {
                   <input
                     type="tel"
                     value={data.emp_deduction_details.professional_tax || ""}
-                    onChange={(e) => handleInputChange("emp_deduction_details", "professional_tax", e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (/^\d*$/.test(value)) {
+                        handleInputChange("emp_deduction_details", "professional_tax", value);
+                      }
+                    }}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                   />
                 </div>
@@ -718,6 +969,7 @@ const AddForm = () => {
             <div className="flex flex-col md:flex-row gap-4 mt-6 items-center justify-around">
               {/* Clear Button */}
               <button
+                type="button"
                 onClick={handleClear}
                 className="w-full md:w-auto px-7 py-3 border border-transparent rounded-lg shadow-lg text-base font-semibold bg-gray-100 hover:bg-gray-200 text-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition-all duration-200 flex items-center justify-center gap-3"
               >

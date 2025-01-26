@@ -3,6 +3,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 import { Search, UserPlus, UserCog, UserMinus, User, FilterX, Filter } from 'lucide-react';
 import { view_emp_by_id, delete_emp_details, all_emp_data } from "../../controller/empController";
 import { SuccessfullyDone } from "../common/SuccessfullyDone";
+import { ConfirmDialogue } from "../common/ConfirmDialogue";
 
 const EMP_aside = ({ setalldata, alldata, setempData, selected_e_id, setselected_e_id }) => {
   const [e_id, sete_id] = useState("");
@@ -11,18 +12,15 @@ const EMP_aside = ({ setalldata, alldata, setempData, selected_e_id, setselected
   const [showDeleteSuccess, setshowDeleteSuccess] = useState({
     message: "", success: false
   });
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState({
+    message: "",
+    success: false,
+    onConfirm: () => { }
+  }); 
 
   const navigate = useNavigate();
 
-  const addEmp = () => {
-    navigate("/employee/addEmployee");
-  }
-
-  const DeleteEmp = async () => {
-    if (!selected_e_id) {
-      console.error("No employee ID selected.");
-      return; // Avoid making the API call if no ID is selected
-    }
+  const onDeleteconfirm = async (selected_e_id) => {
 
     try {
 
@@ -30,6 +28,7 @@ const EMP_aside = ({ setalldata, alldata, setempData, selected_e_id, setselected
       console.log("aside", selected_e_id);
       const response = await delete_emp_details(selected_e_id); // Fetch employee data
       setshowDeleteSuccess({ message: `${response.message}`, success: response.success })
+      setselected_e_id("")
 
       console.log("aside show", showDeleteSuccess);
       try {
@@ -48,6 +47,23 @@ const EMP_aside = ({ setalldata, alldata, setempData, selected_e_id, setselected
     }
 
   }
+
+  const addEmp = () => {
+    navigate("/employee/addEmployee");
+  }
+
+  const DeleteEmp = () => {
+    if (!selected_e_id) {
+      console.error("No employee ID selected.");
+      return; // Avoid making the API call if no ID is selected
+    }
+
+    setShowDeleteConfirm({
+      message: `Are you sure you want to delete the employee details of E_ID: ${selected_e_id}?`,
+      onConfirm: onDeleteconfirm, // Pass the function reference
+    });
+  };
+
   const updateEmp = async () => {
     if (!selected_e_id) {
       console.error("No employee ID selected.");
@@ -70,8 +86,9 @@ const EMP_aside = ({ setalldata, alldata, setempData, selected_e_id, setselected
     } catch (error) {
       console.error("Error fetching employee data:", error.message);
     }
-
   }
+
+
 
   const ViewEmp = async () => {
     if (!selected_e_id) {
@@ -131,12 +148,24 @@ const EMP_aside = ({ setalldata, alldata, setempData, selected_e_id, setselected
 
     <aside className="w-full bg-white shadow-lg rounded-lg overflow-hidden">
 
-        {showDeleteSuccess.success && (
-      <div className="fixed inset-0 z-50">
-        <SuccessfullyDone
-          message={showDeleteSuccess.message}
-          onClose={() => setshowDeleteSuccess({ message: "", success: false })}
-        />
+      {showDeleteSuccess.success && (
+        <div className="fixed inset-0 z-50">
+          <SuccessfullyDone
+            message={showDeleteSuccess.message}
+            onClose={() => setshowDeleteSuccess({ message: "", success: false })}
+          />
+        </div>
+      )}
+      {showDeleteConfirm.message && (
+        <div className="fixed inset-0 z-50">
+          <ConfirmDialogue
+            message={showDeleteConfirm.message}
+            onConfirm={ () => {
+               showDeleteConfirm.onConfirm(selected_e_id); // Call the confirm callback
+              setShowDeleteConfirm({ message: "", onConfirm: null }); // Close the dialog
+            }}
+            onClose={() => setShowDeleteConfirm({ message: "", onConfirm: null })} // Close without confirming
+          />
         </div>
       )}
 

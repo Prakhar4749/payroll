@@ -1,7 +1,14 @@
 
 import { checkConnection, pool } from "../config/db.js";
 import fs from "fs";
+
+const formatDateForMySQL = (date) => {
+  const d = new Date(date);
+  return d.toISOString().split("T")[0]; // Extract only the date part
+};
 //chk for the update 
+
+
 async function chk_for_update(req, res) {
   let result = {
     e_mobile_number: false,
@@ -252,6 +259,9 @@ async function add_new_emp(req, res) {
   const data = req.body;
   //   console.log(data);
 
+  const formattedJoiningDate = formatDateForMySQL(data.emp_details.e_date_of_joining);
+const formattedDOB = formatDateForMySQL(data.emp_details.e_DOB);
+
   const sql = `
   -- Insert into emp_details
   INSERT INTO emp_details (
@@ -263,8 +273,8 @@ async function add_new_emp(req, res) {
   }, '${data.emp_details.e_gender}', '${data.emp_details.e_email}', 
       '${data.emp_details.e_address}', '${imgstr64}', '${data.emp_details.d_id}', 
       '${data.emp_details.e_designation}', '${data.emp_details.e_group}', '${
-    data.emp_details.e_date_of_joining
-  }', '${data.emp_details.e_DOB}'
+    formattedJoiningDate
+  }', '${formattedDOB}'
   );
   
   -- Insert into emp_bank_details
@@ -386,6 +396,8 @@ async function update_emp(req, res) {
 
 
     const data =req.body;
+    const formattedJoiningDate = formatDateForMySQL(data.emp_details.e_date_of_joining);
+const formattedDOB = formatDateForMySQL(data.emp_details.e_DOB);
     try {
         // Update emp_details table
         const empDetailsQuery = `
@@ -407,8 +419,8 @@ async function update_emp(req, res) {
             data.emp_details.d_id,
             data.emp_details.e_designation,
             data.emp_details.e_group,
-            data.emp_details.e_date_of_joining,
-            data.emp_details.e_DOB,
+            formattedJoiningDate,
+            formattedDOB,
             data.emp_details.e_id
         ];
 
