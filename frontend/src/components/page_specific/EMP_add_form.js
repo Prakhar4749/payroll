@@ -136,7 +136,10 @@ const AddForm = () => {
         }
       }
     } catch (err) {
-      alert(err);
+      setshowAddInvalid({
+        message: "Something went Wrong! Try again after some time.", success: true
+      })
+      navigate("/employee")
     }
 
   };
@@ -174,7 +177,7 @@ const AddForm = () => {
                 showAddConfirm.onConfirm(); // Call the confirm callback
                 setShowAddConfirm({ message: "", success: false, onConfirm: null }); // Close the dialog
               }}
-              onClose={() => setShowAddConfirm({ message: "", success: false, onConfirm: null })} // Close without confirming
+              onCancel={() => setShowAddConfirm({ message: "", success: false, onConfirm: null })} // Close without confirming
             />
           </div>
         )}

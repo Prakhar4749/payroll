@@ -1,16 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { update_emp_details } from "../../controller/empController";
-import { useLocation } from "react-router-dom";
+import { update_emp_details, check_for_update_emp } from "../../controller/empController";
+import { useLocation, useNavigate } from "react-router-dom";
 import { emp_data_model } from "../../models/EmpModel";
 import { User, Building, DollarSign, BanknoteIcon as BanknotesIcon, MinusCircle, Save, UserRoundPen, Eraser } from 'lucide-react';
 import Navbar from "../layout/Navbar"
 import { BackButton } from "../common/backButton";
+import { ConfirmDialogue } from "../common/ConfirmDialogue";
+import { SuccessfullyDone } from "../common/SuccessfullyDone";
+import { InvalidDialogue } from "../common/InvalidDialogue";
 
 const UpdateForm = () => {
+  const navigate = useNavigate();
   const location = useLocation();
+
   const [data, setData] = useState(emp_data_model); // State to store employee data
 
-  const [scrolled, setScrolled] = useState(false);
   // Set data from location.state only once when the component mounts
   useEffect(() => {
     if (location.state?.data) {
@@ -18,6 +22,36 @@ const UpdateForm = () => {
     }
 
   }, [location.state]);
+
+  const [showUpdateSuccess, setshowUpdateSuccess] = useState({
+    message: "", success: false
+  });
+  const [showUpdateInvalid, setshowUpdateInvalid] = useState({
+    message: "", success: false
+  });
+  const [showUpdateConfirm, setShowUpdateConfirm] = useState({
+    message: "",
+    success: false,
+    onConfirm: () => { }
+  });
+
+  const onUpdateConfirm = async () => {
+    try {
+
+      const response = await update_emp_details(data);
+      console.log("form", response.message)
+
+      setshowUpdateSuccess({
+        message: `${response.message}`,
+        success: true
+      });
+    } catch (err) {
+      alert(err);
+    }
+
+
+  }
+
 
   // Handle input change for nested objects
   const handleInputChange = (section, field, value) => {
@@ -52,36 +86,128 @@ const UpdateForm = () => {
   // Submit handler
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
 
-      const response = await update_emp_details(data);
-      console.log("form", response.message)
-      alert(response.message);
+    setData((prevData) => ({
+      ...prevData,
+      emp_bank_details: {
+        ...prevData.emp_bank_details,
+        e_name: prevData.emp_details.e_name,
+      },
+      emp_earning_details: {
+        ...prevData.emp_earning_details,
+        e_name: prevData.emp_details.e_name,
+      },
+      emp_deduction_details: {
+        ...prevData.emp_deduction_details,
+        e_name: prevData.emp_details.e_name,
+      },
+    }));
+
+    try {
+      const check_data = await check_for_update_emp(data);
+
+      if (check_data.e_mobile_number && check_data.e_bank_acc_number && check_data.e_pan_number && check_data.d_id) {
+        setShowUpdateConfirm({
+          message: `Are you sure you want to update the Employee details ?`,
+          success: true,
+          onConfirm: onUpdateConfirm, // Pass the function reference
+        });
+
+      }
+      else {
+
+        if (!check_data.e_mobile_number) {
+          setshowUpdateInvalid({
+            message: "Enter valid new mobile number!, Employee's new mobile number already exist.", success: true
+          })
+        }
+
+        else if (!check_data.d_id) {
+          setshowUpdateInvalid({
+            message: "Enter valid new Department ID!,  new Department ID does not exist.", success: true
+          })
+        }
+        else if (!check_data.e_bank_acc_number) {
+          setshowUpdateInvalid({
+            message: "Enter valid new bank account number!, Employee's new account number already exist.", success: true
+          })
+        }
+        else if (!check_data.e_pan_number) {
+          setshowUpdateInvalid({
+            message: "Enter valid new PAN number!, employee's new PAN number already exist.", success: true
+          })
+        }
+      }
+
+
     } catch (err) {
-      alert("Failed to update details.");
+      setshowUpdateInvalid({
+        message: "Something went Wrong! Try again after some time.", success: true
+      })
+      navigate("/employee")
     }
   };
 
   // Render a loading spinner or message until data is ready
 
-  if (!data) return <p className="text-center text-lg font-semibold mt-4">No data available to update.</p>;
-
+  if (!data) {
+    setshowUpdateInvalid({
+    message: "Something went Wrong! Try again after some time.", success: true
+  })
+  navigate("/employee")
+}
   return (
 
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Navbar />
       <div className="max-w-6xl mx-auto mt-20">
+
+
+        {showUpdateSuccess.success && (
+          <div className="fixed inset-0 z-50">
+            <SuccessfullyDone
+              message={showUpdateSuccess.message}
+              onClose={() => {
+                setshowUpdateSuccess({ message: "", success: false })
+                navigate("/employee");
+              }}
+            />
+          </div>
+        )}
+        {showUpdateInvalid.success && (
+          <div className="fixed inset-0 z-50">
+            <InvalidDialogue
+              message={showUpdateInvalid.message}
+              onClose={() => setshowUpdateInvalid({ message: "", success: false })}
+            />
+          </div>
+        )}
+        {showUpdateConfirm.success && (
+          <div className="fixed inset-0 z-50">
+            <ConfirmDialogue
+              message={showUpdateConfirm.message}
+              onConfirm={() => {
+                showUpdateConfirm.onConfirm(); // Call the confirm callback
+                setShowUpdateConfirm({ message: "", success: false, onConfirm: null }); // Close the dialog
+              }}
+              onCancel={() => setShowUpdateConfirm({ message: "", success: false, onConfirm: null }
+              )} // Close without confirming
+            />
+          </div>
+        )}
+
+
+
+
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
           {/* Form Header */}
           <div className="px-6 py-8 bg-gradient-to-r from-emerald-600 via-teal-600 to-sky-600"
           >
             <BackButton />
-            <h1 className={`text-2xl mt-2 font-bold transition-colors duration-300 ${scrolled ? 'text-emerald-600' : 'text-white'
-              }`}>
+            <h1 className={`text-2xl mt-2 font-bold transition-colors duration-300 text-white`}>
               Update Employee Details
             </h1>
-            <p className={`mt-2 transition-colors duration-300 ${scrolled ? 'text-gray-600' : 'text-white/90'
-              }`}>
+            <p className={`mt-2 transition-colors duration-300 text-white/90`}>
               Please change the information you like to update
             </p>
           </div>
@@ -155,7 +281,7 @@ const UpdateForm = () => {
                     value={data.emp_details.e_email}
                     onChange={(e) => handleInputChange("emp_details", "e_email", e.target.value)}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
-                    
+
                   />
                 </div>
 
@@ -168,7 +294,7 @@ const UpdateForm = () => {
                     value={data.emp_details.e_address}
                     onChange={(e) => handleInputChange("emp_details", "e_address", e.target.value)}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
-                    
+
                   />
                 </div>
 
@@ -180,7 +306,7 @@ const UpdateForm = () => {
                     value={data.emp_details.d_id}
                     onChange={(e) => handleInputChange("emp_details", "d_id", e.target.value)}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
-                    
+
                   />
                 </div>
 
@@ -192,7 +318,7 @@ const UpdateForm = () => {
                     value={data.emp_details.e_designation}
                     onChange={(e) => handleInputChange("emp_details", "e_designation", e.target.value)}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
-                    
+
                   />
                 </div>
 
@@ -216,7 +342,7 @@ const UpdateForm = () => {
                     value={data.emp_details.e_date_of_joining}
                     onChange={(e) => handleInputChange("emp_details", "e_date_of_joining", e.target.value)}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
-                    
+
                   />
                 </div>
 
@@ -229,7 +355,7 @@ const UpdateForm = () => {
                     value={data.emp_details.e_DOB}
                     onChange={(e) => handleInputChange("emp_details", "e_DOB", e.target.value)}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
-                    
+
                   />
                 </div>
 
@@ -252,7 +378,7 @@ const UpdateForm = () => {
                       accept=".jpg, .jpeg, .pdf"
                       onChange={(e) => handleFileUpload("emp_details", "e_photo", e.target.files[0])}
                       className="absolute inset-0 opacity-0 w-full cursor-pointer"
-                      
+
                     />
                   </div>
                   <p className="mt-2 text-sm text-gray-500">
@@ -280,7 +406,7 @@ const UpdateForm = () => {
                     value={data.emp_bank_details.e_bank_name}
                     onChange={(e) => handleInputChange("emp_bank_details", "e_bank_name", e.target.value)}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
-                    
+
                   />
                 </div>
 
@@ -292,7 +418,7 @@ const UpdateForm = () => {
                     value={data.emp_bank_details.e_bank_acc_number || ""}
                     onChange={(e) => handleInputChange("emp_bank_details", "e_bank_acc_number", e.target.value)}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
-                    
+
                   />
                 </div>
 
@@ -304,7 +430,7 @@ const UpdateForm = () => {
                     value={data.emp_bank_details.e_pan_number}
                     onChange={(e) => handleInputChange("emp_bank_details", "e_pan_number", e.target.value)}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
-                    
+
                   />
                 </div>
 
@@ -316,7 +442,7 @@ const UpdateForm = () => {
                     value={data.emp_bank_details.e_bank_IFSC}
                     onChange={(e) => handleInputChange("emp_bank_details", "e_bank_IFSC", e.target.value)}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
-                    
+
                   />
                 </div>
 
@@ -675,6 +801,7 @@ const UpdateForm = () => {
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                   />
                 </div>
+
 
                 {/* ... */}
               </div>
