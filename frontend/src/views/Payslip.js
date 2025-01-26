@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Navbar from "../components/layout/Navbar";
 import { useNavigate } from "react-router-dom";
 import {ConfirmDialogue} from "../components/common/ConfirmDialogue";
-import InvalidDialogue from "../components/common/InvalidDialogue";
+import {InvalidDialogue} from "../components/common/InvalidDialogue";
 import { Calendar, UserRound } from 'lucide-react';
 
 export default function Payslip() {

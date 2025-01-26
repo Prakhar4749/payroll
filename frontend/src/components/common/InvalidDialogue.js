@@ -43,4 +43,4 @@ function InvalidDialogue({ message, onClose }) {
   );
 }
 
-export default InvalidDialogue;
+export { InvalidDialogue};

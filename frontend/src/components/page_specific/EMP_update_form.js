@@ -110,6 +110,7 @@ const UpdateForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Name</label>
                   <input
+                    onSubmit={handleSubmit}
                     type="text"
                     value={data.emp_details.e_name}
                     onChange={(e) => handleInputChange("emp_details", "e_name", e.target.value)}
@@ -683,6 +684,7 @@ const UpdateForm = () => {
               {/* Clear Button */}
               <button
                 onClick={handleClear}
+                type="button"
                 className="w-full md:w-auto px-7 py-3 border border-transparent rounded-lg shadow-lg text-base font-semibold bg-gray-100 hover:bg-gray-200 text-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition-all duration-200 flex items-center justify-center gap-3"
               >
                 <Eraser className="h-6 w-6" />

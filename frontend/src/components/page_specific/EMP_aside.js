@@ -16,7 +16,7 @@ const EMP_aside = ({ setalldata, alldata, setempData, selected_e_id, setselected
     message: "",
     success: false,
     onConfirm: () => { }
-  });
+  }); 
 
   const navigate = useNavigate();
 
