@@ -1,19 +1,25 @@
 import React, { useState } from "react";
 import Navbar from "../components/layout/Navbar";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {ConfirmDialogue} from "../components/common/ConfirmDialogue";
 import {InvalidDialogue} from "../components/common/InvalidDialogue";
 import { Calendar, UserRound } from 'lucide-react';
 
 export default function Payslip() {
-  const [e_id, sete_id] = useState("");
-  const [salary_month, setsalary_month] = useState("");
-  const [salary_year, setsalary_year] = useState("");
+
+  const navigate = useNavigate();
+  const location = useLocation();
+  const selected_e_id = location.state && location.state.selected_e_id
+  ? location.state.selected_e_id
+  : null;
+  const [e_id, sete_id] = useState(selected_e_id);
+  const [salary_month, setsalary_month] = useState(new Date().getMonth() + 1);
+  const [salary_year, setsalary_year] = useState(new Date().getFullYear());
   const [showConfirm, setShowConfirm] = useState(false);
   const [showInvalid, setShowInvalid] = useState(false);
   const [invalidMessage, setInvalidMessage] = useState("");
 
-  const navigate = useNavigate();
+  
 
   const validateInputs = () => {
     if (salary_year > new Date().getFullYear() || salary_year < 2015) {

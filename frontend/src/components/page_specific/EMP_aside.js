@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
-import { Search, UserPlus, UserCog, UserMinus, User, FilterX, Filter } from 'lucide-react';
+import { Search, UserPlus, UserCog, UserMinus, User, FilterX, Filter, FileText } from 'lucide-react';
 import { view_emp_by_id, delete_emp_details, all_emp_data } from "../../controller/empController";
 import { SuccessfullyDone } from "../common/SuccessfullyDone";
 import { ConfirmDialogue } from "../common/ConfirmDialogue";
@@ -16,7 +16,7 @@ const EMP_aside = ({ setalldata, alldata, setempData, selected_e_id, setselected
     message: "",
     success: false,
     onConfirm: () => { }
-  }); 
+  });
 
   const navigate = useNavigate();
 
@@ -114,8 +114,17 @@ const EMP_aside = ({ setalldata, alldata, setempData, selected_e_id, setselected
     }
   };
 
+  const payslipEmp = async () => {
+    if (!selected_e_id) {
+      console.error("No employee ID selected.");
+      return; // Avoid making the API call if no ID is selected
+    }
+    navigate("/payslip", { state: { selected_e_id } });
+  };
+
 
   function apply() {
+    if(!alldata) return
     const filteredData = alldata.filter((employee) => {
       const idMatch = e_id
         ? employee.e_id.toLowerCase().includes(e_id.toLowerCase())
@@ -160,50 +169,97 @@ const EMP_aside = ({ setalldata, alldata, setempData, selected_e_id, setselected
         <div className="fixed inset-0 z-50">
           <ConfirmDialogue
             message={showDeleteConfirm.message}
-            onConfirm={ () => {
-               showDeleteConfirm.onConfirm(selected_e_id); // Call the confirm callback
+            onConfirm={() => {
+              showDeleteConfirm.onConfirm(selected_e_id); // Call the confirm callback
               setShowDeleteConfirm({ message: "", onConfirm: null }); // Close the dialog
             }}
-            onClose={() => setShowDeleteConfirm({ message: "", onConfirm: null })} // Close without confirming
+            onCancel={() => setShowDeleteConfirm({ message: "", onConfirm: null })} // Close without confirming
           />
         </div>
       )}
 
 
       <div className="p-6 flex flex-col gap-4">
-        <button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 px-4 rounded-md text-sm transition-all duration-200 flex items-center justify-center gap-2" onClick={addEmp} >
+        {/* Add Employee Button - Emerald */}
+        <button
+          className="w-full px-4 py-2.5 text-white font-medium rounded-xl
+    bg-emerald-600 hover:bg-emerald-700
+    focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2
+    transform transition-all duration-200 hover:scale-[1.02]
+    shadow-lg shadow-emerald-600/20
+    flex items-center justify-center gap-2 text-sm"
+          onClick={addEmp}
+        >
           <UserPlus className="w-4 h-4" />
           Add Employee
         </button>
+
+        {/* Update Employee Button - Teal */}
         <button
-          className={`w-full font-medium py-2.5 px-4 rounded-md text-sm transition-all duration-200 flex items-center justify-center gap-2 ${selected_e_id
-            ? "bg-teal-600 hover:bg-teal-700 text-white"
-            : "bg-gray-100 text-gray-400 cursor-not-allowed"
+          className={`w-full px-4 py-2.5 font-medium rounded-xl
+    transition-all duration-200 flex items-center justify-center gap-2 text-sm
+    ${selected_e_id
+              ? "bg-teal-600 text-white hover:bg-teal-700 \
+         focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 \
+         transform hover:scale-[1.02] shadow-lg shadow-teal-600/20"
+              : "bg-slate-100 text-slate-400 cursor-not-allowed"
             }`}
           disabled={!selected_e_id}
-          onClick={updateEmp}>
+          onClick={updateEmp}
+        >
           <UserCog className="w-4 h-4" />
           Update Employee
         </button>
+
+        {/* Remove Employee Button - Rose */}
         <button
-          className={`w-full font-medium py-2.5 px-4 rounded-md text-sm transition-all duration-200 flex items-center justify-center gap-2 ${selected_e_id
-            ? "bg-rose-600 hover:bg-rose-700 text-white"
-            : "bg-gray-100 text-gray-400 cursor-not-allowed"
+          className={`w-full px-4 py-2.5 font-medium rounded-xl
+    transition-all duration-200 flex items-center justify-center gap-2 text-sm
+    ${selected_e_id
+              ? "bg-rose-600 text-white hover:bg-rose-700 \
+         focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2 \
+         transform hover:scale-[1.02] shadow-lg shadow-rose-600/20"
+              : "bg-slate-100 text-slate-400 cursor-not-allowed"
             }`}
-          disabled={!selected_e_id} onClick={DeleteEmp}
+          disabled={!selected_e_id}
+          onClick={DeleteEmp}
         >
           <UserMinus className="w-4 h-4" />
           Remove Employee
         </button>
+
+        {/* View Employee Button - Sky */}
         <button
-          className={`w-full font-medium py-2.5 px-4 rounded-md text-sm transition-all duration-200 flex items-center justify-center gap-2 ${selected_e_id
-            ? "bg-sky-600 hover:bg-sky-700 text-white"
-            : "bg-gray-100 text-gray-400 cursor-not-allowed"
+          className={`w-full px-4 py-2.5 font-medium rounded-xl
+    transition-all duration-200 flex items-center justify-center gap-2 text-sm
+    ${selected_e_id
+              ? "bg-sky-600 text-white hover:bg-sky-700 \
+         focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 \
+         transform hover:scale-[1.02] shadow-lg shadow-sky-600/20"
+              : "bg-slate-100 text-slate-400 cursor-not-allowed"
             }`}
-          disabled={!selected_e_id} onClick={ViewEmp}
+          disabled={!selected_e_id}
+          onClick={ViewEmp}
         >
           <User className="w-4 h-4" />
           View Employee
+        </button>
+
+        {/* Get Payslip Button - Violet */}
+        <button
+          className={`w-full px-4 py-2.5 font-medium rounded-xl
+    transition-all duration-200 flex items-center justify-center gap-2 text-sm
+    ${selected_e_id
+              ? "bg-violet-600 text-white hover:bg-violet-700 \
+         focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 \
+         transform hover:scale-[1.02] shadow-lg shadow-violet-600/20"
+              : "bg-slate-100 text-slate-400 cursor-not-allowed"
+            }`}
+          disabled={!selected_e_id}
+          onClick={payslipEmp}
+        >
+          <FileText className="w-4 h-4" />
+          Get Payslip
         </button>
 
         <div className="mt-4 pt-4 border-t border-gray-200">
