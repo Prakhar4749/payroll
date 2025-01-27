@@ -22,13 +22,17 @@ const AddForm = () => {
     message: "", success: false
   });
   const [showAddInvalid, setshowAddInvalid] = useState({
-    message: "", success: false
+    message: "", success: false ,onClose: ()=>{ setshowAddInvalid({ message: "", success: false })}
   });
   const [showAddConfirm, setShowAddConfirm] = useState({
     message: "",
     success: false,
     onConfirm: () => { }
   });
+
+  const [file_to_sand, setFile_to_sand] = useState(null);
+
+  const[fileName,setFileName] = useState("Choose a file")
 
   const onAddConfirm = async () => {
     try {
@@ -37,19 +41,22 @@ const AddForm = () => {
       console.log(result)
 
       setshowAddSuccess({
-        message: `${result.message}`,
+        message: `${result}`,
         success: true
       });
     } catch (err) {
-      alert(err);
+      setshowAddInvalid({
+        message: "Something went wrong! Please try again after some time", success: true, onClose: ()=>{
+          setshowAddInvalid({ message: "", success: false })
+          navigate('/employee')
+        }
+      })
     }
 
 
   }
 
-  const [file_to_sand, setFile_to_sand] = useState(null);
-
-  const[fileName,setFileName] = useState("Choose a file")
+  
 
 
 
@@ -163,7 +170,7 @@ const AddForm = () => {
       }
     } catch (err) {
       setshowAddInvalid({
-        message: "Something went Wrong! Try again after some time.", success: true
+        message: "Something went wrong! Please try again after some time", success: true
       })
       navigate("/employee")
     }
@@ -192,7 +199,7 @@ const AddForm = () => {
           <div className="fixed inset-0 z-50">
             <InvalidDialogue
               message={showAddInvalid.message}
-              onClose={() => setshowAddInvalid({ message: "", success: false })}
+              onClose={() => {showAddInvalid.onClose()}}
             />
           </div>
         )}
@@ -253,10 +260,10 @@ const AddForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Mobile Number</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_details.e_mobile_number}
                     onChange={(e) => {// Allow only numerical input
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10); // Truncate to max 10 digits
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_details", "e_mobile_number", value);
                       }
@@ -264,7 +271,6 @@ const AddForm = () => {
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                     required
                     pattern="\d*"
-                    maxLength={10}
                   />
                 </div>
 
@@ -437,10 +443,10 @@ const AddForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Bank Account Number</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_bank_details.e_bank_acc_number || ""}
                     onChange={(e) => {// Allow only numerical input
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 20);
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_bank_details", "e_bank_acc_number", value);
                       }
@@ -481,10 +487,10 @@ const AddForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">CPF/GPF Number</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_bank_details.e_cpf_or_gpf_number || ""}
                     onChange={(e) => {// Allow only numerical input
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 20);
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_bank_details", "e_cpf_or_gpf_number", value);
                       }
@@ -513,10 +519,10 @@ const AddForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Basic Salary</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_earning_details.basic_salary || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_earning_details", "basic_salary", value);
                       }
@@ -529,10 +535,10 @@ const AddForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Special Pay</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_earning_details.special_pay || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_earning_details", "special_pay", value);
                       }
@@ -545,10 +551,10 @@ const AddForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Dearness Allowance</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_earning_details.dearness_allowance || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_earning_details", "dearness_allowance", value);
                       }
@@ -561,10 +567,10 @@ const AddForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">DA</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_earning_details.DA || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_earning_details", "DA", value);
                       }
@@ -577,10 +583,10 @@ const AddForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">ADA</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_earning_details.ADA || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_earning_details", "ADA", value);
                       }
@@ -593,10 +599,10 @@ const AddForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Interim Relief</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_earning_details.interim_relief || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_earning_details", "interim_relief", value);
                       }
@@ -609,10 +615,10 @@ const AddForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">HRA</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_earning_details.HRA || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_earning_details", "HRA", value);
                       }
@@ -625,10 +631,10 @@ const AddForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">CCA</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_earning_details.CCA || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_earning_details", "CCA", value);
                       }
@@ -641,10 +647,10 @@ const AddForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Conveyance</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_earning_details.conveyance || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_earning_details", "conveyance", value);
                       }
@@ -657,10 +663,10 @@ const AddForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Medical</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_earning_details.medical || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_earning_details", "medical", value);
                       }
@@ -673,10 +679,10 @@ const AddForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Washing Allowance</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_earning_details.washing_allowance || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_earning_details", "washing_allowance", value);
                       }
@@ -689,10 +695,10 @@ const AddForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">BDP</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_earning_details.BDP || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_earning_details", "BDP", value);
                       }
@@ -705,10 +711,10 @@ const AddForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Arrears</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_earning_details.arrears || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_earning_details", "arrears", value);
                       }
@@ -735,10 +741,10 @@ const AddForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Deduction CPF</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_deduction_details.deduction_CPF || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_deduction_details", "deduction_CPF", value);
                       }
@@ -751,10 +757,10 @@ const AddForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">GIS</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_deduction_details.GIS || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_deduction_details", "GIS", value);
                       }
@@ -767,10 +773,10 @@ const AddForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">House Rent</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_deduction_details.house_rent || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_deduction_details", "house_rent", value);
                       }
@@ -783,10 +789,10 @@ const AddForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Water Charges</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_deduction_details.water_charges || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_deduction_details", "water_charges", value);
                       }
@@ -799,10 +805,10 @@ const AddForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Electricity Charges</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_deduction_details.electricity_charges || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_deduction_details", "electricity_charges", value);
                       }
@@ -815,10 +821,10 @@ const AddForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Vehicle Deduction</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_deduction_details.vehicle_deduction || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_deduction_details", "vehicle_deduction", value);
                       }
@@ -831,10 +837,10 @@ const AddForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">HB Loan</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_deduction_details.HB_loan || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_deduction_details", "HB_loan", value);
                       }
@@ -847,10 +853,10 @@ const AddForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">GPF Loan</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_deduction_details.GPF_loan || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_deduction_details", "GPF_loan", value);
                       }
@@ -863,10 +869,10 @@ const AddForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Festival Loan</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_deduction_details.festival_loan || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_deduction_details", "festival_loan", value);
                       }
@@ -879,10 +885,10 @@ const AddForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Grain Charges</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_deduction_details.grain_charges || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_deduction_details", "grain_charges", value);
                       }
@@ -895,10 +901,10 @@ const AddForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Bank Advance</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_deduction_details.bank_advance || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_deduction_details", "bank_advance", value);
                       }
@@ -911,10 +917,10 @@ const AddForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Advance</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_deduction_details.advance || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_deduction_details", "advance", value);
                       }
@@ -927,10 +933,10 @@ const AddForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">RGPV Advance</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_deduction_details.RGPV_advance || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_deduction_details", "RGPV_advance", value);
                       }
@@ -943,10 +949,10 @@ const AddForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Income Tax</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_deduction_details.income_tax || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_deduction_details", "income_tax", value);
                       }
@@ -959,10 +965,10 @@ const AddForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Professional Tax</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_deduction_details.professional_tax || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_deduction_details", "professional_tax", value);
                       }

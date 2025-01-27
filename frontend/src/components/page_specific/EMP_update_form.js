@@ -8,6 +8,7 @@ import { BackButton } from "../common/backButton";
 import { ConfirmDialogue } from "../common/ConfirmDialogue";
 import { SuccessfullyDone } from "../common/SuccessfullyDone";
 import { InvalidDialogue } from "../common/InvalidDialogue";
+import imageCompression from "browser-image-compression"
 
 const UpdateForm = () => {
   const navigate = useNavigate();
@@ -29,13 +30,16 @@ const UpdateForm = () => {
     message: "", success: false
   });
   const [showUpdateInvalid, setshowUpdateInvalid] = useState({
-    message: "", success: false
+    message: "", success: false ,onClose: ()=>{ setshowUpdateInvalid({ message: "", success: false })}
   });
   const [showUpdateConfirm, setShowUpdateConfirm] = useState({
     message: "",
     success: false,
     onConfirm: () => { }
   });
+  const [file_to_sand, setFile_to_sand] = useState(null);
+
+  const[fileName,setFileName] = useState("Choose a file")
 
   const onUpdateConfirm = async () => {
     try {
@@ -48,7 +52,13 @@ const UpdateForm = () => {
         success: true
       });
     } catch (err) {
-      alert(err);
+      setshowUpdateInvalid({
+        message: "Something went wrong! Please try again after some time.", success: true , onClose: ()=>{
+          setshowUpdateInvalid({ message: "", success: true })
+          navigate("/employee")}
+      })
+      
+      
     }
 
 
@@ -66,19 +76,32 @@ const UpdateForm = () => {
     }));
   };
 
-  const handleFileUpload = (section, field, file) => {
-    if (file && (file.type === "image/jpeg" || file.type === "png")) {
-      if (file.size <= 4 * 1024) { // Check if file size is less than or equal to 5MB
-        const updatedData = { ...data };
-        updatedData[section][field] = file; // Save the file in the state
-        setData(updatedData);
-      } else {
-        alert("File size exceeds 5MB. Please upload a smaller file.");
-      }
-    } else {
-      alert("Invalid file format. Please upload a JPG or PNG file.");
-    }
-  };
+ const handleFileUpload = async (section, field, file) => {
+     console.log(file)
+     
+     if (file && (file.type === "image/jpeg" || file.type === "image/png")) {
+       const options = {
+         maxSizeMB: 0.04, // Maximum file size in MB
+         maxWidthOrHeight: 800, // Max width or height
+         useWebWorker: true,
+       };
+       
+       try {
+         const compressedImage = await imageCompression(file, options);
+         setFile_to_sand(compressedImage);
+         setFileName(file.name)
+         console.log("Compressed file:", compressedImage);
+         const updatedData = { ...data };
+         updatedData[section][field] = file_to_sand; // Save the file in the state
+        
+         setData(updatedData)
+       } catch (error) {
+         console.error("Error compressing the image:", error);
+       }
+     } else {
+       alert("Invalid file format. Please upload a JPG or PNG file.");
+     }
+   };
   // clear handler
   const handleClear = async (e) => {
     e.preventDefault();
@@ -144,9 +167,12 @@ const UpdateForm = () => {
 
     } catch (err) {
       setshowUpdateInvalid({
-        message: "Something went Wrong! Try again after some time.", success: true
+        message: "Something went wrong! Please try again after some time.", success: true , onClose: ()=>{
+          setshowUpdateInvalid({ message: "", success: false })
+          navigate("/employee")}
       })
-      navigate("/employee")
+      
+      
     }
   };
 
@@ -154,7 +180,7 @@ const UpdateForm = () => {
 
   if (!data) {
     setshowUpdateInvalid({
-      message: "Something went Wrong! Try again after some time.", success: true
+      message: "Something went Wrong! Please try again after some time.", success: true
     })
     navigate("/employee")
   }
@@ -180,7 +206,7 @@ const UpdateForm = () => {
           <div className="fixed inset-0 z-50">
             <InvalidDialogue
               message={showUpdateInvalid.message}
-              onClose={() => setshowUpdateInvalid({ message: "", success: false })}
+              onClose={()=>{showUpdateInvalid.onClose()}}
             />
           </div>
         )}
@@ -252,10 +278,10 @@ const UpdateForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Mobile Number</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_details.e_mobile_number}
                     onChange={(e) => {// Allow only numerical input
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10); // Truncate to max 10 digits
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_details", "e_mobile_number", value);
                       }
@@ -436,10 +462,10 @@ const UpdateForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Bank Account Number</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_bank_details.e_bank_acc_number || ""}
                     onChange={(e) => {// Allow only numerical input
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 20); // Truncate to max 10 digits
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_bank_details", "e_bank_acc_number", value);
                       }
@@ -480,10 +506,10 @@ const UpdateForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">CPF/GPF Number</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_bank_details.e_cpf_or_gpf_number || ""}
                     onChange={(e) => {// Allow only numerical input
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 20); // Truncate to max 10 digits
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_bank_details", "e_cpf_or_gpf_number", value);
                       }
@@ -512,10 +538,10 @@ const UpdateForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Basic Salary</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_earning_details.basic_salary || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10); // Truncate to max 10 digits
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_earning_details", "basic_salary", value);
                       }
@@ -528,10 +554,10 @@ const UpdateForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Special Pay</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_earning_details.special_pay || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10); // Truncate to max 10 digits
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_earning_details", "special_pay", value);
                       }
@@ -544,10 +570,10 @@ const UpdateForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Dearness Allowance</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_earning_details.dearness_allowance || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10); // Truncate to max 10 digits
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_earning_details", "dearness_allowance", value);
                       }
@@ -560,10 +586,10 @@ const UpdateForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">DA</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_earning_details.DA || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10); // Truncate to max 10 digits
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_earning_details", "DA", value);
                       }
@@ -576,10 +602,10 @@ const UpdateForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">ADA</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_earning_details.ADA || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10); // Truncate to max 10 digits
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_earning_details", "ADA", value);
                       }
@@ -592,10 +618,10 @@ const UpdateForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Interim Relief</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_earning_details.interim_relief || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10); // Truncate to max 10 digits
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_earning_details", "interim_relief", value);
                       }
@@ -608,10 +634,10 @@ const UpdateForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">HRA</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_earning_details.HRA || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10); // Truncate to max 10 digits
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_earning_details", "HRA", value);
                       }
@@ -624,10 +650,10 @@ const UpdateForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">CCA</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_earning_details.CCA || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10); // Truncate to max 10 digits
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_earning_details", "CCA", value);
                       }
@@ -640,10 +666,10 @@ const UpdateForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Conveyance</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_earning_details.conveyance || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10); // Truncate to max 10 digits
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_earning_details", "conveyance", value);
                       }
@@ -656,10 +682,10 @@ const UpdateForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Medical</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_earning_details.medical || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10); // Truncate to max 10 digits
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_earning_details", "medical", value);
                       }
@@ -672,10 +698,10 @@ const UpdateForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Washing Allowance</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_earning_details.washing_allowance || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10); // Truncate to max 10 digits
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_earning_details", "washing_allowance", value);
                       }
@@ -688,10 +714,10 @@ const UpdateForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">BDP</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_earning_details.BDP || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10); // Truncate to max 10 digits
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_earning_details", "BDP", value);
                       }
@@ -704,10 +730,10 @@ const UpdateForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Arrears</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_earning_details.arrears || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10); // Truncate to max 10 digits
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_earning_details", "arrears", value);
                       }
@@ -735,10 +761,10 @@ const UpdateForm = () => {
                  <div>
                   <label className="block text-sm font-medium text-gray-700">Deduction CPF</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_deduction_details.deduction_CPF || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10); // Truncate to max 10 digits
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_deduction_details", "deduction_CPF", value);
                       }
@@ -751,10 +777,10 @@ const UpdateForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">GIS</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_deduction_details.GIS || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10); // Truncate to max 10 digits
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_deduction_details", "GIS", value);
                       }
@@ -767,10 +793,10 @@ const UpdateForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">House Rent</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_deduction_details.house_rent || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10); // Truncate to max 10 digits
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_deduction_details", "house_rent", value);
                       }
@@ -783,10 +809,10 @@ const UpdateForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Water Charges</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_deduction_details.water_charges || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10); // Truncate to max 10 digits
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_deduction_details", "water_charges", value);
                       }
@@ -799,10 +825,10 @@ const UpdateForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Electricity Charges</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_deduction_details.electricity_charges || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10); // Truncate to max 10 digits
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_deduction_details", "electricity_charges", value);
                       }
@@ -815,10 +841,10 @@ const UpdateForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Vehicle Deduction</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_deduction_details.vehicle_deduction || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10); // Truncate to max 10 digits
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_deduction_details", "vehicle_deduction", value);
                       }
@@ -831,10 +857,10 @@ const UpdateForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">HB Loan</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_deduction_details.HB_loan || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10); // Truncate to max 10 digits
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_deduction_details", "HB_loan", value);
                       }
@@ -847,10 +873,10 @@ const UpdateForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">GPF Loan</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_deduction_details.GPF_loan || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10); // Truncate to max 10 digits
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_deduction_details", "GPF_loan", value);
                       }
@@ -863,10 +889,10 @@ const UpdateForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Festival Loan</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_deduction_details.festival_loan || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10); // Truncate to max 10 digits
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_deduction_details", "festival_loan", value);
                       }
@@ -879,10 +905,10 @@ const UpdateForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Grain Charges</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_deduction_details.grain_charges || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10); // Truncate to max 10 digits
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_deduction_details", "grain_charges", value);
                       }
@@ -895,10 +921,10 @@ const UpdateForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Bank Advance</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_deduction_details.bank_advance || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10); // Truncate to max 10 digits
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_deduction_details", "bank_advance", value);
                       }
@@ -911,10 +937,10 @@ const UpdateForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Advance</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_deduction_details.advance || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10); // Truncate to max 10 digits
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_deduction_details", "advance", value);
                       }
@@ -927,10 +953,10 @@ const UpdateForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">RGPV Advance</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_deduction_details.RGPV_advance || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10); // Truncate to max 10 digits
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_deduction_details", "RGPV_advance", value);
                       }
@@ -943,10 +969,10 @@ const UpdateForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Income Tax</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_deduction_details.income_tax || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10); // Truncate to max 10 digits
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_deduction_details", "income_tax", value);
                       }
@@ -959,10 +985,10 @@ const UpdateForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Professional Tax</label>
                   <input
-                    type="tel"
+                    type="number"
                     value={data.emp_deduction_details.professional_tax || ""}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.slice(0, 10); // Truncate to max 10 digits
                       if (/^\d*$/.test(value)) {
                         handleInputChange("emp_deduction_details", "professional_tax", value);
                       }
