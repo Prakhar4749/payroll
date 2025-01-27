@@ -2,8 +2,9 @@
 import { useState } from 'react';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import Navbar from '../layout/Navbar';
-import { User, Building, DollarSign, BanknoteIcon as BanknotesIcon,LaptopMinimalCheck, MinusCircle, Save, UserRoundPen, Eraser } from 'lucide-react';
+import { User, Building, DollarSign, BanknoteIcon as BanknotesIcon, LaptopMinimalCheck, MinusCircle, Save, UserRoundPen, Eraser } from 'lucide-react';
 import { BackButton } from "../common/backButton";
+import default_profile from "../../assets/images/default_profile.png"
 
 const ViewEmployee = () => {
     const location = useLocation();
@@ -15,14 +16,14 @@ const ViewEmployee = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         Navigate(-1)
-        
-      };
+
+    };
 
     return (
 
         <div className="min-h-screen flex flex-col bg-gray-50 ">
             <Navbar />
-            <div className="w-full lg:max-w-[1215px] mx-auto mt-20 px-4 sm:px-6 lg:px-8 lg:max-w-7xl mx-auto mt-20  sm:px-6 lg:px-8">
+            <div className="w-full lg:max-w-[1215px] mx-auto mt-20 px-4 sm:px-6 lg:px-8">
                 <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
                     {/* Form Header */}
                     <div className="px-6 py-8 bg-gradient-to-r from-emerald-600 via-teal-600 to-sky-600"
@@ -40,6 +41,24 @@ const ViewEmployee = () => {
 
                     <form className="px-6 py-8 space-y-8" onSubmit={handleSubmit}>
                         {/* Employee Details Section */}
+
+                        {/* Employee Photo Section */}
+                        <div className="flex flex-col items-center sm:flex-row sm:items-start space-y-4 sm:space-y-0 sm:space-x-6 bg-white p-6  ">
+                            <div className="relative group">
+                                <div className="relative">
+                                    <img
+                                        src={data.emp_details.e_photo || default_profile}
+                                        alt={`Photo of ${data.emp_details.e_name || 'Employee'}`}
+                                        className="h-32 w-32 object-cover rounded-full border-4 border-emerald-100 shadow-md transition-transform duration-300 group-hover:scale-105 text-center my-auto"
+                                    />
+                                    <div className="absolute inset-0 rounded-full bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300" />
+                                </div>
+                                <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100 shadow-sm">
+                                    <p className="text-xs text-emerald-600 font-medium">Profile Photo</p>
+                                </div>
+                            </div>
+                            
+                        </div>
                         <div className="space-y-6">
                             <div className="flex items-center">
                                 <User className="h-5 w-5 text-emerald-600 mr-2" />
@@ -594,7 +613,7 @@ const ViewEmployee = () => {
                             </div>
                         </div>
                         <div className="flex flex-col md:flex-row gap-4 mt-6 py-6 items-center justify-around">
-                            
+
                             {/* done Button */}
                             <button
                                 type="submit"
