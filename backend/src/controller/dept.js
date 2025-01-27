@@ -73,10 +73,14 @@ async function add_new_dept(req, res) {
         await pool.query(sql,[d_id, d_name]);
         
 
-        res.json("the given department has been added");
+        return res.json({ success: true ,
+          message:"the given department has been added"
+        });
       } catch (err) {
         console.error("Database query error:", err);
-        res.status(500).json({ error: "Failed to fetch department data." });
+        return res.json({ success: false ,
+          message:"the given department has been added"
+        });
       }
 }
 
