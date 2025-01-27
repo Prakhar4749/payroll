@@ -1,7 +1,5 @@
 import { pool } from '../config/db.js';
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import dotenv from 'dotenv';
+
 
 
 const SECRET_KEY = process.env.DB_HOST;
@@ -119,7 +117,11 @@ async function update_dept(req, res) {
   const {d_id , new_d_id, new_d_name } = req.body
 
   if (!new_d_id || !new_d_name) {
-    return res.status(400).json({ error: "please enter valid new departmentid and  name " });
+    return res.status(400).json({
+      success: false,
+      message: "please enter valid new department ID and name",
+      result: error
+  });
   }
     try {
         const sql = `UPDATE dept_details SET d_id = ?, d_name = ? WHERE d_id = ?`;

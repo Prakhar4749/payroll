@@ -6,7 +6,11 @@ import deptroute from "./routes/dept.js"
 import payslipRoute from "./routes/payslip.js"
 import cors from"cors";
 
-const PORT  = 5000
+
+
+
+
+const PORT  = process.env.BACKEND_PORT
 const app = express();
 
 app.use(express.urlencoded({ extended: true }));

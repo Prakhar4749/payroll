@@ -12,7 +12,7 @@ const pool=mysql2.createPool({
     queueLimit:0,
     waitForConnections:true,
     multipleStatements: true,   // Enable multiple statements
-    port:3306
+    port:process.env.DB_PORT
 });
 
 const checkConnection=async() => {
