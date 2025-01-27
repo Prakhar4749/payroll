@@ -1,16 +1,27 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Building, Building2, FilterX, Filter } from "lucide-react";
+import { Building, Building2 , FilterX, Filter , PlusCircle, Edit, Trash2 } from "lucide-react";
+import { removeFromDept } from "../../controller/department.controller";
+import { ConfirmDialogue } from "../common/ConfirmDialogue";
 
-import {removeFromDept} from "../../controller/department.controller"
-
-
-const DEPT_aside = ({ deptData, deptDatacopy, setdeptDatacopy, d_id ,setdeptData ,setd_id }) => {
-
-  const navigate = useNavigate();
+const DEPT_aside = ({
+  deptData,
+  deptDatacopy,
+  setdeptDatacopy,
+  d_id,
+  setdeptData,
+  setd_id,
+}) => {
   const [dId, setdID] = useState("");
   const [dName, setdName] = useState("");
   const [dNamec, setdNamec] = useState("");
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState({
+    message: "",
+    success: false,
+    onConfirm: () => {},
+  });
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (d_id) {
@@ -21,99 +32,111 @@ const DEPT_aside = ({ deptData, deptDatacopy, setdeptDatacopy, d_id ,setdeptData
     }
   }, [d_id, deptDatacopy]);
 
-async  function remove() {
-    if (d_id) {
-      const confirmDelete = window.confirm(
-        `Are you sure you want to remove department ID: ${d_id}?`
+  const onDeleteConfirm = async (selected_d_id) => {
+    try {
+      await removeFromDept(selected_d_id);
+      setd_id("");
+      setdeptData(deptDatacopy.filter((dept) => dept.d_id !== selected_d_id));
+      setdeptDatacopy(
+        deptDatacopy.filter((dept) => dept.d_id !== selected_d_id)
       );
-      if (confirmDelete) {
-        const remove= await removeFromDept(d_id)
-        alert(`${d_id} is successfully deleted ...`)
-        setd_id("")
-        const updatedDeptData = deptDatacopy.filter((dept) => dept.d_id !== d_id);
-        setdeptData(updatedDeptData);
-         // Update state
-        const updatedDeptDatacopy = deptDatacopy.filter((dept) => dept.d_id !== d_id);
-        setdeptDatacopy(updatedDeptDatacopy); // Update state
-        
-        // Clear selected department ID after removal
-        setd_id("");
-
-
-      }
+    } catch (error) {
+      console.error("Error removing department:", error.message);
     }
-  }
+  };
 
-  function add_dept() {
+  const removeDept = () => {
+    if (!d_id) {
+      console.error("No department ID selected.");
+      return;
+    }
+
+    setShowDeleteConfirm({
+      message: `Are you sure you want to remove department ID: ${d_id}?`,
+      onConfirm: onDeleteConfirm,
+    });
+  };
+
+  const addDept = () => {
     navigate("/department/add_form");
-  }
+  };
 
-  function update() {
-    if (d_id) {
-      const d = { d_id: d_id, d_name: dName };
-      navigate("/department/update_form", { state: d });
-    }
+  const updateDept = () => {
+    if (!d_id) return;
+    navigate("/department/update_form", { state: { d_id, d_name: dName } });
+  };
+
+  function applyFilter() {
+    const filteredData = deptData.filter((dept) => {
+      const matchesId = dId ? dept.d_id.toString().includes(dId) : true;
+      const matchesName = dNamec
+        ? dept.d_name.toLowerCase().includes(dNamec.toLowerCase())
+        : true;
+      return matchesId && matchesName;
+    });
+    setdeptDatacopy(filteredData);
   }
 
   function clearFilter() {
-    setdID(""); // Clear Department ID input
-    setdNamec(""); // Clear Department Name input
-    setdeptDatacopy(deptData); // Reset the department data to the original list
+    setdID("");
+    setdNamec("");
+    setdeptDatacopy(deptData);
   }
-
-  function applyFilter() {
-    // Filter based on Department ID and/or Department Name
-    const filteredData = deptData.filter((dept) => {
-      // Filter logic for Department ID (dId)
-      const matchesId = dId ? dept.d_id.toString().includes(dId) : true; // Checks if the ID contains the input value
-      
-      // Filter logic for Department Name (dNamec)
-      const matchesName = dNamec
-        ? dept.d_name.toLowerCase().includes(dNamec.toLowerCase()) // Case-insensitive matching for the department name
-        : true;
-        setd_id("")
-      // Return departments that match both criteria (if provided)
-      return matchesId && matchesName;
-    });
-  
-    setdeptDatacopy(filteredData);  // Update the department data with the filtered results
-  }
-  
 
   return (
     <aside className="w-full bg-white shadow-lg rounded-lg overflow-hidden">
+      {showDeleteConfirm.message && (
+        <div className="fixed inset-0 z-50">
+          <ConfirmDialogue
+            message={showDeleteConfirm.message}
+            onConfirm={() => {
+              showDeleteConfirm.onConfirm(d_id);
+              setShowDeleteConfirm({ message: "", onConfirm: null });
+            }}
+            onClose={() =>
+              setShowDeleteConfirm({ message: "", onConfirm: null })
+            }
+          />
+        </div>
+      )}
       <div className="p-6 flex flex-col gap-4">
-        <button
-          className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 px-4 rounded-md text-sm transition-all duration-200 flex items-center justify-center gap-2"
-          onClick={add_dept}
-        >
-          <Building className="w-4 h-4" />
-          Add Department
-        </button>
-        <button
-          className={`w-full font-medium py-2.5 px-4 rounded-md text-sm transition-all duration-200 flex items-center justify-center gap-2 ${
-            d_id
-              ? "bg-teal-600 hover:bg-teal-700 text-white"
-              : "bg-gray-100 text-gray-400 cursor-not-allowed"
-          }`}
-          onClick={update}
-          disabled={!d_id}
-        >
-          <Building className="w-4 h-4" />
-          Update Department
-        </button>
-        <button
-          className={`w-full font-medium py-2.5 px-4 rounded-md text-sm transition-all duration-200 flex items-center justify-center gap-2 ${
-            d_id
-              ? "bg-rose-600 hover:bg-rose-700 text-white"
-              : "bg-gray-100 text-gray-400 cursor-not-allowed"
-          }`}
-          onClick={remove}
-          disabled={!d_id}
-        >
-          <Building2 className="w-4 h-4" />
-          Remove Department
-        </button>
+
+
+      <button
+  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 px-4 rounded-md text-sm transition-all duration-200 flex items-center justify-center gap-2"
+  onClick={addDept}
+>
+  <PlusCircle className="w-4 h-4" />
+  Add Department
+</button>
+
+<button
+  className={`w-full font-medium py-2.5 px-4 rounded-md text-sm transition-all duration-200 flex items-center justify-center gap-2 ${
+    d_id
+      ? "bg-teal-600 hover:bg-teal-700 text-white"
+      : "bg-gray-100 text-gray-400 cursor-not-allowed"
+  }`}
+  disabled={!d_id}
+  onClick={updateDept}
+>
+  <Edit className="w-4 h-4" />
+  Update Department
+</button>
+
+<button
+  className={`w-full font-medium py-2.5 px-4 rounded-md text-sm transition-all duration-200 flex items-center justify-center gap-2 ${
+    d_id
+      ? "bg-rose-600 hover:bg-rose-700 text-white"
+      : "bg-gray-100 text-gray-400 cursor-not-allowed"
+  }`}
+  disabled={!d_id}
+  onClick={removeDept}
+>
+  <Trash2 className="w-4 h-4" />
+  Remove Department
+</button>
+
+
 
         <div className="mt-4 pt-4 border-t border-gray-200">
           <div className="flex items-center justify-between mb-4">
@@ -121,44 +144,43 @@ async  function remove() {
               Filter Options
             </h3>
           </div>
-
           <div className="space-y-4">
-            <div>
+            <div className="flex flex-col">
               <label
+                htmlFor="deptId"
                 className="block text-sm font-medium text-gray-700 mb-1"
-                htmlFor="d_id"
               >
                 Department ID
               </label>
               <input
                 type="text"
-                id="d_id"
+                id="deptId"
                 value={dId}
                 onChange={(e) => setdID(e.target.value)}
-                className="w-full border border-gray-300 rounded-md py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-colors duration-200"
+                className="w-full border border-gray-300 rounded-md py-2 px-3 text-sm"
                 placeholder="Search by ID..."
               />
             </div>
-            <div>
+
+            <div className="flex flex-col">
               <label
+                htmlFor="deptName"
                 className="block text-sm font-medium text-gray-700 mb-1"
-                htmlFor="d_name"
               >
                 Department Name
               </label>
               <input
                 type="text"
-                id="d_name"
+                id="deptName"
                 value={dNamec}
-                onChange={(e)=>setdNamec(e.target.value)}
-                
-                className="w-full border border-gray-300 rounded-md py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-colors duration-200"
-                placeholder="Department name..."
+                onChange={(e) => setdNamec(e.target.value)}
+                className="w-full border border-gray-300 rounded-md py-2 px-3 text-sm"
+                placeholder="Search by name..."
               />
             </div>
           </div>
 
-          <div className="flex gap-3 mt-6">
+          <div className="flex gap-3 mt-6 w-full">
             <button
               onClick={clearFilter}
               className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-600 font-medium py-2 px-4 rounded-md text-sm transition-all duration-200 flex items-center justify-center gap-2"
@@ -166,7 +188,10 @@ async  function remove() {
               <FilterX className="w-4 h-4" />
               Clear
             </button>
-            <button className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 px-4 rounded-md text-sm transition-all duration-200 flex items-center justify-center gap-2" onClick={applyFilter}>
+            <button
+              onClick={applyFilter}
+              className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 px-4 rounded-md text-sm transition-all duration-200 flex items-center justify-center gap-2"
+            >
               <Filter className="w-4 h-4" />
               Apply
             </button>

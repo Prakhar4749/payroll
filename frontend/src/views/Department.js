@@ -31,12 +31,19 @@ export default function Department() {
     <div>
       <Navbar />
 
-      <div className="flex w-full pt-16">
-        <div className="w-1/4  bg-white shadow-lg min-h-[calc(100vh-4rem)]">
-          <DEPT_aside deptData={deptData} deptDatacopy={deptDatacopy} d_id={d_id} setdeptDatacopy={setdeptDatacopy} setdeptData={setdeptData} setd_id={setd_id} />
+      <div className="flex flex-col lg:flex-row w-full pt-16">
+        <div className="w-full lg:w-1/4 bg-white shadow-lg min-h-[calc(100vh-4rem)]">
+          <DEPT_aside
+            deptData={deptData}
+            deptDatacopy={deptDatacopy}
+            d_id={d_id}
+            setdeptDatacopy={setdeptDatacopy}
+            setdeptData={setdeptData}
+            setd_id={setd_id}
+          />
         </div>
 
-        <main className="w-3/4 p-6 bg-gray-50">
+        <main className="w-full lg:w-3/4 p-6 bg-gray-50">
           <div className="bg-white rounded-lg shadow-lg overflow-hidden">
             <Dept_Table data={deptDatacopy} onRowSelect={onRowSelect} />
           </div>

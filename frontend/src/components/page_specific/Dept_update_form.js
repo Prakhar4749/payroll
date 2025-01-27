@@ -1,124 +1,138 @@
 import React, { useState } from "react";
-import { useNavigate , useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import Navbar from "../layout/Navbar";
 import { checkDepartment, updateDepartment } from "../../controller/department.controller";
+import { SuccessfullyDone } from "../common/SuccessfullyDone";
+import { BackButton } from "../common/backButton";
+import { InvalidDialogue } from "../common/InvalidDialogue";
+import { ConfirmDialogue } from "../common/ConfirmDialogue";
+import { Eraser, Save } from 'lucide-react';
 
 const DeptUpdateForm = () => {
-  // State for the form fields
   const location = useLocation();
   const data = location.state;
-  console.log(data)
   const [dId, setDId] = useState(data.d_id.toUpperCase());
   const [dName, setDName] = useState(data.d_name);
-
   const navigate = useNavigate();
 
-  // Reset form fields
+  const [showSuccess, setShowSuccess] = useState({ message: "", success: false });
+  const [showInvalid, setShowInvalid] = useState({ message: "", success: false });
+  const [showConfirm, setShowConfirm] = useState({ message: "", success: false, onConfirm: () => {} });
+
   const clearForm = () => {
     setDId("");
     setDName("");
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (dId[0] !== 'D') {
-      alert("Department ID should start with letter 'D'.");
+    if (dId[0] !== "D") {
+      setShowInvalid({ message: "Department ID should start with 'D'.", success: true });
       return;
     }
 
     if (!/^\d{3}$/.test(dId.slice(-3))) {
-      alert("Department ID's Last three characters should be numeric.");
+      setShowInvalid({ message: "Department ID's last three characters should be numeric.", success: true });
       return;
     }
 
     const result = await checkDepartment(dId, dName);
 
-    if (result.d_name === false) {
-      const set = {
-        d_id: data.d_id.toUpperCase(),
-        new_d_id: dId,
-        new_d_name: dName,
-      };
-
-      const set_update = await updateDepartment(set);
-      navigate("/department");
-    }
-    
-     else {
-      // Handle case where department exists
-      setDId(data.d_id.toUpperCase())
-      setDName(data.d_name)
-      console.log("Department already exists");
-      console.log(result)
-      alert("Department Name already exists");
+    if (result.d_id && result.d_name && data.d_id.toUpperCase()!=dId && data.d_id.toUpperCase()!=dId) {
+      setShowInvalid({ message: "Both Department ID and Department Name already exist.", success: true });
+      return;
     }
 
+    if (result.d_id && data.d_id.toUpperCase()!=dId) {
+      setShowInvalid({ message: "Department ID already exists.", success: true });
+      return;
+    }
 
+    if (result.d_name && data.d_name!=dName ) {
+      setShowInvalid({ message: "Department Name already exists.", success: true });
+      return;
+    }
 
+    setShowConfirm({
+      message: "Are you sure you want to update the Department?",
+      success: true,
+      onConfirm: async () => {
+        setShowConfirm({ message: "", success: false });
+        const updateData = {
+          d_id: data.d_id.toUpperCase(),
+          new_d_id: dId,
+          new_d_name: dName,
+        };
+        await updateDepartment(updateData);
+        setShowSuccess({ message: "Department updated successfully!", success: true });
+      },
+    });
   };
 
   return (
-    <>
+    <div className="min-h-screen flex flex-col bg-gray-50">
       <Navbar />
-      <div className="container mx-auto p-4">
-        <h1 className="text-xl font-semibold mb-4">Update Department</h1>
+      <div className="max-w-4xl mx-auto mt-20">
+        {showSuccess.success && (
+          <SuccessfullyDone message={showSuccess.message} onClose={() => navigate("/department")} />
+        )}
+        {showInvalid.success && (
+          <InvalidDialogue message={showInvalid.message} onClose={() => setShowInvalid({ message: "", success: false })} />
+        )}
+        {showConfirm.success && (
+          <ConfirmDialogue
+            message={showConfirm.message}
+            onConfirm={showConfirm.onConfirm}
+            onCancel={() => setShowConfirm({ message: "", success: false, onConfirm: () => {} })}
+          />
+        )}
 
-        <form onSubmit={handleSubmit}>
-          {/* Department ID Field */}
-          <div className="mb-4">
-            <label htmlFor="d_id" className="block text-sm font-medium">
-              Department ID
-            </label>
-            <input
-              maxLength="4"
-              type="text"
-              id="d_id"
-              value={dId}
-              onChange={(e) => setDId(e.target.value.toUpperCase())}
-              className="mt-2 block w-full px-3 py-2 border border-gray-300 rounded-md"
-              required
-            />
+        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+          <div className="px-6 py-8 bg-gradient-to-r from-emerald-600 via-teal-600 to-sky-600">
+            <BackButton />
+            <h1 className="text-2xl mt-2 font-bold text-white">Update Department</h1>
+            <p className="mt-2 text-white/90">Modify the department details below</p>
           </div>
 
-          {/* Department Name Field */}
-          <div className="mb-4">
-            <label htmlFor="d_name" className="block text-sm font-medium">
-              Department Name
-            </label>
-            <input
-              type="text"
-              id="d_name"
-              value={dName}
-              onChange={(e) => setDName(e.target.value)}
-              className="mt-2 block w-full px-3 py-2 border border-gray-300 rounded-md"
-              required
-            />
-          </div>
+          <form onSubmit={handleSubmit} className="px-6 py-8 space-y-8">
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Department ID</label>
+                <input
+                  type="text"
+                  maxLength="4"
+                  value={dId}
+                  onChange={(e) => setDId(e.target.value.toUpperCase())}
+                  className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500"
+                  required
+                />
+              </div>
 
-          {/* Action Buttons */}
-          <div className="flex space-x-4">
-            {/* Clear Button */}
-            <button
-              type="button"
-              onClick={clearForm}
-              className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md"
-            >
-              Clear
-            </button>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Department Name</label>
+                <input
+                  type="text"
+                  value={dName}
+                  onChange={(e) => setDName(e.target.value)}
+                  className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500"
+                  required
+                />
+              </div>
+            </div>
 
-            {/* Submit Button */}
-            <button
-              type="submit"
-              className="px-4 py-2 bg-blue-600 text-white rounded-md"
-            >
-              Submit
-            </button>
-          </div>
-        </form>
+            <div className="flex flex-col md:flex-row gap-4 mt-6 items-center justify-around">
+              <button type="button" onClick={clearForm} className="w-full md:w-auto px-7 py-3 bg-gray-100 rounded-lg shadow-lg text-gray-600 flex items-center gap-3">
+                <Eraser className="h-6 w-6" /> Clear
+              </button>
+              <button type="submit" className="w-full md:w-auto px-8 py-3 bg-gradient-to-r from-emerald-500 via-teal-500 to-sky-500 text-white rounded-lg shadow-lg flex items-center gap-3">
+                <Save className="h-6 w-6" /> Submit
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
-    </>
+    </div>
   );
 };
 
