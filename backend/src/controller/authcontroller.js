@@ -197,7 +197,7 @@ async function login_user(req, res) {
 
     try {
 
-        const [results] = await pool.query(sql, [user_name]);
+        const [results,fields] = await pool.query(sql, [user_name]);
 
         if (results.length === 0) {
             return res.status(404).json({
