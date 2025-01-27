@@ -1,12 +1,14 @@
 
 import { checkConnection, pool } from "../config/db.js";
+import fs from "fs";
 
 const formatDateForMySQL = (date) => {
   const d = new Date(date);
   return d.toISOString().split("T")[0]; // Extract only the date part
 };
-
 //chk for the update 
+
+
 async function chk_for_update(req, res) {
   let result = {
     e_mobile_number: false,
@@ -131,7 +133,7 @@ async function check_for_data(req, res) {
 
 // to export all emp_details
 async function get_all_basic__emp_details(req, res) {
-  const sql = "SELECT * FROM emp_details";
+  const sql = "SELECT e_id,e_name,e_mobile_number,e_email,e_address,e_designation  FROM emp_details";
   try {
     const [results, fields] = await pool.query(sql);
     // Clean the fields to include only necessary information
@@ -213,6 +215,25 @@ async function delete_e_id(req, res) {
 
 //  add new emp
 async function add_new_emp(req, res) {
+
+  //img processing
+  let imgPath = req.file ? req.file.path : "NULL";  // Use the path of the uploaded file
+  let imgstr64="NULL"
+  if (imgPath !== "NULL") {
+    try {
+      // Read the file and convert it to base64
+      const imgBuffer = fs.readFileSync(imgPath);
+      const imgBase64 = imgBuffer.toString('base64');
+      imgstr64=imgBase64
+      
+    } catch (err) {
+      console.error("Error reading image file:", err);
+      return res.status(500).send("Error reading image file");
+    }
+  }
+
+
+
   // to generat new e_id
   let new_e_id;
   function incrementString(input) {
@@ -224,7 +245,7 @@ async function add_new_emp(req, res) {
     return prefix + incrementedNumber; // Combine the prefix and incremented number
   }
 
-  const sql1 = "SELECT * FROM emp_details";
+  const sql1 = "SELECT e_id FROM emp_details ORDER BY e_id ASC";
   try {
     const [results, fields] = await pool.query(sql1);
     new_e_id = incrementString(results[results.length - 1]["e_id"]);
@@ -250,9 +271,7 @@ const formattedDOB = formatDateForMySQL(data.emp_details.e_DOB);
       '${new_e_id}', '${data.emp_details.e_name}', ${
     data.emp_details.e_mobile_number
   }, '${data.emp_details.e_gender}', '${data.emp_details.e_email}', 
-      '${data.emp_details.e_address}', ${
-    data.emp_details.e_photo === null ? "NULL" : `'${data.emp_details.e_photo}'`
-  }, '${data.emp_details.d_id}', 
+      '${data.emp_details.e_address}', '${imgstr64}', '${data.emp_details.d_id}', 
       '${data.emp_details.e_designation}', '${data.emp_details.e_group}', '${
     formattedJoiningDate
   }', '${formattedDOB}'
@@ -356,6 +375,26 @@ const formattedDOB = formatDateForMySQL(data.emp_details.e_DOB);
 
 //update the emp
 async function update_emp(req, res) {
+
+  //img processing
+  let imgPath = req.file ? req.file.path : "NULL";  // Use the path of the uploaded file
+  let imgstr64="NULL"
+  if (imgPath !== "NULL") {
+    try {
+      // Read the file and convert it to base64
+      const imgBuffer = fs.readFileSync(imgPath);
+      const imgBase64 = imgBuffer.toString('base64');
+      imgstr64=imgBase64
+      
+    } catch (err) {
+      console.error("Error reading image file:", err);
+      return res.status(500).send("Error reading image file");
+    }
+  }
+
+
+
+
     const data =req.body;
     const formattedJoiningDate = formatDateForMySQL(data.emp_details.e_date_of_joining);
 const formattedDOB = formatDateForMySQL(data.emp_details.e_DOB);
@@ -376,7 +415,7 @@ const formattedDOB = formatDateForMySQL(data.emp_details.e_DOB);
             data.emp_details.e_gender,
             data.emp_details.e_email,
             data.emp_details.e_address,
-            data.emp_details.e_photo,
+            imgstr64,
             data.emp_details.d_id,
             data.emp_details.e_designation,
             data.emp_details.e_group,
