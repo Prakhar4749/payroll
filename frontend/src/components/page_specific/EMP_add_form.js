@@ -8,6 +8,7 @@ import { ConfirmDialogue } from "../common/ConfirmDialogue";
 import { SuccessfullyDone } from "../common/SuccessfullyDone";
 import { InvalidDialogue } from "../common/InvalidDialogue";
 import { useNavigate } from "react-router-dom";
+import imageCompression from "browser-image-compression"
 
 
 const AddForm = () => {
@@ -67,19 +68,27 @@ const AddForm = () => {
   };
 
 
-  const handleFileUpload = (section, field, file) => {
-    setFile_to_sand(file)
-    setFileName(file.name)
-    console.log(file_to_sand)
-    if (file && (file.type === "image/jpeg" || file.type === "png")) {
-      if (file.size <= 4 * 1024 ) { // Check if file size is less than or equal to 5MB
+  const handleFileUpload = async (section, field, file) => {
+    console.log(file)
+    
+    if (file && (file.type === "image/jpeg" || file.type === "image/png")) {
+      const options = {
+        maxSizeMB: 0.04, // Maximum file size in MB
+        maxWidthOrHeight: 800, // Max width or height
+        useWebWorker: true,
+      };
+      
+      try {
+        const compressedImage = await imageCompression(file, options);
+        setFile_to_sand(compressedImage);
+        setFileName(file.name)
+        console.log("Compressed file:", compressedImage);
         const updatedData = { ...data };
-        updatedData[section][field] = file; // Save the file in the state
-        setFile_to_sand(updatedData);
+        updatedData[section][field] = file_to_sand; // Save the file in the state
+       
         setData(updatedData)
-
-      } else {
-        alert("File size exceeds 5MB. Please upload a smaller file.");
+      } catch (error) {
+        console.error("Error compressing the image:", error);
       }
     } else {
       alert("Invalid file format. Please upload a JPG or PNG file.");
