@@ -6,7 +6,8 @@ async function fetchAllDeptData() {
   try {
     const response = await axios.get(`${ip}/dept`);
     // console.log(response.data);
-    return response.data; // Update state with API response
+    // console.log(response.data)
+    return response.data  ; // Update state with API response
   } catch (error) {
     console.error("Axios request failed:", error.message);
   }

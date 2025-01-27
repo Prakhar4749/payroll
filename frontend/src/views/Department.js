@@ -12,7 +12,9 @@ export default function Department() {
   useEffect(() => {
     async function getDeptData() {
       try {
-        const data = await fetchAllDeptData();
+        const rawdata = await fetchAllDeptData();
+        // console.log("raw data "+rawdata)
+        const data = rawdata.result
         setdeptData(data);
         setdeptDatacopy(data);
       } catch (error) {
