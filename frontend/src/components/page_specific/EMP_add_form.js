@@ -36,7 +36,7 @@ const AddForm = () => {
 
   const onAddConfirm = async () => {
     try {
-
+      console.log(data);
       const result = await add_emp_details(data);
       console.log(result)
 
@@ -90,10 +90,10 @@ const AddForm = () => {
         setFile_to_sand(compressedImage);
         setFileName(file.name)
         console.log("Compressed file:", compressedImage);
-        const updatedData = { ...data };
-        updatedData[section][field] = file_to_sand; // Save the file in the state
-       
-        setData(updatedData)
+        setData((prevData) => ({
+          ...prevData,
+          e_photo: compressedImage,}))
+      
       } catch (error) {
         console.error("Error compressing the image:", error);
       }
@@ -116,7 +116,6 @@ const AddForm = () => {
 
     setData((prevData) => ({
       ...prevData,
-      e_photo: file_to_sand,
       emp_bank_details: {
         ...prevData.emp_bank_details,
         e_name: prevData.emp_details.e_name,
@@ -130,8 +129,8 @@ const AddForm = () => {
         e_name: prevData.emp_details.e_name,
       },
     }));
-    console.log(data.emp_details.e_photo);
-    console.log(data)
+    
+    console.log("final",data)
     try {
 
       const check_data = await check_for_add_emp(data);

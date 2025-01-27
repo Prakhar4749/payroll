@@ -26,7 +26,9 @@ const add_emp_details = async (data) => {
         "Content-Type": "multipart/form-data",
       },
     });
-    return response.message;
+    console.log(response.data)
+    return response.data;
+
   } catch (error) {
     console.error("Axios request failed:", error);
   }

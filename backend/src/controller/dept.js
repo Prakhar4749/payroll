@@ -1,8 +1,10 @@
 import { pool } from '../config/db.js';
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import dotenv from 'dotenv';
 
-const SECRET_KEY = "admin";
+
+const SECRET_KEY = process.env.DB_HOST;
 
 async function get_all_dept_details(req, res) {
     
@@ -16,10 +18,18 @@ async function get_all_dept_details(req, res) {
           type: field.type,
         }));
 
-        return res.json(results);
+        return res.json({
+          success: true ,
+          message:"data has been fetched successfully",
+          result: results
+        });
       } catch (err) {
         console.error("Database query error:", err);
-        res.status(500).json({ error: "Failed to fetch department data." });
+        return res.json({
+          success: false ,
+          message:"error in fetching details",
+          result: err
+        });
       }
 }
 
@@ -36,10 +46,18 @@ async function get_d_id_details(req, res) {
           type: field.type,
         }));
 
-        return res.json(results);
+        return res.json({
+          success: true ,
+          message:"data has been fetched successfully",
+          result: results
+        });
       } catch (err) {
         console.error("Database query error:", err);
-        res.status(500).json({ error: "Failed to fetch department data." });
+        return res.json({
+          success: false ,
+          message:"error in fetching details",
+          result: err
+        });
       }
 }
 
@@ -52,10 +70,18 @@ async function delete_d_id(req, res) {
         const sql = `DELETE FROM dept_details WHERE d_id =?`;
         await pool.query(sql,[d_id]);
 
-        res.json("the given department has been deleted");  
+        return res.json({
+          success: true ,
+          message:"the department has been deleted",
+          result: d_id
+        });
       } catch (err) {
         console.error("Database query error:", err);
-        res.status(500).json({ error: "Failed to fetch department data." });
+        return res.json({
+          success: false ,
+          message:"error in deleting department",
+          result: err
+        });
       }
 }
 
@@ -73,10 +99,17 @@ async function add_new_dept(req, res) {
         await pool.query(sql,[d_id, d_name]);
         
 
-        res.json("the given department has been added");
+        return res.json({
+          success: true ,
+          message:"the given department has been added",
+          result: ""
+        });
       } catch (err) {
         console.error("Database query error:", err);
-        res.status(500).json({ error: "Failed to fetch department data." });
+        return res.json({ success: false ,
+          message:"the given department has been added",
+          result: ""
+        });
       }
 }
 
@@ -92,10 +125,18 @@ async function update_dept(req, res) {
         const sql = `UPDATE dept_details SET d_id = ?, d_name = ? WHERE d_id = ?`;
         await pool.query(sql,[new_d_id, new_d_name, d_id]);
       
-        res.json("department details has been updated succesfully");
+        return res.json({
+          success: true ,
+          message:"the department details has been updated successfully",
+          result: ""
+        });
       } catch (err) {
         console.error("Database query error:", err);
-        res.status(500).json({ error: "Failed to fetch department data." });
+        return res.json({
+          success: false ,
+          message:"error in updating details",
+          result: err
+        });
       }
 }
 
@@ -121,15 +162,25 @@ async function chk_isit_present(req, res) {
     const d_id_exists = results[0][0].d_id_count > 0;
     const d_name_exists = results[1][0].d_name_count > 0;
 
-    res.json({
-      d_id: d_id_exists,
-      d_name: d_name_exists,
-      message: `D_ID exists: ${d_id_exists}, D_Name exists: ${d_name_exists}`
+    
+    return res.json({
+      success: true ,
+      message:"d_id exit ",
+      result: {
+        d_id: d_id_exists,
+        d_name: d_name_exists
+      }
     });
-
   } catch (err) {
-    console.error("Error executing query:", err);
-    res.status(500).json({ error: "Database query failed", details: err.message });
+    console.error("Database query error:", err);
+    return res.json({
+      success: false ,
+      message:"d_id does not exist",
+      result: {
+        d_id: d_id_exists,
+        d_name: d_name_exists
+      }
+    });
   }
 }
 
