@@ -1,7 +1,8 @@
 import { checkConnection, pool } from "../config/db.js";
 import fs from "fs";
 
-const formatDateForMySQL = (date) => {
+const formatDateForMySQL =async (date) => {
+  return date;
   const d = new Date(date);
   if (isNaN(d.getTime())) {
     throw new Error("Invalid date input");
@@ -337,10 +338,10 @@ async function add_new_emp(req, res) {
 
   // Fetching data from req.body
   const data = req.body;
-  const formattedJoiningDate = formatDateForMySQL(
+  const formattedJoiningDate =await formatDateForMySQL(
     data.emp_details.e_date_of_joining
   );
-  const formattedDOB = formatDateForMySQL(data.emp_details.e_DOB);
+  const formattedDOB = await  formatDateForMySQL(data.emp_details.e_DOB);
 
   // Start a new connection and begin a transaction
   const connection = await pool.getConnection(); // Get a new connection
