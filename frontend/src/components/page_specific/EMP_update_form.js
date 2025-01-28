@@ -30,7 +30,7 @@ const UpdateForm = () => {
     message: "", success: false
   });
   const [showUpdateInvalid, setshowUpdateInvalid] = useState({
-    message: "", success: false ,onClose: ()=>{ setshowUpdateInvalid({ message: "", success: false })}
+    message: "", success: false ,onClose: ()=>{ setshowUpdateInvalid(showUpdateInvalid)}
   });
   const [showUpdateConfirm, setShowUpdateConfirm] = useState({
     message: "",
@@ -48,17 +48,19 @@ const UpdateForm = () => {
       console.log("form", response.message)
 
       setshowUpdateSuccess({
-        message: `${response.message}`,
-        success: true
+        message: response.message,
+        success: response.success
+      });
+      setshowUpdateInvalid({
+        message: response.message,
+        success: !response.success
       });
     } catch (err) {
       setshowUpdateInvalid({
         message: "Something went wrong! Please try again after some time.", success: true , onClose: ()=>{
-          setshowUpdateInvalid({ message: "", success: true })
+          setshowUpdateInvalid(showUpdateInvalid)
           navigate("/employee")}
       })
-      
-      
     }
 
 
@@ -129,7 +131,8 @@ const UpdateForm = () => {
     }));
 
     try {
-      const check_data = await check_for_update_emp(data);
+      const response = await check_for_update_emp(data);
+      const check_data = response.result;
 
       if (check_data.e_mobile_number && check_data.e_bank_acc_number && check_data.e_pan_number && check_data.d_id) {
         setShowUpdateConfirm({
@@ -144,22 +147,34 @@ const UpdateForm = () => {
         if (!check_data.e_mobile_number) {
           setshowUpdateInvalid({
             message: "Enter valid new mobile number!, Employee's new mobile number already exist.", success: true
+            , onClose: ()=>{
+              setshowUpdateInvalid(showUpdateInvalid)
+              }
           })
         }
 
         else if (!check_data.d_id) {
           setshowUpdateInvalid({
             message: "Enter valid new Department ID!,  new Department ID does not exist.", success: true
+            , onClose: ()=>{
+              setshowUpdateInvalid(showUpdateInvalid)
+              }
           })
         }
         else if (!check_data.e_bank_acc_number) {
           setshowUpdateInvalid({
             message: "Enter valid new bank account number!, Employee's new account number already exist.", success: true
+            , onClose: ()=>{
+              setshowUpdateInvalid(showUpdateInvalid)
+              }
           })
         }
         else if (!check_data.e_pan_number) {
           setshowUpdateInvalid({
             message: "Enter valid new PAN number!, employee's new PAN number already exist.", success: true
+            , onClose: ()=>{
+              setshowUpdateInvalid(showUpdateInvalid)
+             }
           })
         }
       }
@@ -168,11 +183,9 @@ const UpdateForm = () => {
     } catch (err) {
       setshowUpdateInvalid({
         message: "Something went wrong! Please try again after some time.", success: true , onClose: ()=>{
-          setshowUpdateInvalid({ message: "", success: false })
+          setshowUpdateInvalid(showUpdateInvalid)
           navigate("/employee")}
-      })
-      
-      
+      }) 
     }
   };
 
@@ -180,9 +193,13 @@ const UpdateForm = () => {
 
   if (!data) {
     setshowUpdateInvalid({
-      message: "Something went Wrong! Please try again after some time.", success: true
+      message: "Something went Wrong! Please try again after some time.", success: true, onClose: ()=>{
+        setshowUpdateInvalid(showUpdateInvalid)
+        navigate("/employee")
+      }
     })
-    navigate("/employee")
+    
+    
   }
   return (
 
@@ -196,7 +213,7 @@ const UpdateForm = () => {
             <SuccessfullyDone
               message={showUpdateSuccess.message}
               onClose={() => {
-                setshowUpdateSuccess({ message: "", success: false })
+                setshowUpdateSuccess(showUpdateInvalid)
                 navigate("/employee");
               }}
             />

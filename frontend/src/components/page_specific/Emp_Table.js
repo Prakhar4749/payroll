@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ArrowUpDown, Check } from "lucide-react";
+import { ArrowUpDown, Check, FileQuestion } from "lucide-react";
 
 const Emp_Table = ({ data, onRowSelect, selectedId, setSelectedId }) => {
 
@@ -7,8 +7,16 @@ const Emp_Table = ({ data, onRowSelect, selectedId, setSelectedId }) => {
 
   if (!Array.isArray(data)) {
     return (
-      <div className="flex items-center justify-center h-32 bg-white rounded-lg shadow-lg">
-        <p className="text-slate-600 font-medium">No data available.</p>
+      <div className="flex flex-col items-center justify-center h-48 bg-gradient-to-br from-slate-50 to-white rounded-xl shadow-xl border border-slate-100">
+        <div className="w-16 h-16 mb-4 rounded-full bg-gradient-to-r from-emerald-600 via-teal-600 to-sky-600 flex items-center justify-center shadow-lg shadow-emerald-600/20">
+          <FileQuestion className="w-8 h-8 text-white" />
+        </div>
+        <p className="text-lg font-medium bg-gradient-to-r from-emerald-600 via-teal-600 to-sky-600 bg-clip-text text-transparent">
+          No data available
+        </p>
+        <p className="text-sm text-slate-500 mt-1">
+          Data will appear here once available
+        </p>
       </div>
     );
   }

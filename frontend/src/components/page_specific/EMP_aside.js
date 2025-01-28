@@ -33,8 +33,8 @@ const EMP_aside = ({ setalldata, alldata, setempData, selected_e_id, setselected
       console.log("aside show", showDeleteSuccess);
       try {
         const data = await all_emp_data();
-        setalldata(data);
-        setempData(data);
+        setalldata(data.result);
+        setempData(data.result);
       } catch (error) {
         console.error("Error fetching employee data:", error);
       }
@@ -71,7 +71,8 @@ const EMP_aside = ({ setalldata, alldata, setempData, selected_e_id, setselected
     }
 
     try {
-      const data = await view_emp_by_id(selected_e_id); // Fetch employee data
+      const response = await view_emp_by_id(selected_e_id); // Fetch employee data
+      const data = response.result; // Fetch employee data
 
       console.log("Employee data received:", data);
 
@@ -97,7 +98,8 @@ const EMP_aside = ({ setalldata, alldata, setempData, selected_e_id, setselected
     }
 
     try {
-      const data = await view_emp_by_id(selected_e_id); // Fetch employee data
+      const response = await view_emp_by_id(selected_e_id); // Fetch employee data
+      const data = response.result; // Fetch employee data
 
       console.log("Employee data received:", data);
 
