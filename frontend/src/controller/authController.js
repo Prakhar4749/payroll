@@ -10,13 +10,14 @@ export const loginUser = async (user_name, user_password) => {
     console.log(response)
 
     // On success, store token and return response
-    sessionStorage.setItem("token", response.data.token);
+    sessionStorage.setItem("token", response.data.result);
     sessionStorage.setItem("login", true); // For ProtectedRoute
-    return { success: true, message: "Login successful" };
+    return response.data;
   } catch (err) {
     return {
       success: false,
-      error: err.response?.data?.error || "Something went wrong",
+      result: err,
+      message: "Something went wrong! Please try again"
     };
   }
 };
