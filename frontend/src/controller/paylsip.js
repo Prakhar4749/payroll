@@ -1,12 +1,14 @@
 import axios from 'axios';
 
+const base_url = process.env.REACT_APP_BASE_URL;
+
 const check_id = async (e_id) => {
   try {
-    const response = await axios.post("http://localhost:5000/emp/:e_id");
+    const response = await axios.post(`${base_url}/emp/:e_id`);
 
     console.log(response)
 
-    return { success: true, message: " successful" };
+    return response.data;
   } catch (err) {
     return {
       success: false,
@@ -16,11 +18,11 @@ const check_id = async (e_id) => {
 };
 const fetch_form = async (e_id) => {
   try {
-    const response = await axios.post("http://localhost:5000/emp/:e_id");
+    const response = await axios.post(`${base_url}/emp/${e_id}`);
 
     console.log(response)
 
-    return { success: true, message: " successful" };
+    return response.data;
   } catch (err) {
     return {
       success: false,
@@ -30,5 +32,5 @@ const fetch_form = async (e_id) => {
 };
 
 export {
-  fetch_form,
+  check_id,fetch_form,
 }

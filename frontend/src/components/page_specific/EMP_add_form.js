@@ -37,12 +37,15 @@ const AddForm = () => {
   const onAddConfirm = async () => {
     try {
       console.log(data);
-      const result = await add_emp_details(data);
-      console.log(result)
+      const response = await add_emp_details(data);
 
       setshowAddSuccess({
-        message: `${result}`,
-        success: true
+        message: response.message,
+        success: response.success
+      });
+      setshowAddInvalid({
+        message: response.message,
+        success: !response.success
       });
     } catch (err) {
       setshowAddInvalid({
@@ -133,7 +136,8 @@ const AddForm = () => {
     console.log("final",data)
     try {
 
-      const check_data = await check_for_add_emp(data);
+      const response = await check_for_add_emp(data);
+      const check_data = response.result;
 
       if (check_data.e_mobile_number && check_data.e_bank_acc_number && check_data.e_pan_number && check_data.d_id) {
         setShowAddConfirm({
@@ -147,31 +151,51 @@ const AddForm = () => {
 
         if (!check_data.e_mobile_number) {
           setshowAddInvalid({
-            message: "Enter valid mobile number!, Employee's mobile number already exist.", success: true
+            message: "Enter valid mobile number!, Employee's mobile number already exist.", success: true,
+            onClose: ()=>{
+              setshowAddInvalid({ message: "", success: false })
+              
+            }
           })
         }
 
         else if (!check_data.d_id) {
           setshowAddInvalid({
-            message: "Enter valid Department ID!,  Department ID does not exist.", success: true
+            message: "Enter valid Department ID!,  Department ID does not exist.", success: true ,
+            onClose: ()=>{
+              setshowAddInvalid({ message: "", success: false })
+              
+            }
           })
         }
         else if (!check_data.e_bank_acc_number) {
           setshowAddInvalid({
-            message: "Enter valid bank account number!, Employee's account number already exist.", success: true
+            message: "Enter valid bank account number!, Employee's account number already exist.", success: true ,
+            onClose: ()=>{
+              setshowAddInvalid({ message: "", success: false })
+              
+            }
           })
         }
         else if (!check_data.e_pan_number) {
           setshowAddInvalid({
-            message: "Enter valid PAN number!, employee's PAN number already exist.", success: true
+            message: "Enter valid PAN number!, employee's PAN number already exist.", success: true ,
+            onClose: ()=>{
+              setshowAddInvalid({ message: "", success: false })
+              
+            }
           })
         }
       }
     } catch (err) {
       setshowAddInvalid({
-        message: "Something went wrong! Please try again after some time", success: true
+        message: "Something went wrong! Please try again after some time", success: true ,
+        onClose: ()=>{
+          setshowAddInvalid({ message: "", success: false })
+          
+        }
       })
-      navigate("/employee")
+     
     }
 
   };

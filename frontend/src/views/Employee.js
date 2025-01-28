@@ -13,8 +13,8 @@ export default function Employee() {
     async function getallempData() {
       try {
         const data = await all_emp_data();
-        setalldata(data);
-        setempData(data);
+        setalldata(data.result);
+        setempData(data.result);
       } catch (error) {
         console.error("Error fetching employee data:", error);
       }

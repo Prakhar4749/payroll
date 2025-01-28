@@ -1,18 +1,20 @@
 import axios from 'axios';
 
+const base_url = process.env.REACT_APP_BASE_URL;
+
 const all_emp_data = async () => {
   try {
-    const response = await axios.get("http://localhost:5000/emp/");
+    const response = await axios.get(`${base_url}/emp/`);
     return response.data;
   } catch (error) {
-    console.error("Axios request failed:", error.message);
+    console.error("Axios request failed:", error);
   }
 
 }
 
 const check_for_add_emp = async (raw_data) => {
   try {
-    const response = await axios.put(`http://localhost:5000/emp/chk/1`,raw_data);
+    const response = await axios.put(`${base_url}/emp/chk/1`,raw_data);
     return response.data;
   } catch (error) {
     console.error("Axios request failed:", error);
@@ -21,7 +23,7 @@ const check_for_add_emp = async (raw_data) => {
 
 const add_emp_details = async (data) => {
   try {
-    const response = await axios.post(`http://localhost:5000/emp/add_emp`,data , {
+    const response = await axios.post(`${base_url}/emp/add_emp`,data , {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -36,7 +38,7 @@ const add_emp_details = async (data) => {
 
 const check_for_update_emp = async (raw_data) => {
   try {
-    const response = await axios.put(`http://localhost:5000/emp/chk_for_update`,raw_data);
+    const response = await axios.put(`${base_url}/emp/chk_for_update`,raw_data);
     console.log(response.data)
     return response.data;
   } catch (error) {
@@ -46,7 +48,7 @@ const check_for_update_emp = async (raw_data) => {
 
 const update_emp_details = async (data) => {
   try {
-    const response = await axios.put(`http://localhost:5000/emp/update_emp`,data);
+    const response = await axios.put(`${base_url}/emp/update_emp`,data);
     return response.data;
   } catch (error) {
     console.error("Axios request failed:", error);
@@ -57,7 +59,7 @@ const delete_emp_details = async (e_id) => {
   try {
 
     console.log("conroller",e_id);
-    const response = await axios.delete(`http://localhost:5000/emp/delete/${e_id}`);
+    const response = await axios.delete(`${base_url}/emp/delete/${e_id}`);
     console.log("conroller",response.data);
     return response.data;
   } catch (error) {
@@ -68,7 +70,7 @@ const delete_emp_details = async (e_id) => {
 
 const view_emp_by_id = async (e_id) => {
   try {
-    const response = await axios.get(`http://localhost:5000/emp/${e_id}`);
+    const response = await axios.get(`${base_url}/emp/${e_id}`);
     return response.data;
   } catch (error) {
     console.error("Axios request failed:", error);
