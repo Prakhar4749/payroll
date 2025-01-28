@@ -137,6 +137,7 @@ const AddForm = () => {
     try {
 
       const response = await check_for_add_emp(data);
+      console.log("data is ->"+data)
       const check_data = response.result;
 
       if (check_data.e_mobile_number && check_data.e_bank_acc_number && check_data.e_pan_number && check_data.d_id) {
