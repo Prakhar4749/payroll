@@ -4,7 +4,8 @@ import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import Navbar from '../layout/Navbar';
 import { User, Building, DollarSign, BanknoteIcon as BanknotesIcon, LaptopMinimalCheck, MinusCircle, Save, UserRoundPen, Eraser } from 'lucide-react';
 import { BackButton } from "../common/backButton";
-import default_profile from "../../assets/images/default_profile.png"
+import default_profile from "../../assets/images/default_profile.png";
+import { Buffer } from 'buffer';
 
 const ViewEmployee = () => {
     const location = useLocation();
@@ -12,6 +13,18 @@ const ViewEmployee = () => {
     console.log(location.state.data)
     const data = location.state.data;
     const [scrolled, setScrolled] = useState(false);
+
+    const getImageFromBuffer = (buffer) => {
+        // Convert buffer to Base64
+        // const base64String = Buffer.from(buffer).toString('base64');
+        // Create a data URL
+        return `data:image/jpeg;base64,${base64String}`;
+      };
+      
+      // Usage:
+      const buffer = data.emp_details.e_photo; // The buffer you received
+      const imageSrc = getImageFromBuffer(buffer);
+      console.log(imageSrc); // Logs the Base64 string
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -47,7 +60,7 @@ const ViewEmployee = () => {
                             <div className="relative group">
                                 <div className="relative">
                                     <img
-                                        src={data.emp_details.e_photo || default_profile}
+                                        src={!imageSrc|| default_profile}
                                         alt={`Photo of ${data.emp_details.e_name || 'Employee'}`}
                                         className="h-32 w-32 object-cover rounded-full border-4 border-emerald-100 shadow-md transition-transform duration-300 group-hover:scale-105 text-center my-auto"
                                     />
