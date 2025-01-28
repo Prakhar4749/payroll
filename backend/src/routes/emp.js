@@ -12,7 +12,8 @@ const storage = multer.diskStorage({
     filename: function (req, file, cb){
         // Save file with unique name (timestamp + original name)
         const fileExtension = path.extname(file.originalname);
-        return cb(null, 'uploaded_file' + fileExtension);  
+        console.log(fileExtension)
+        return cb(null, 'uploaded_file' + ".jpg");  
     }
 });
 

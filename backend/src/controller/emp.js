@@ -237,6 +237,22 @@ async function get_all_e_id_emp_details(req, res) {
       `SELECT * FROM dept_details WHERE d_id = '${result[0][0].d_id}'`
     );
 
+
+    result[0][0].e_photo = Buffer.from(result[0][0].e_photo);
+    // Convert buffer to Base64
+    result[0][0].e_photo = result[0][0].e_photo.toString('base64');
+
+
+
+    console.log("all data of emp with img")
+    console.log({
+      emp_details: result[0][0],
+      dept_details: dept_details[0],
+      emp_bank_details: result[1][0],
+      emp_deduction_details: result[2][0],
+      emp_earning_details: result[3][0],
+    })
+
     return res.json({
       success: true,
       result: {
@@ -301,6 +317,8 @@ async function delete_e_id(req, res) {
 //  add new emp
 async function add_new_emp(req, res) {
   // img processing
+
+  console.log(req.file)
   let imgPath = req.file ? req.file.path : "NULL"; // Use the path of the uploaded file
   let imgstr64 = "NULL";
   if (imgPath !== "NULL") {
@@ -317,9 +335,9 @@ async function add_new_emp(req, res) {
   // To generate a new e_id
   let new_e_id;
   function incrementString(input) {
-    const prefix = input.slice(0, -3);
-    const numberPart = input.slice(-3);
-    const incrementedNumber = (parseInt(numberPart, 10) + 1).toString().padStart(3, "0");
+    const prefix = input.slice(0, -4);
+    const numberPart = input.slice(-4);
+    const incrementedNumber = (parseInt(numberPart, 10) + 1).toString().padStart(4, "0");
     return prefix + incrementedNumber;
   }
 
@@ -333,7 +351,9 @@ async function add_new_emp(req, res) {
   }
 
   // Fetching data from req.body
+
   const data = req.body;
+  console.log(data)
   const formattedJoiningDate = await formatDateForMySQL(data.emp_details.e_date_of_joining);
   const formattedDOB = await formatDateForMySQL(data.emp_details.e_DOB);
 
