@@ -5,7 +5,7 @@ import Navbar from '../layout/Navbar';
 import { User, Building, DollarSign, BanknoteIcon as BanknotesIcon, LaptopMinimalCheck, MinusCircle, Save, UserRoundPen, Eraser } from 'lucide-react';
 import { BackButton } from "../common/backButton";
 import default_profile from "../../assets/images/default_profile.png";
-import { Buffer } from 'buffer';
+
 
 const ViewEmployee = () => {
     const location = useLocation();
@@ -23,7 +23,7 @@ const ViewEmployee = () => {
     };
 
     // Usage:
-    const buffer = data.emp_details.e_photo; // The buffer you received
+    const buffer = data.e_photo; // The buffer you received
     const imageSrc = getImageFromBuffer(buffer);
     console.log(imageSrc); // Logs the Base64 string
 
