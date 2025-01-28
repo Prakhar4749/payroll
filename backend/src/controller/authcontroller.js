@@ -233,7 +233,10 @@ async function login_user(req, res) {
         return res.json({
             success: true,
             message: "Login Successfull!",
-            result: token
+            result: {
+                token: token,
+                user_name: user_name
+            }
         });
     } catch (err) {
         console.error("Database query error:", err);
