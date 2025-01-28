@@ -93,10 +93,10 @@ const UpdateForm = () => {
          setFile_to_sand(compressedImage);
          setFileName(file.name)
          console.log("Compressed file:", compressedImage);
-         const updatedData = { ...data };
-         updatedData[section][field] = file_to_sand; // Save the file in the state
-        
-         setData(updatedData)
+         setData((prevData) => ({
+           ...prevData,
+           e_photo: compressedImage,}))
+       
        } catch (error) {
          console.error("Error compressing the image:", error);
        }

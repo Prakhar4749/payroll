@@ -18,13 +18,14 @@ const ViewEmployee = () => {
         // Convert buffer to Base64
         // const base64String = Buffer.from(buffer).toString('base64');
         // Create a data URL
-        return `data:image/jpeg;base64,${base64String}`;
-      };
-      
-      // Usage:
-      const buffer = data.emp_details.e_photo; // The buffer you received
-      const imageSrc = getImageFromBuffer(buffer);
-      console.log(imageSrc); // Logs the Base64 string
+
+        return `data:image/jpeg;base64,${buffer}`;
+    };
+
+    // Usage:
+    const buffer = data.emp_details.e_photo; // The buffer you received
+    const imageSrc = getImageFromBuffer(buffer);
+    console.log(imageSrc); // Logs the Base64 string
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -56,21 +57,30 @@ const ViewEmployee = () => {
                         {/* Employee Details Section */}
 
                         {/* Employee Photo Section */}
-                        <div className="flex flex-col items-center sm:flex-row sm:items-start space-y-4 sm:space-y-0 sm:space-x-6 bg-white p-6  ">
-                            <div className="relative group">
+                        <div className="w-full flex flex-col items-center mb-8">
+                            <div className="relative group mb-4">
+                                {/* Main Photo Container */}
                                 <div className="relative">
-                                    <img
-                                        src={!imageSrc|| default_profile}
-                                        alt={`Photo of ${data.emp_details.e_name || 'Employee'}`}
-                                        className="h-32 w-32 object-cover rounded-full border-4 border-emerald-100 shadow-md transition-transform duration-300 group-hover:scale-105 text-center my-auto"
-                                    />
-                                    <div className="absolute inset-0 rounded-full bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300" />
-                                </div>
-                                <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100 shadow-sm">
-                                    <p className="text-xs text-emerald-600 font-medium">Profile Photo</p>
+                                    {/* Photo */}
+                                    <div className="relative">
+                                        <img
+                                            src={imageSrc || default_profile}
+                                            alt={`Photo of ${data.emp_details.e_name || 'Employee'}`}
+                                            className="h-36 w-36 object-contain p-1 rounded-full bg-white border-4 border-slate-100 shadow-md transition-all duration-300 group-hover:scale-105"
+                                        />
+
+                                        {/* Hover Overlay */}
+                                        <div className="absolute inset-0 rounded-full bg-black/0 group-hover:bg-black/5 transition-all duration-300" />
+                                    </div>
                                 </div>
                             </div>
-                            
+
+                            {/* Label - Now outside the image container */}
+                            <div className="bg-slate-50 px-6 py-2 rounded-lg border border-slate-200">
+                                <p className="text-sm font-medium text-slate-600">
+                                    Profile Photo
+                                </p>
+                            </div>
                         </div>
                         <div className="space-y-6">
                             <div className="flex items-center">

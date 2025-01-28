@@ -347,11 +347,11 @@ const AddForm = () => {
                   <input
                     type="text"
                     value={data.emp_details.d_id}
-                    onChange={(e) => handleInputChange("emp_details", "d_id", e.target.value)}
+                    onChange={(e) => handleInputChange("emp_details", "d_id", e.target.value.toUpperCase())}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
 
                     maxLength={4}
-                    style={{ textTransform: "capitalize" }}
+                   
                   />
                 </div>
 

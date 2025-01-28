@@ -238,9 +238,10 @@ async function get_all_e_id_emp_details(req, res) {
     );
 
 
-    result[0][0].e_photo = Buffer.from(result[0][0].e_photo);
+   
     // Convert buffer to Base64
-    result[0][0].e_photo = result[0][0].e_photo.toString('base64');
+    result[0][0].e_photo = result[0][0].e_photo.toString('utf8');
+    res.set('Content-Type', 'application/json');
 
 
 
