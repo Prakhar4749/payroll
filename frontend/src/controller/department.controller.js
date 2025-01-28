@@ -53,9 +53,9 @@ const addToDepartment = async (to_add)=>{
 
 const removeFromDept = async (d_id)=>{
     try{
-      
       const result = await axios.delete(`${ip}/dept/delete_d_id/${d_id}`)
-      return result;
+      console.log(result)
+      return result.data;
     }catch(err){
       console.log(err)
     }

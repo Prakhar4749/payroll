@@ -1,22 +1,28 @@
-
 import { checkConnection, pool } from "../config/db.js";
 import fs from "fs";
 
 const formatDateForMySQL = (date) => {
   const d = new Date(date);
-  return d.toISOString().split("T")[0]; // Extract only the date part
+  if (isNaN(d.getTime())) {
+    throw new Error("Invalid date input");
+  }
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0"); // Ensure 2-digit month
+  const day = String(d.getDate()).padStart(2, "0"); // Ensure 2-digit day
+  return `${year}-${month}-${day}`;
 };
-//chk for the update 
 
-
+//chk for the update
 async function chk_for_update(req, res) {
   let result = {
     e_mobile_number: false,
     e_bank_acc_number: false,
     e_pan_number: false,
     d_id: false,
-    d_name: false
+    d_name: false,
   };
+
+  let message = "";
 
   const rawdata = req.body;
   const { e_id } = rawdata.emp_details;
@@ -24,7 +30,7 @@ async function chk_for_update(req, res) {
     e_mobile_number: rawdata.emp_details?.e_mobile_number || null,
     e_bank_acc_number: rawdata.emp_bank_details?.e_bank_acc_number || null,
     e_pan_number: rawdata.emp_bank_details?.e_pan_number || null,
-    d_id: rawdata.emp_details?.d_id || null
+    d_id: rawdata.emp_details?.d_id || null,
   };
 
   console.log(data);
@@ -41,35 +47,66 @@ async function chk_for_update(req, res) {
     console.log(SQLresult);
 
     // Check mobile number
-    if ((SQLresult[0][0]?.e_id == e_id || !SQLresult[0][0]) && data.e_mobile_number != null) 
+    if (
+      (SQLresult[0][0]?.e_id == e_id || !SQLresult[0][0]) &&
+      data.e_mobile_number != null
+    ) {
       result.e_mobile_number = true;
+     
+    } else {
+      message += "Mobile number already exists or is invalid. \n";
+    }
 
     // Check bank account number
-    if ((SQLresult[1][0]?.e_id == e_id || !SQLresult[1][0]) && data.e_bank_acc_number != null) 
+    if (
+      (SQLresult[1][0]?.e_id == e_id || !SQLresult[1][0]) &&
+      data.e_bank_acc_number != null
+    ) {
       result.e_bank_acc_number = true;
+      
+    } else {
+      message += "Bank account number already exists or is invalid. \n";
+    }
 
     // Check PAN number
-    if ((SQLresult[2][0]?.e_id == e_id || !SQLresult[2][0]) && data.e_pan_number != null) 
+    if (
+      (SQLresult[2][0]?.e_id == e_id || !SQLresult[2][0]) &&
+      data.e_pan_number != null
+    ) {
       result.e_pan_number = true;
+      
+    } else {
+      message += "PAN number already exists or is invalid. \n";
+    }
 
     // Check if d_id exists and fetch d_name
     if (SQLresult[3].length > 0) {
       result.d_id = true;
       result.d_name = SQLresult[3][0].d_name ? SQLresult[3][0].d_name : false;
+      
+    } else {
+      message += "Department ID is invalid or not found. \n";
+    }
+
+    if (!message) {
+      message = "Every detail is correct and unique";
     }
 
     console.log(result);
-    res.json(result);
+    res.json({ success: true, result: result, message: message.trim() });
   } catch (err) {
     console.log(err);
-    res.json({ error: "Database error occurred" });
+    res.status(500).json({
+      success: false,
+      result: err,
+      message: "An unexpected error occurred while processing your request.",
+    });
   }
 }
 
-
 // to check that (e_mobile_number ,e_bank_acc_number ,e_pan_number ,d_name )  pressent or not
 async function check_for_data(req, res) {
-  console.log("I am running ----");
+  // console.log("I am running ----");
 
   let result = {
     e_mobile_number: false,
@@ -84,7 +121,7 @@ async function check_for_data(req, res) {
     e_mobile_number: rawdata.emp_details?.e_mobile_number || null,
     e_bank_acc_number: rawdata.emp_bank_details?.e_bank_acc_number || null,
     e_pan_number: rawdata.emp_bank_details?.e_pan_number || null,
-    d_id: rawdata.emp_details?.d_id || null
+    d_id: rawdata.emp_details?.d_id || null,
   };
 
   console.log(data);
@@ -101,39 +138,64 @@ async function check_for_data(req, res) {
     console.log(SQLresult);
     console.log(sql);
 
+    let message = "";
+
     // Check if e_mobile_number doesn't exist and data is provided
-    if (SQLresult[0][0].count == 0 && data.e_mobile_number != null) 
+    if (SQLresult[0][0].count == 0 && data.e_mobile_number != null) {
       result.e_mobile_number = true;
+      
+    } else {
+      message += "Mobile number already exists \n";
+    }
 
     // Check if e_bank_acc_number doesn't exist and data is provided
-    if (SQLresult[1][0].count == 0 && data.e_bank_acc_number != null) 
+    if (SQLresult[1][0].count == 0 && data.e_bank_acc_number != null) {
       result.e_bank_acc_number = true;
+      
+    } else {
+      message += "Bank account number already exists \n";
+    }
 
     // Check if e_pan_number doesn't exist and data is provided
-    if (SQLresult[2][0].count == 0 && data.e_pan_number != null) 
+    if (SQLresult[2][0].count == 0 && data.e_pan_number != null) {
       result.e_pan_number = true;
+     
+    } else {
+      message += "PAN number already exists \n";
+    }
 
     // Check if d_id exists and fetch d_name
     if (SQLresult[3].length > 0) {
       result.d_id = true;
       result.d_name = SQLresult[3][0].d_name ? SQLresult[3][0].d_name : false;
+      
     } else {
       result.d_id = false;
       result.d_name = false;
+      message += "Department ID is invalid \n";
     }
 
-    res.json(result);
+    if(!message) {
+      message="Every detail is correct and unique";
+    }
+
+    res.json({
+      success: true,
+      result: result,
+      message: message.trim(), // Trim to remove trailing space
+    });
 
   } catch (err) {
     console.log(err);
-    res.status(500).json({ error: "Database error occurred", details: err });
+    res.status(500).json({ success: false, result: err, message: "An unexpected error occurred while processing your request." });
   }
 }
 
-
 // to export all emp_details
 async function get_all_basic__emp_details(req, res) {
-  const sql = "SELECT e_id,e_name,e_mobile_number,e_email,e_address,e_designation  FROM emp_details";
+  console.log(checkConnection());
+  const sql =
+    "SELECT e_id,e_name,e_mobile_number,e_email,e_address,e_designation  FROM emp_details";
   try {
     const [results, fields] = await pool.query(sql);
     // Clean the fields to include only necessary information
@@ -142,10 +204,20 @@ async function get_all_basic__emp_details(req, res) {
       type: field.type,
     }));
 
-    return res.json(results);
+    return res.json({
+      success: true,
+      result: results,
+      message: "Employee basic details fetched successfully",
+    });
   } catch (err) {
     console.error("Database query error:", err);
-    res.status(500).json({ error: "Failed to fetch user data." });
+    res
+      .status(500)
+      .json({
+        success: false,
+        result: err,
+        message: "There is some problem in fetching employee basic details",
+      });
   }
 }
 
@@ -160,17 +232,29 @@ async function get_all_e_id_emp_details(req, res) {
 
     // for gatin the dept_details
     // console.log(result[0][0])
-      const [dept_details, fi] = await pool.query(`SELECT * FROM dept_details WHERE d_id = '${result[0][0].d_id}'`);
+    const [dept_details, fi] = await pool.query(
+      `SELECT * FROM dept_details WHERE d_id = '${result[0][0].d_id}'`
+    );
 
     return res.json({
-      emp_details: result[0][0],
-      dept_details: dept_details[0],
-      emp_bank_details: result[1][0],
-      emp_deduction_details: result[2][0],
-      emp_earning_details: result[3][0],
+      success: true,
+      result: {
+        emp_details: result[0][0],
+        dept_details: dept_details[0],
+        emp_bank_details: result[1][0],
+        emp_deduction_details: result[2][0],
+        emp_earning_details: result[3][0],
+      },
+      message: `Here are the details of ${req.params["e_id"]}`,
     });
   } catch (err) {
-    res.json({ err_: err });
+    res
+      .status(500)
+      .json({
+        success: false,
+        result: err,
+        message: `There is some problem fetching details of - ${req.params["e_id"]}`,
+      });
   }
 }
 
@@ -208,33 +292,29 @@ async function delete_e_id(req, res) {
     return res.json({
       success: false,
       message: `thir is some problum in deleting the ${e_id}`,
-      err: err,
+      result: err,
     });
   }
 }
 
 //  add new emp
 async function add_new_emp(req, res) {
-
-  //img processing
-  let imgPath = req.file ? req.file.path : "NULL";  // Use the path of the uploaded file
-  let imgstr64="NULL"
+  // img processing
+  let imgPath = req.file ? req.file.path : "NULL"; // Use the path of the uploaded file
+  let imgstr64 = "NULL";
   if (imgPath !== "NULL") {
     try {
       // Read the file and convert it to base64
       const imgBuffer = fs.readFileSync(imgPath);
-      const imgBase64 = imgBuffer.toString('base64');
-      imgstr64=imgBase64
-      
+      const imgBase64 = imgBuffer.toString("base64");
+      imgstr64 = imgBase64;
     } catch (err) {
       console.error("Error reading image file:", err);
       return res.status(500).send("Error reading image file");
     }
   }
 
-
-
-  // to generat new e_id
+  // To generate a new e_id
   let new_e_id;
   function incrementString(input) {
     const prefix = input.slice(0, -3); // Extract the non-numeric part ('E')
@@ -252,289 +332,297 @@ async function add_new_emp(req, res) {
     console.log(new_e_id);
   } catch (err) {
     console.error("Database query error:", err);
-    res.status(500).json({ error: "Failed to fetch user data." });
+    return res.status(500).json({ error: "Failed to fetch user data." });
   }
 
-  // fatching data fro req
+  // Fetching data from req.body
   const data = req.body;
-  //   console.log(data);
+  const formattedJoiningDate = formatDateForMySQL(
+    data.emp_details.e_date_of_joining
+  );
+  const formattedDOB = formatDateForMySQL(data.emp_details.e_DOB);
 
-  const formattedJoiningDate = formatDateForMySQL(data.emp_details.e_date_of_joining);
-const formattedDOB = formatDateForMySQL(data.emp_details.e_DOB);
-
-  const sql = `
-  -- Insert into emp_details
-  INSERT INTO emp_details (
-      e_id, e_name, e_mobile_number, e_gender, e_email, e_address, e_photo, d_id, 
-      e_designation, e_group, e_date_of_joining, e_DOB
-  ) VALUES (
-      '${new_e_id}', '${data.emp_details.e_name}', ${
-    data.emp_details.e_mobile_number
-  }, '${data.emp_details.e_gender}', '${data.emp_details.e_email}', 
-      '${data.emp_details.e_address}', '${imgstr64}', '${data.emp_details.d_id}', 
-      '${data.emp_details.e_designation}', '${data.emp_details.e_group}', '${
-    formattedJoiningDate
-  }', '${formattedDOB}'
-  );
-  
-  -- Insert into emp_bank_details
-  INSERT INTO emp_bank_details (
-      e_id, e_name, e_bank_name, e_bank_acc_number, e_pan_number, e_bank_IFSC, e_cpf_or_gpf_number
-  ) VALUES (
-      '${new_e_id}', '${data.emp_bank_details.e_name}', '${
-    data.emp_bank_details.e_bank_name
-  }', ${data.emp_bank_details.e_bank_acc_number}, 
-      '${data.emp_bank_details.e_pan_number}', '${
-    data.emp_bank_details.e_bank_IFSC
-  }', ${
-    data.emp_bank_details.e_cpf_or_gpf_number === null
-      ? "NULL"
-      : `'${data.emp_bank_details.e_cpf_or_gpf_number}'`
-  }
-  );
-  
-  -- Insert into emp_deduction_details
-  INSERT INTO emp_deduction_details (
-      e_id, e_name, leave_days, leave_deduction_amount, deduction_CPF, GIS, 
-      house_rent, water_charges, electricity_charges, vehicle_deduction, 
-      HB_loan, GPF_loan, festival_loan, grain_charges, bank_advance, advance, 
-      RGPV_advance, income_tax, professional_tax
-  ) VALUES (
-      '${new_e_id}', '${data.emp_deduction_details.e_name}', ${
-    data.emp_deduction_details.leave_days
-  }, ${data.emp_deduction_details.leave_deduction_amount}, 
-      ${data.emp_deduction_details.deduction_CPF}, ${
-    data.emp_deduction_details.GIS
-  }, ${data.emp_deduction_details.house_rent}, 
-      ${data.emp_deduction_details.water_charges}, ${
-    data.emp_deduction_details.electricity_charges
-  }, ${data.emp_deduction_details.vehicle_deduction}, 
-      ${data.emp_deduction_details.HB_loan}, ${
-    data.emp_deduction_details.GPF_loan
-  }, ${data.emp_deduction_details.festival_loan}, 
-      ${data.emp_deduction_details.grain_charges}, ${
-    data.emp_deduction_details.bank_advance
-  }, ${data.emp_deduction_details.advance}, 
-      ${data.emp_deduction_details.RGPV_advance}, ${
-    data.emp_deduction_details.income_tax
-  }, ${data.emp_deduction_details.professional_tax}
-  );
-  
-  -- Insert into emp_earning_details
-  INSERT INTO emp_earning_details (
-      e_id, e_name, basic_salary, special_pay, dearness_allowance, DA, ADA, 
-      interim_relief, HRA, CCA, conveyance, medical, washing_allowance, BDP, arrears
-  ) VALUES (
-      '${new_e_id}', '${data.emp_earning_details.e_name}', ${
-    data.emp_earning_details.basic_salary
-  }, ${data.emp_earning_details.special_pay}, 
-      ${data.emp_earning_details.dearness_allowance}, ${
-    data.emp_earning_details.DA
-  }, ${data.emp_earning_details.ADA}, 
-      ${data.emp_earning_details.interim_relief}, ${
-    data.emp_earning_details.HRA
-  }, ${data.emp_earning_details.CCA}, 
-      ${data.emp_earning_details.conveyance}, ${
-    data.emp_earning_details.medical
-  }, ${data.emp_earning_details.washing_allowance}, 
-      ${data.emp_earning_details.BDP}, ${data.emp_earning_details.arrears}
-  );
-  `;
-
+  // Start a new connection and begin a transaction
+  const connection = await pool.getConnection(); // Get a new connection
   try {
-    const [newResult, fi] = await pool.query(sql);
-    console.log(newResult);
-  } catch (err) {
-    return res.json({ mess: err });
-  }
+    await connection.beginTransaction(); // Begin the transaction
 
-  const sql_for_emp_details = `SELECT * FROM emp_details  WHERE e_id = '${new_e_id}' ; 
-    SELECT * FROM emp_bank_details  WHERE e_id = '${new_e_id}' ; 
-    SELECT * FROM emp_deduction_details  WHERE e_id = '${new_e_id}' ; 
-    SELECT * FROM emp_earning_details  WHERE e_id = '${new_e_id}' ;  `;
-  try {
-    const [result, fildes1] = await pool.query(sql_for_emp_details);
+    // Insert into emp_details
+    const empDetailsQuery = `
+      INSERT INTO emp_details (
+        e_id, e_name, e_mobile_number, e_gender, e_email, e_address, e_photo, d_id, 
+        e_designation, e_group, e_date_of_joining, e_DOB
+      ) VALUES (
+        '${new_e_id}', '${data.emp_details.e_name}', '${data.emp_details.e_mobile_number}', 
+        '${data.emp_details.e_gender}', '${data.emp_details.e_email}', '${data.emp_details.e_address}', 
+        '${imgstr64}', '${data.emp_details.d_id}', '${data.emp_details.e_designation}', 
+        '${data.emp_details.e_group}', '${formattedJoiningDate}', '${formattedDOB}'
+      );
+    `;
+    await connection.query(empDetailsQuery);
 
-    
+    // Insert into emp_bank_details
+    const empBankQuery = `
+      INSERT INTO emp_bank_details (
+        e_id, e_name, e_bank_name, e_bank_acc_number, e_pan_number, e_bank_IFSC, e_cpf_or_gpf_number
+      ) VALUES (
+        '${new_e_id}', '${data.emp_bank_details.e_name}', '${
+      data.emp_bank_details.e_bank_name
+    }',
+        ${data.emp_bank_details.e_bank_acc_number}, '${
+      data.emp_bank_details.e_pan_number
+    }', 
+        '${data.emp_bank_details.e_bank_IFSC}', ${
+      data.emp_bank_details.e_cpf_or_gpf_number === null
+        ? "NULL"
+        : `'${data.emp_bank_details.e_cpf_or_gpf_number}'`
+    }
+      );
+    `;
+    await connection.query(empBankQuery);
+
+    // Insert into emp_deduction_details
+    const empDeductionQuery = `
+      INSERT INTO emp_deduction_details (
+        e_id, e_name, leave_days, leave_deduction_amount, deduction_CPF, GIS, 
+        house_rent, water_charges, electricity_charges, vehicle_deduction, 
+        HB_loan, GPF_loan, festival_loan, grain_charges, bank_advance, advance, 
+        RGPV_advance, income_tax, professional_tax
+      ) VALUES (
+        '${new_e_id}', '${data.emp_deduction_details.e_name}', ${data.emp_deduction_details.leave_days},
+        ${data.emp_deduction_details.leave_deduction_amount}, ${data.emp_deduction_details.deduction_CPF}, 
+        ${data.emp_deduction_details.GIS}, ${data.emp_deduction_details.house_rent}, 
+        ${data.emp_deduction_details.water_charges}, ${data.emp_deduction_details.electricity_charges},
+        ${data.emp_deduction_details.vehicle_deduction}, ${data.emp_deduction_details.HB_loan}, 
+        ${data.emp_deduction_details.GPF_loan}, ${data.emp_deduction_details.festival_loan},
+        ${data.emp_deduction_details.grain_charges}, ${data.emp_deduction_details.bank_advance}, 
+        ${data.emp_deduction_details.advance}, ${data.emp_deduction_details.RGPV_advance},
+        ${data.emp_deduction_details.income_tax}, ${data.emp_deduction_details.professional_tax}
+      );
+    `;
+    await connection.query(empDeductionQuery);
+
+    // Insert into emp_earning_details
+    const empEarningQuery = `
+      INSERT INTO emp_earning_details (
+        e_id, e_name, basic_salary, special_pay, dearness_allowance, DA, ADA, 
+        interim_relief, HRA, CCA, conveyance, medical, washing_allowance, BDP, arrears
+      ) VALUES (
+        '${new_e_id}', '${data.emp_earning_details.e_name}', ${data.emp_earning_details.basic_salary}, 
+        ${data.emp_earning_details.special_pay}, ${data.emp_earning_details.dearness_allowance}, 
+        ${data.emp_earning_details.DA}, ${data.emp_earning_details.ADA}, 
+        ${data.emp_earning_details.interim_relief}, ${data.emp_earning_details.HRA}, 
+        ${data.emp_earning_details.CCA}, ${data.emp_earning_details.conveyance}, 
+        ${data.emp_earning_details.medical}, ${data.emp_earning_details.washing_allowance}, 
+        ${data.emp_earning_details.BDP}, ${data.emp_earning_details.arrears}
+      );
+    `;
+    await connection.query(empEarningQuery);
+
+    // Commit the transaction if all queries are successful
+    await connection.commit();
+
+    // Query the newly inserted employee details
+    const sql_for_emp_details = `
+      SELECT * FROM emp_details WHERE e_id = '${new_e_id}';
+      SELECT * FROM emp_bank_details WHERE e_id = '${new_e_id}';
+      SELECT * FROM emp_deduction_details WHERE e_id = '${new_e_id}';
+      SELECT * FROM emp_earning_details WHERE e_id = '${new_e_id}';
+    `;
+    const [result] = await connection.query(sql_for_emp_details);
+
     return res.json({
       success: true,
-      message: `employee added successfull , ${new_e_id} is your E_id `,
-      result:{
+      message: `Employee added successfully, ${new_e_id} is your E_id.`,
+      result: {
         emp_details: result[0][0],
         emp_bank_details: result[1][0],
         emp_deduction_details: result[2][0],
         emp_earning_details: result[3][0],
-      }
+      },
     });
   } catch (err) {
-    res.json({  success: false,
-      message: `failed to add emmoploye`,
-      error:err});
+    // Rollback the transaction if any query fails
+    await connection.rollback();
+    console.error("Error adding employee:", err);
+    return res.json({
+      success: false,
+      message: "Failed to add employee.",
+      error: err,
+    });
+  } finally {
+    // Release the connection back to the pool
+    connection.release();
   }
 }
 
 //update the emp
 async function update_emp(req, res) {
+  let imgPath = req.file ? req.file.path : "NULL"; // Use the path of the uploaded file
+  let imgstr64 = "NULL";
 
-  //img processing
-  let imgPath = req.file ? req.file.path : "NULL";  // Use the path of the uploaded file
-  let imgstr64="NULL"
   if (imgPath !== "NULL") {
     try {
       // Read the file and convert it to base64
       const imgBuffer = fs.readFileSync(imgPath);
-      const imgBase64 = imgBuffer.toString('base64');
-      imgstr64=imgBase64
-      
+      const imgBase64 = imgBuffer.toString("base64");
+      imgstr64 = imgBase64;
     } catch (err) {
       console.error("Error reading image file:", err);
       return res.status(500).send("Error reading image file");
     }
   }
 
+  const data = req.body;
+  const formattedJoiningDate = formatDateForMySQL(
+    data.emp_details.e_date_of_joining
+  );
+  const formattedDOB = formatDateForMySQL(data.emp_details.e_DOB);
 
+  const connection = await pool.getConnection(); // Start a new connection for the transaction
 
+  try {
+    await connection.beginTransaction(); // Begin the transaction
 
-    const data =req.body;
-    const formattedJoiningDate = formatDateForMySQL(data.emp_details.e_date_of_joining);
-const formattedDOB = formatDateForMySQL(data.emp_details.e_DOB);
-    try {
-        // Update emp_details table
-        const empDetailsQuery = `
-            UPDATE emp_details 
-            SET 
-                e_name = ?, e_mobile_number = ?, e_gender = ?, e_email = ?, e_address = ?, 
-                e_photo = ?, d_id = ?, e_designation = ?, e_group = ?, 
-                e_date_of_joining = ?, e_DOB = ?
-            WHERE e_id = ?;
-        `;
+    // Update emp_details table
+    const empDetailsQuery = `
+      UPDATE emp_details 
+      SET 
+        e_name = ?, e_mobile_number = ?, e_gender = ?, e_email = ?, e_address = ?, 
+        e_photo = ?, d_id = ?, e_designation = ?, e_group = ?, 
+        e_date_of_joining = ?, e_DOB = ?
+      WHERE e_id = ?;
+    `;
+    const empDetailsValues = [
+      data.emp_details.e_name,
+      data.emp_details.e_mobile_number,
+      data.emp_details.e_gender,
+      data.emp_details.e_email,
+      data.emp_details.e_address,
+      imgstr64,
+      data.emp_details.d_id,
+      data.emp_details.e_designation,
+      data.emp_details.e_group,
+      formattedJoiningDate,
+      formattedDOB,
+      data.emp_details.e_id,
+    ];
+    await connection.query(empDetailsQuery, empDetailsValues);
 
-        const empDetailsValues = [
-            data.emp_details.e_name,
-            data.emp_details.e_mobile_number,
-            data.emp_details.e_gender,
-            data.emp_details.e_email,
-            data.emp_details.e_address,
-            imgstr64,
-            data.emp_details.d_id,
-            data.emp_details.e_designation,
-            data.emp_details.e_group,
-            formattedJoiningDate,
-            formattedDOB,
-            data.emp_details.e_id
-        ];
+    // Update dept_details table
+    const deptDetailsQuery = `
+      UPDATE dept_details 
+      SET d_name = ?
+      WHERE d_id = ?;
+    `;
+    const deptDetailsValues = [
+      data.dept_details.d_name,
+      data.dept_details.d_id,
+    ];
+    await connection.query(deptDetailsQuery, deptDetailsValues);
 
-        await pool.query(empDetailsQuery, empDetailsValues);
+    // Update emp_bank_details table
+    const empBankQuery = `
+      UPDATE emp_bank_details 
+      SET 
+        e_name = ?, e_bank_name = ?, e_bank_acc_number = ?, 
+        e_pan_number = ?, e_bank_IFSC = ?, e_cpf_or_gpf_number = ?
+      WHERE e_id = ?;
+    `;
+    const empBankValues = [
+      data.emp_bank_details.e_name,
+      data.emp_bank_details.e_bank_name,
+      data.emp_bank_details.e_bank_acc_number,
+      data.emp_bank_details.e_pan_number,
+      data.emp_bank_details.e_bank_IFSC,
+      data.emp_bank_details.e_cpf_or_gpf_number,
+      data.emp_bank_details.e_id,
+    ];
+    await connection.query(empBankQuery, empBankValues);
 
-        // Update dept_details table
-        const deptDetailsQuery = `
-            UPDATE dept_details 
-            SET d_name = ?
-            WHERE d_id = ?;
-        `;
+    // Update emp_deduction_details table
+    const empDeductionQuery = `
+      UPDATE emp_deduction_details 
+      SET 
+        e_name = ?, leave_days = ?, leave_deduction_amount = ?, deduction_CPF = ?, 
+        GIS = ?, house_rent = ?, water_charges = ?, electricity_charges = ?, 
+        vehicle_deduction = ?, HB_loan = ?, GPF_loan = ?, festival_loan = ?, 
+        grain_charges = ?, bank_advance = ?, advance = ?, RGPV_advance = ?, 
+        income_tax = ?, professional_tax = ?
+      WHERE e_id = ?;
+    `;
+    const empDeductionValues = [
+      data.emp_deduction_details.e_name,
+      data.emp_deduction_details.leave_days,
+      data.emp_deduction_details.leave_deduction_amount,
+      data.emp_deduction_details.deduction_CPF,
+      data.emp_deduction_details.GIS,
+      data.emp_deduction_details.house_rent,
+      data.emp_deduction_details.water_charges,
+      data.emp_deduction_details.electricity_charges,
+      data.emp_deduction_details.vehicle_deduction,
+      data.emp_deduction_details.HB_loan,
+      data.emp_deduction_details.GPF_loan,
+      data.emp_deduction_details.festival_loan,
+      data.emp_deduction_details.grain_charges,
+      data.emp_deduction_details.bank_advance,
+      data.emp_deduction_details.advance,
+      data.emp_deduction_details.RGPV_advance,
+      data.emp_deduction_details.income_tax,
+      data.emp_deduction_details.professional_tax,
+      data.emp_deduction_details.e_id,
+    ];
+    await connection.query(empDeductionQuery, empDeductionValues);
 
-        const deptDetailsValues = [
-            data.dept_details.d_name,
-            data.dept_details.d_id
-        ];
+    // Update emp_earning_details table
+    const empEarningQuery = `
+      UPDATE emp_earning_details 
+      SET 
+        e_name = ?, basic_salary = ?, special_pay = ?, dearness_allowance = ?, 
+        DA = ?, ADA = ?, interim_relief = ?, HRA = ?, CCA = ?, 
+        conveyance = ?, medical = ?, washing_allowance = ?, BDP = ?, arrears = ?
+      WHERE e_id = ?;
+    `;
+    const empEarningValues = [
+      data.emp_earning_details.e_name,
+      data.emp_earning_details.basic_salary,
+      data.emp_earning_details.special_pay,
+      data.emp_earning_details.dearness_allowance,
+      data.emp_earning_details.DA,
+      data.emp_earning_details.ADA,
+      data.emp_earning_details.interim_relief,
+      data.emp_earning_details.HRA,
+      data.emp_earning_details.CCA,
+      data.emp_earning_details.conveyance,
+      data.emp_earning_details.medical,
+      data.emp_earning_details.washing_allowance,
+      data.emp_earning_details.BDP,
+      data.emp_earning_details.arrears,
+      data.emp_earning_details.e_id,
+    ];
+    await connection.query(empEarningQuery, empEarningValues);
 
-        await pool.query(deptDetailsQuery, deptDetailsValues);
+    // Commit the transaction if all queries are successful
+    await connection.commit();
 
-        // Update emp_bank_details table
-        const empBankQuery = `
-            UPDATE emp_bank_details 
-            SET 
-                e_name = ?, e_bank_name = ?, e_bank_acc_number = ?, 
-                e_pan_number = ?, e_bank_IFSC = ?, e_cpf_or_gpf_number = ?
-            WHERE e_id = ?;
-        `;
-
-        const empBankValues = [
-            data.emp_bank_details.e_name,
-            data.emp_bank_details.e_bank_name,
-            data.emp_bank_details.e_bank_acc_number,
-            data.emp_bank_details.e_pan_number,
-            data.emp_bank_details.e_bank_IFSC,
-            data.emp_bank_details.e_cpf_or_gpf_number,
-            data.emp_bank_details.e_id
-        ];
-
-        await pool.query(empBankQuery, empBankValues);
-
-        // Update emp_deduction_details table
-        const empDeductionQuery = `
-            UPDATE emp_deduction_details 
-            SET 
-                e_name = ?, leave_days = ?, leave_deduction_amount = ?, deduction_CPF = ?, 
-                GIS = ?, house_rent = ?, water_charges = ?, electricity_charges = ?, 
-                vehicle_deduction = ?, HB_loan = ?, GPF_loan = ?, festival_loan = ?, 
-                grain_charges = ?, bank_advance = ?, advance = ?, RGPV_advance = ?, 
-                income_tax = ?, professional_tax = ?
-            WHERE e_id = ?;
-        `;
-
-        const empDeductionValues = [
-            data.emp_deduction_details.e_name,
-            data.emp_deduction_details.leave_days,
-            data.emp_deduction_details.leave_deduction_amount,
-            data.emp_deduction_details.deduction_CPF,
-            data.emp_deduction_details.GIS,
-            data.emp_deduction_details.house_rent,
-            data.emp_deduction_details.water_charges,
-            data.emp_deduction_details.electricity_charges,
-            data.emp_deduction_details.vehicle_deduction,
-            data.emp_deduction_details.HB_loan,
-            data.emp_deduction_details.GPF_loan,
-            data.emp_deduction_details.festival_loan,
-            data.emp_deduction_details.grain_charges,
-            data.emp_deduction_details.bank_advance,
-            data.emp_deduction_details.advance,
-            data.emp_deduction_details.RGPV_advance,
-            data.emp_deduction_details.income_tax,
-            data.emp_deduction_details.professional_tax,
-            data.emp_deduction_details.e_id
-        ];
-
-        await pool.query(empDeductionQuery, empDeductionValues);
-
-        // Update emp_earning_details table
-        const empEarningQuery = `
-            UPDATE emp_earning_details 
-            SET 
-                e_name = ?, basic_salary = ?, special_pay = ?, dearness_allowance = ?, 
-                DA = ?, ADA = ?, interim_relief = ?, HRA = ?, CCA = ?, 
-                conveyance = ?, medical = ?, washing_allowance = ?, BDP = ?, arrears = ?
-            WHERE e_id = ?;
-        `;
-
-        const empEarningValues = [
-            data.emp_earning_details.e_name,
-            data.emp_earning_details.basic_salary,
-            data.emp_earning_details.special_pay,
-            data.emp_earning_details.dearness_allowance,
-            data.emp_earning_details.DA,
-            data.emp_earning_details.ADA,
-            data.emp_earning_details.interim_relief,
-            data.emp_earning_details.HRA,
-            data.emp_earning_details.CCA,
-            data.emp_earning_details.conveyance,
-            data.emp_earning_details.medical,
-            data.emp_earning_details.washing_allowance,
-            data.emp_earning_details.BDP,
-            data.emp_earning_details.arrears,
-            data.emp_earning_details.e_id
-        ];
-
-        await pool.query(empEarningQuery, empEarningValues);
-
-      
-        return res.json({ success: true, message: "Employee data updated successfully." });
-
-    } catch (error) {
-        console.error("Error updating employee data:", error);
-        return res.json({ success: false, message: "Error updating employee data.", error });
-    }
-
+    return res.json({
+      success: true,
+      message: `Employee - ${data.emp_details.e_id} data updated successfully.`,
+      result: true,
+    });
+  } catch (error) {
+    // Rollback the transaction if an error occurs
+    await connection.rollback();
+    console.error("Error updating employee data:", error);
+    return res.json({
+      success: false,
+      message: "Error updating employee data.",
+      result: error,
+    });
+  } finally {
+    // Release the connection back to the pool
+    connection.release();
+  }
 }
 
 export {
@@ -544,5 +632,5 @@ export {
   add_new_emp,
   update_emp,
   check_for_data,
-  chk_for_update
+  chk_for_update,
 };

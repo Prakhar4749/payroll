@@ -69,17 +69,17 @@ async function delete_d_id(req, res) {
 
         const sql = `DELETE FROM dept_details WHERE d_id =?`;
         await pool.query(sql,[d_id]);
-
+        
         return res.json({
           success: true ,
-          message:"the department has been deleted",
+          message:`Department ${d_id} has been deleted`,
           result: d_id
         });
       } catch (err) {
         console.error("Database query error:", err);
         return res.json({
           success: false ,
-          message:"error in deleting department",
+          message:`error in deleting ${d_id} department`,
           result: err
         });
       }

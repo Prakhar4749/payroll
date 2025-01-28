@@ -1,8 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Building, Building2 , FilterX, Filter , PlusCircle, Edit, Trash2 } from "lucide-react";
+import {
+  Building,
+  Building2,
+  FilterX,
+  Filter,
+  PlusCircle,
+  Edit,
+  Trash2,
+} from "lucide-react";
 import { removeFromDept } from "../../controller/department.controller";
 import { ConfirmDialogue } from "../common/ConfirmDialogue";
+import { SuccessfullyDone } from "../common/SuccessfullyDone";
+import { InvalidDialogue } from "../common/InvalidDialogue";
 
 const DEPT_aside = ({
   deptData,
@@ -12,6 +22,14 @@ const DEPT_aside = ({
   setdeptData,
   setd_id,
 }) => {
+  const [showDeleteSuccess, setshowDeleteSuccess] = useState({
+    message: "",
+    success: false,
+  });
+  const [showInvalid, setShowInvalid] = useState({
+    message: "",
+    success: false,
+  });
   const [dId, setdID] = useState("");
   const [dName, setdName] = useState("");
   const [dNamec, setdNamec] = useState("");
@@ -34,12 +52,15 @@ const DEPT_aside = ({
 
   const onDeleteConfirm = async (selected_d_id) => {
     try {
-      await removeFromDept(selected_d_id);
-      setd_id("");
-      setdeptData(deptDatacopy.filter((dept) => dept.d_id !== selected_d_id));
-      setdeptDatacopy(
-        deptDatacopy.filter((dept) => dept.d_id !== selected_d_id)
-      );
+      const resultt = await removeFromDept(selected_d_id);
+      console.log(resultt);
+      if (resultt.success) {
+        
+        setshowDeleteSuccess({ message: resultt.message, success: true });
+      } else {
+        setShowInvalid({ message: resultt.message, success: true });
+        setd_id("");
+      }
     } catch (error) {
       console.error("Error removing department:", error.message);
     }
@@ -85,6 +106,34 @@ const DEPT_aside = ({
 
   return (
     <aside className="w-full bg-white shadow-lg rounded-lg overflow-hidden">
+      {showDeleteSuccess.success && (
+        <div className="fixed inset-0 z-50">
+          <SuccessfullyDone
+            message={showDeleteSuccess.message}
+            onClose={() => {
+              setshowDeleteSuccess({ message: "", success: false });
+              setdeptData(
+                deptDatacopy.filter((dept) => dept.d_id !== d_id)
+              );
+              setdeptDatacopy(
+                deptDatacopy.filter((dept) => dept.d_id !== d_id)
+              );
+            }}
+          />
+        </div>
+      )}
+
+      {showInvalid.success && (
+        <div className="fixed inset-0 z-50">
+          <InvalidDialogue
+            message={showInvalid.message}
+            onClose={() => {
+              setShowInvalid({ message: "", success: false });
+            }}
+          />
+        </div>
+      )}
+
       {showDeleteConfirm.message && (
         <div className="fixed inset-0 z-50">
           <ConfirmDialogue
@@ -100,43 +149,39 @@ const DEPT_aside = ({
         </div>
       )}
       <div className="p-6 flex flex-col gap-4">
+        <button
+          className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 px-4 rounded-md text-sm transition-all duration-200 flex items-center justify-center gap-2"
+          onClick={addDept}
+        >
+          <PlusCircle className="w-4 h-4" />
+          Add Department
+        </button>
 
+        <button
+          className={`w-full font-medium py-2.5 px-4 rounded-md text-sm transition-all duration-200 flex items-center justify-center gap-2 ${
+            d_id
+              ? "bg-teal-600 hover:bg-teal-700 text-white"
+              : "bg-gray-100 text-gray-400 cursor-not-allowed"
+          }`}
+          disabled={!d_id}
+          onClick={updateDept}
+        >
+          <Edit className="w-4 h-4" />
+          Update Department
+        </button>
 
-      <button
-  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 px-4 rounded-md text-sm transition-all duration-200 flex items-center justify-center gap-2"
-  onClick={addDept}
->
-  <PlusCircle className="w-4 h-4" />
-  Add Department
-</button>
-
-<button
-  className={`w-full font-medium py-2.5 px-4 rounded-md text-sm transition-all duration-200 flex items-center justify-center gap-2 ${
-    d_id
-      ? "bg-teal-600 hover:bg-teal-700 text-white"
-      : "bg-gray-100 text-gray-400 cursor-not-allowed"
-  }`}
-  disabled={!d_id}
-  onClick={updateDept}
->
-  <Edit className="w-4 h-4" />
-  Update Department
-</button>
-
-<button
-  className={`w-full font-medium py-2.5 px-4 rounded-md text-sm transition-all duration-200 flex items-center justify-center gap-2 ${
-    d_id
-      ? "bg-rose-600 hover:bg-rose-700 text-white"
-      : "bg-gray-100 text-gray-400 cursor-not-allowed"
-  }`}
-  disabled={!d_id}
-  onClick={removeDept}
->
-  <Trash2 className="w-4 h-4" />
-  Remove Department
-</button>
-
-
+        <button
+          className={`w-full font-medium py-2.5 px-4 rounded-md text-sm transition-all duration-200 flex items-center justify-center gap-2 ${
+            d_id
+              ? "bg-rose-600 hover:bg-rose-700 text-white"
+              : "bg-gray-100 text-gray-400 cursor-not-allowed"
+          }`}
+          disabled={!d_id}
+          onClick={removeDept}
+        >
+          <Trash2 className="w-4 h-4" />
+          Remove Department
+        </button>
 
         <div className="mt-4 pt-4 border-t border-gray-200">
           <div className="flex items-center justify-between mb-4">
