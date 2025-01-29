@@ -176,6 +176,18 @@ const ViewEmployee = () => {
                                     />
                                 </div>
 
+                                {/* Department name */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Department name</label>
+                                    <input
+                                        type="text"
+                                        value={data.dept_details.d_name}
+                                        disabled
+                                        className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+
+                                    />
+                                </div>
+
                                 {/* Designation */}
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700">Designation</label>

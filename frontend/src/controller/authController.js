@@ -19,11 +19,19 @@ export const loginUser = async (user_name, user_password) => {
     sessionStorage.setItem("login", response.data.success); // For ProtectedRoute
     sessionStorage.setItem("user_name", response.data.result.user_name); 
     return response.data;
-  } catch (err) {
-    return {
-      success: false,
-      result: err,
-      message: "Something went wrong! Please try again after some time"
-    };
+  } catch (error) {
+    if (error.response) {
+      // Backend responded with an error (like 400, 401, 404)
+      console.error("Login error:", error.response.data);
+      return error.response.data; // Return error response
+    } else if (error.request) {
+      // No response from the server (CORS, network issue)
+      console.error("No response received from server", error.request);
+      return { success: false, message: "No response from server" };
+    } else {
+      // Unknown Axios error
+      console.error("Axios error:", error.message);
+      return { success: false, message: "Unexpected error occurred" };
+    }
   }
 };

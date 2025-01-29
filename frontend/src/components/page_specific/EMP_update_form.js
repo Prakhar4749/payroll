@@ -86,8 +86,8 @@ const UpdateForm = () => {
 
     if (file && (file.type === "image/jpeg" || file.type === "image/png")) {
       const options = {
-        maxSizeMB: 0.04, // Maximum file size in MB
-        maxWidthOrHeight: 800, // Max width or height
+        maxSizeMB: 0.03, // Maximum file size in MB
+        maxWidthOrHeight: 500, // Max width or height
         useWebWorker: true,
       };
 

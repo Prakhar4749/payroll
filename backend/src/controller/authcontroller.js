@@ -180,7 +180,6 @@ async function change_user_name(req, res) {
 }
 
 
-
 async function login_user(req, res) {
     const { user_name, user_password } = req.body;
 
@@ -188,62 +187,57 @@ async function login_user(req, res) {
     if (!user_name || !user_password) {
         return res.status(400).json({
             success: false,
-            message: "user_name and user_password are required",
-            result: error
+            message: "Username and password are required",
         });
     }
 
-    const sql = `SELECT * FROM user_login_details WHERE user_name = ?`;
-
+    
     try {
+        const sql = `SELECT * FROM user_login_details WHERE user_name = ?`;
+        const [results] = await pool.query(sql, [user_name]);
 
-        const [results,fields] = await pool.query(sql, [user_name]);
-
+        // If user does not exist
         if (results.length === 0) {
             return res.status(404).json({
                 success: false,
-                message: "user not found",
-                result: error
+                message: "User not found",
             });
         }
 
         const user = results[0];
 
-
-
-        const isMatch = await bcrypt.compare(user_password, user.user_password);
-
-
-
-        if (!isMatch) {
-            return res.status(401).json({
+        // Ensure password exists before comparing
+        if (!user.user_password) {
+            return res.status(500).json({
                 success: false,
-                message: " invalid  password",
-                result: error
+                message: "User password is missing in the database",
             });
         }
 
+        // Compare passwords securely
+        const isMatch = await bcrypt.compare(user_password, user.user_password);
+        if (!isMatch) {
+            return res.status(401).json({
+                success: false,
+                message: "Invalid Password! Please enter the correct password",
+            });
+        }
 
-        const token = jwt.sign(
-            { name: user.user_name, }, // Include necessary fields
-            SECRET_KEY,
-            { expiresIn: "1h" }
-        );
+        // Generate JWT token
+        const token = jwt.sign({ name: user.user_name }, SECRET_KEY, { expiresIn: "1h" });
 
         return res.json({
             success: true,
-            message: "Login Successfull!",
-            result: {
-                token: token,
-                user_name: user_name
-            }
+            message: "Login Successful!",
+            result: { token, user_name },
         });
+
     } catch (err) {
         console.error("Database query error:", err);
         return res.status(500).json({
             success: false,
-            message: "Error during login ",
-            result: err
+            message: "Error during login",
+            result: err.message, // Send only error message for security
         });
     }
 }
