@@ -368,7 +368,7 @@ async function add_new_emp(req, res) {
     try {
       const imgBuffer = fs.readFileSync(imgPath);
       const imgBase64 = imgBuffer.toString("base64");
-      imgstr64 = imgBase64;
+      imgstr64 = `data:image/jpeg;base64,${imgBase64}`;
     } catch (err) {
       console.error("Error reading image file:", err);
       return res.status(500).send("Error reading image file");
@@ -521,20 +521,37 @@ async function add_new_emp(req, res) {
 
 //update the emp
 async function update_emp(req, res) {
-  console.log(req.body)
-  console.log(req.file)
-  let imgPath = req.file ? req.file.path : "NULL"; // Use the path of the uploaded file
-  let imgstr64 = "NULL";
- 
+  console.log(req.body);
+  console.log(req.file);
+
+  let imgPath = req.file ? req.file.path : "NULL"; // Use the uploaded file path
+  let imgstr64 = imgPath;
+  console.log("this is imgpath ------>   "+imgstr64) // Already in base64 format, assign directly
+
+
   if (imgPath !== "NULL") {
-    try { 
-      // Read the file and convert it to base64
-      const imgBuffer = fs.readFileSync(imgPath);
-      const imgBase64 = imgBuffer.toString("base64");
-      imgstr64 = imgBase64;
-    } catch (err) {
-      console.error("Error reading image file:", err);
-      let imgstr64 = "NULL";
+    // Check if imgPath is already in base64 format
+    const isBase64 = /^data:image\/(png|jpeg|jpg|gif);base64,/.test(imgPath);
+    console.log("this is isbase64 outside if ------>   "+isBase64) // Already in base64 format, assign directly
+    
+    if (isBase64) {
+      imgstr64 = imgPath;
+      console.log("this is imgstr64 ------>   "+imgstr64) // Already in base64 format, assign directly
+    } else {
+      console.log("this is imgstr64 in to else------>   "+imgstr64) // Already in base64 format, assign directly
+
+      try {
+        // Read the file and convert it to base64
+        const imgBuffer = fs.readFileSync(imgPath);
+        imgstr64 = `data:image/jpeg;base64,${imgBuffer.toString("base64")}`;
+      } catch (err) {
+        console.error("Error reading image file:", err);
+        imgstr64 = "NULL";
+      }
+    }
+  }else{
+    if(req.body.e_photo!=='Null'){
+      imgstr64=req.body.e_photo
     }
   }
 
@@ -572,18 +589,6 @@ async function update_emp(req, res) {
     ];
     await connection.query(empDetailsQuery, empDetailsValues);
 
-    // Update dept_details table
-    const deptDetailsQuery = `
-      UPDATE dept_details 
-      SET d_name = ?
-      WHERE d_id = ?;
-    `;
-    const deptDetailsValues = [
-      data.dept_details.d_name,
-      data.dept_details.d_id,
-    ];
-    await connection.query(deptDetailsQuery, deptDetailsValues);
-
     // Update emp_bank_details table
     const empBankQuery = `
       UPDATE emp_bank_details 
@@ -593,13 +598,13 @@ async function update_emp(req, res) {
       WHERE e_id = ?;
     `;
     const empBankValues = [
-      data.emp_bank_details.e_name,
+      data.emp_details.e_name,
       data.emp_bank_details.e_bank_name,
       data.emp_bank_details.e_bank_acc_number,
       data.emp_bank_details.e_pan_number,
       data.emp_bank_details.e_bank_IFSC,
       data.emp_bank_details.e_cpf_or_gpf_number,
-      data.emp_bank_details.e_id,
+      data.emp_details.e_id,
     ];
     await connection.query(empBankQuery, empBankValues);
 
@@ -615,7 +620,7 @@ async function update_emp(req, res) {
       WHERE e_id = ?;
     `;
     const empDeductionValues = [
-      data.emp_deduction_details.e_name,
+      data.emp_details.e_name,
       data.emp_deduction_details.leave_days,
       data.emp_deduction_details.leave_deduction_amount,
       data.emp_deduction_details.deduction_CPF,
@@ -633,7 +638,7 @@ async function update_emp(req, res) {
       data.emp_deduction_details.RGPV_advance,
       data.emp_deduction_details.income_tax,
       data.emp_deduction_details.professional_tax,
-      data.emp_deduction_details.e_id,
+      data.emp_details.e_id,
     ];
     await connection.query(empDeductionQuery, empDeductionValues);
 
@@ -647,7 +652,7 @@ async function update_emp(req, res) {
       WHERE e_id = ?;
     `;
     const empEarningValues = [
-      data.emp_earning_details.e_name,
+      data.emp_details.e_name,
       data.emp_earning_details.basic_salary,
       data.emp_earning_details.special_pay,
       data.emp_earning_details.dearness_allowance,
@@ -661,7 +666,7 @@ async function update_emp(req, res) {
       data.emp_earning_details.washing_allowance,
       data.emp_earning_details.BDP,
       data.emp_earning_details.arrears,
-      data.emp_earning_details.e_id,
+      data.emp_details.e_id,
     ];
     await connection.query(empEarningQuery, empEarningValues);
 
@@ -687,6 +692,7 @@ async function update_emp(req, res) {
     connection.release();
   }
 }
+
 
 export {
   get_all_basic__emp_details,

@@ -19,7 +19,7 @@ const ViewEmployee = () => {
         // const base64String = Buffer.from(buffer).toString('base64');
         // Create a data URL
 
-        return `data:image/jpeg;base64,${buffer}`;
+        return buffer ;
     };
 
     // Usage:
