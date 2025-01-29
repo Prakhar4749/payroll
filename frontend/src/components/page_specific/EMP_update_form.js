@@ -276,7 +276,7 @@ const UpdateForm = () => {
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="px-6 py-8 space-y-8">
+          <form onSubmit={handleSubmit} className="px-6 py-8 space-y-8" encType="multipart/form-data">
             {/* Employee Details Section */}
             <div className="space-y-6">
               <div className="flex items-center">
