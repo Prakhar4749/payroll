@@ -1,7 +1,7 @@
 import { checkConnection, pool } from "../config/db.js";
 import fs from "fs";
 
-const formatDateForMySQL =async (date) => {
+const formatDateForMySQL = (date) => {
   return date;
   const d = new Date(date);
   if (isNaN(d.getTime())) {
@@ -345,8 +345,8 @@ async function add_new_emp(req, res) {
 
   const data = req.body;
   console.log(data)
-  const formattedJoiningDate = await formatDateForMySQL(data.emp_details.e_date_of_joining);
-  const formattedDOB = await formatDateForMySQL(data.emp_details.e_DOB);
+  const formattedJoiningDate = formatDateForMySQL(data.emp_details.e_date_of_joining);
+  const formattedDOB = formatDateForMySQL(data.emp_details.e_DOB);
 
   const connection = await pool.getConnection(); // Get a new connection
   try {
@@ -485,10 +485,13 @@ async function update_emp(req, res) {
   }
 
   const data = req.body;
+  console.log(data)
   const formattedJoiningDate = formatDateForMySQL(
     data.emp_details.e_date_of_joining
   );
   const formattedDOB = formatDateForMySQL(data.emp_details.e_DOB);
+  console.log("formatede", formattedDOB );
+  console.log("formatede", formattedJoiningDate )
 
   const connection = await pool.getConnection(); // Start a new connection for the transaction
 
@@ -514,8 +517,8 @@ async function update_emp(req, res) {
       data.emp_details.d_id,
       data.emp_details.e_designation,
       data.emp_details.e_group,
-      formattedJoiningDate,
-      formattedDOB,
+      data.emp_details.e_date_of_joining,
+      data.emp_details.e_DOB,
       data.emp_details.e_id,
     ];
     await connection.query(empDetailsQuery, empDetailsValues);
