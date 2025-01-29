@@ -237,26 +237,16 @@ async function get_all_e_id_emp_details(req, res) {
       `SELECT * FROM dept_details WHERE d_id = '${result[0][0].d_id}'`
     );
 
-
    
     // Convert buffer to Base64
-    result[0][0].e_photo = result[0][0].e_photo.toString('utf8');
+    const photo= result[0][0].e_photo.toString('utf8');
     res.set('Content-Type', 'application/json');
-
-
-
-    console.log("all data of emp with img")
-    console.log({
-      emp_details: result[0][0],
-      dept_details: dept_details[0],
-      emp_bank_details: result[1][0],
-      emp_deduction_details: result[2][0],
-      emp_earning_details: result[3][0],
-    })
+    result[0][0].e_photo=null;
 
     return res.json({
       success: true,
       result: {
+        e_photo:photo,
         emp_details: result[0][0],
         dept_details: dept_details[0],
         emp_bank_details: result[1][0],

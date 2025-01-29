@@ -5,7 +5,7 @@ import Navbar from '../layout/Navbar';
 import { User, Building, DollarSign, BanknoteIcon as BanknotesIcon, LaptopMinimalCheck, MinusCircle, Save, UserRoundPen, Eraser } from 'lucide-react';
 import { BackButton } from "../common/backButton";
 import default_profile from "../../assets/images/default_profile.png";
-import { Buffer } from 'buffer';
+
 
 const ViewEmployee = () => {
     const location = useLocation();
