@@ -22,7 +22,7 @@ const AddForm = () => {
     message: "", success: false
   });
   const [showAddInvalid, setshowAddInvalid] = useState({
-    message: "", success: false ,onClose: ()=>{ setshowAddInvalid({ message: "", success: false })}
+    message: "", success: false, onClose: () => { setshowAddInvalid({ message: "", success: false }) }
   });
   const [showAddConfirm, setShowAddConfirm] = useState({
     message: "",
@@ -32,7 +32,7 @@ const AddForm = () => {
 
   const [file_to_sand, setFile_to_sand] = useState(null);
 
-  const[fileName,setFileName] = useState("Choose a file")
+  const [fileName, setFileName] = useState("Choose a file")
 
   const onAddConfirm = async () => {
     try {
@@ -49,7 +49,7 @@ const AddForm = () => {
       });
     } catch (err) {
       setshowAddInvalid({
-        message: "Something went wrong! Please try again after some time", success: true, onClose: ()=>{
+        message: "Something went wrong! Please try again after some time", success: true, onClose: () => {
           setshowAddInvalid({ message: "", success: false })
           navigate('/employee')
         }
@@ -59,7 +59,7 @@ const AddForm = () => {
 
   }
 
-  
+
 
 
 
@@ -78,16 +78,16 @@ const AddForm = () => {
   };
 
 
-  const handleFileUpload = async (section, field, file) => {
+  const handleFileUpload = async (section, file) => {
     console.log(file)
-    
+
     if (file && (file.type === "image/jpeg" || file.type === "image/png")) {
       const options = {
         maxSizeMB: 0.04, // Maximum file size in MB
         maxWidthOrHeight: 800, // Max width or height
         useWebWorker: true,
       };
-      
+
       try {
         const compressedImage = await imageCompression(file, options);
         setFile_to_sand(compressedImage);
@@ -95,8 +95,9 @@ const AddForm = () => {
         console.log("Compressed file:", compressedImage);
         setData((prevData) => ({
           ...prevData,
-          e_photo: compressedImage,}))
-      
+          e_photo: compressedImage,
+        }))
+
       } catch (error) {
         console.error("Error compressing the image:", error);
       }
@@ -132,12 +133,12 @@ const AddForm = () => {
         e_name: prevData.emp_details.e_name,
       },
     }));
-    
-    console.log("final",data)
+
+    console.log("final", data)
     try {
 
       const response = await check_for_add_emp(data);
-      console.log("data is ->"+data)
+      console.log("data is ->" + data)
       const check_data = response.result;
 
       if (check_data.e_mobile_number && check_data.e_bank_acc_number && check_data.e_pan_number && check_data.d_id) {
@@ -149,54 +150,62 @@ const AddForm = () => {
 
       }
       else {
+        if (data.emp_details.e_mobile_number.length === 10) {
+          setshowAddInvalid({
+            message: "Enter valid new mobile number of 10 digits!", success: true
+            , onClose: () => {
+              setshowAddInvalid(showAddInvalid)
+            }
+          })
+        }
 
-        if (!check_data.e_mobile_number) {
+        else if (!check_data.e_mobile_number) {
           setshowAddInvalid({
             message: "Enter valid mobile number!, Employee's mobile number already exist.", success: true,
-            onClose: ()=>{
+            onClose: () => {
               setshowAddInvalid({ message: "", success: false })
-              
+
             }
           })
         }
 
         else if (!check_data.d_id) {
           setshowAddInvalid({
-            message: "Enter valid Department ID!,  Department ID does not exist.", success: true ,
-            onClose: ()=>{
+            message: "Enter valid Department ID!,  Department ID does not exist.", success: true,
+            onClose: () => {
               setshowAddInvalid({ message: "", success: false })
-              
+
             }
           })
         }
         else if (!check_data.e_bank_acc_number) {
           setshowAddInvalid({
-            message: "Enter valid bank account number!, Employee's account number already exist.", success: true ,
-            onClose: ()=>{
+            message: "Enter valid bank account number!, Employee's account number already exist.", success: true,
+            onClose: () => {
               setshowAddInvalid({ message: "", success: false })
-              
+
             }
           })
         }
         else if (!check_data.e_pan_number) {
           setshowAddInvalid({
-            message: "Enter valid PAN number!, employee's PAN number already exist.", success: true ,
-            onClose: ()=>{
+            message: "Enter valid PAN number!, employee's PAN number already exist.", success: true,
+            onClose: () => {
               setshowAddInvalid({ message: "", success: false })
-              
+
             }
           })
         }
       }
     } catch (err) {
       setshowAddInvalid({
-        message: "Something went wrong! Please try again after some time", success: true ,
-        onClose: ()=>{
+        message: "Something went wrong! Please try again after some time", success: true,
+        onClose: () => {
           setshowAddInvalid({ message: "", success: false })
-          
+
         }
       })
-     
+
     }
 
   };
@@ -223,7 +232,7 @@ const AddForm = () => {
           <div className="fixed inset-0 z-50">
             <InvalidDialogue
               message={showAddInvalid.message}
-              onClose={() => {showAddInvalid.onClose()}}
+              onClose={() => { showAddInvalid.onClose() }}
             />
           </div>
         )}
@@ -257,7 +266,7 @@ const AddForm = () => {
           <form method="POST"
             action="emp/add_emp"
             onSubmit={handleSubmit}
-            encType="multipart/form-data" 
+            encType="multipart/form-data"
             className="px-6 py-8 space-y-8">
             {/* Employee Details Section */}
             <div className="space-y-6">
@@ -284,7 +293,7 @@ const AddForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Mobile Number</label>
                   <input
-                    type="number"
+                    type="tel"
                     value={data.emp_details.e_mobile_number}
                     onChange={(e) => {// Allow only numerical input
                       const value = e.target.value.slice(0, 10); // Truncate to max 10 digits
@@ -295,6 +304,8 @@ const AddForm = () => {
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                     required
                     pattern="\d*"
+                    maxLength={10}
+                    minLength={10}
                   />
                 </div>
 
@@ -351,7 +362,7 @@ const AddForm = () => {
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
 
                     maxLength={4}
-                   
+
                   />
                 </div>
 
@@ -370,14 +381,19 @@ const AddForm = () => {
                 {/* Group */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Group</label>
-                  <input
-                    type="text"
+                  <select
                     value={data.emp_details.e_group}
                     onChange={(e) => handleInputChange("emp_details", "e_group", e.target.value)}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
-                    maxLength={1}
-                    style={{ textTransform: "capitalize" }}
-                  />
+                  >
+                    <option value="">Select a group</option>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                    <option value="E">E</option>
+                    <option value="F">F</option>
+                  </select>
                 </div>
 
                 {/* date of joining */}
@@ -421,14 +437,14 @@ const AddForm = () => {
                       htmlFor="file-upload"
                       className="w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white cursor-pointer hover:text-emerald-600 focus:outline-none"
                     >
-                     {fileName}
+                      {fileName}
                     </label>
                     <input
                       id="file-upload"
                       type="file"
                       name="e_photo"
                       accept=".jpg, .jpeg, .png"
-                      onChange={(e) => handleFileUpload("emp_details", "e_photo", e.target.files[0])}
+                      onChange={(e) => handleFileUpload("e_photo", e.target.files[0])}
                       className="absolute inset-0 opacity-0 w-full cursor-pointer"
 
                     />
@@ -491,6 +507,7 @@ const AddForm = () => {
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                     required
                     maxLength={10}
+                    minLength={10}
                   />
                 </div>
 

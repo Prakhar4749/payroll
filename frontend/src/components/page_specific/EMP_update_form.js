@@ -30,7 +30,7 @@ const UpdateForm = () => {
     message: "", success: false
   });
   const [showUpdateInvalid, setshowUpdateInvalid] = useState({
-    message: "", success: false ,onClose: ()=>{ setshowUpdateInvalid(showUpdateInvalid)}
+    message: "", success: false, onClose: () => { setshowUpdateInvalid(showUpdateInvalid) }
   });
   const [showUpdateConfirm, setShowUpdateConfirm] = useState({
     message: "",
@@ -39,7 +39,7 @@ const UpdateForm = () => {
   });
   const [file_to_sand, setFile_to_sand] = useState(null);
 
-  const[fileName,setFileName] = useState("Choose a file")
+  const [fileName, setFileName] = useState("Choose a file")
 
   const onUpdateConfirm = async () => {
     try {
@@ -53,13 +53,14 @@ const UpdateForm = () => {
       });
       setshowUpdateInvalid({
         message: response.message,
-        success: !response.success
+        success: !response.success, onClose: () => { setshowUpdateInvalid(showUpdateInvalid) }
       });
     } catch (err) {
       setshowUpdateInvalid({
-        message: "Something went wrong! Please try again after some time.", success: true , onClose: ()=>{
+        message: "Something went wrong! Please try again after some time.", success: true, onClose: () => {
           setshowUpdateInvalid(showUpdateInvalid)
-          navigate("/employee")}
+          navigate("/employee")
+        }
       })
     }
 
@@ -78,32 +79,33 @@ const UpdateForm = () => {
     }));
   };
 
- const handleFileUpload = async (section, field, file) => {
-     console.log(file)
-     
-     if (file && (file.type === "image/jpeg" || file.type === "image/png")) {
-       const options = {
-         maxSizeMB: 0.04, // Maximum file size in MB
-         maxWidthOrHeight: 800, // Max width or height
-         useWebWorker: true,
-       };
-       
-       try {
-         const compressedImage = await imageCompression(file, options);
-         setFile_to_sand(compressedImage);
-         setFileName(file.name)
-         console.log("Compressed file:", compressedImage);
-         setData((prevData) => ({
-           ...prevData,
-           e_photo: compressedImage,}))
-       
-       } catch (error) {
-         console.error("Error compressing the image:", error);
-       }
-     } else {
-       alert("Invalid file format. Please upload a JPG or PNG file.");
-     }
-   };
+  const handleFileUpload = async (section, file) => {
+    console.log(file)
+
+    if (file && (file.type === "image/jpeg" || file.type === "image/png")) {
+      const options = {
+        maxSizeMB: 0.04, // Maximum file size in MB
+        maxWidthOrHeight: 800, // Max width or height
+        useWebWorker: true,
+      };
+
+      try {
+        const compressedImage = await imageCompression(file, options);
+        setFile_to_sand(compressedImage);
+        setFileName(file.name)
+        console.log("Compressed file:", compressedImage);
+        setData((prevData) => ({
+          ...prevData,
+          e_photo: compressedImage,
+        }))
+
+      } catch (error) {
+        console.error("Error compressing the image:", error);
+      }
+    } else {
+      alert("Invalid file format. Please upload a JPG or PNG file.");
+    }
+  };
   // clear handler
   const handleClear = async (e) => {
     e.preventDefault();
@@ -144,37 +146,45 @@ const UpdateForm = () => {
       }
       else {
 
-        if (!check_data.e_mobile_number) {
+        if (data.emp_details.e_mobile_number.length === 10) {
+          setshowUpdateInvalid({
+            message: "Enter valid new mobile number of 10 digits!", success: true
+            , onClose: () => {
+              setshowUpdateInvalid(showUpdateInvalid)
+            }
+          })
+        }
+        else if (!check_data.e_mobile_number) {
           setshowUpdateInvalid({
             message: "Enter valid new mobile number!, Employee's new mobile number already exist.", success: true
-            , onClose: ()=>{
+            , onClose: () => {
               setshowUpdateInvalid(showUpdateInvalid)
-              }
+            }
           })
         }
 
         else if (!check_data.d_id) {
           setshowUpdateInvalid({
             message: "Enter valid new Department ID!,  new Department ID does not exist.", success: true
-            , onClose: ()=>{
+            , onClose: () => {
               setshowUpdateInvalid(showUpdateInvalid)
-              }
+            }
           })
         }
         else if (!check_data.e_bank_acc_number) {
           setshowUpdateInvalid({
             message: "Enter valid new bank account number!, Employee's new account number already exist.", success: true
-            , onClose: ()=>{
+            , onClose: () => {
               setshowUpdateInvalid(showUpdateInvalid)
-              }
+            }
           })
         }
         else if (!check_data.e_pan_number) {
           setshowUpdateInvalid({
             message: "Enter valid new PAN number!, employee's new PAN number already exist.", success: true
-            , onClose: ()=>{
+            , onClose: () => {
               setshowUpdateInvalid(showUpdateInvalid)
-             }
+            }
           })
         }
       }
@@ -182,10 +192,11 @@ const UpdateForm = () => {
 
     } catch (err) {
       setshowUpdateInvalid({
-        message: "Something went wrong! Please try again after some time.", success: true , onClose: ()=>{
+        message: "Something went wrong! Please try again after some time.", success: true, onClose: () => {
           setshowUpdateInvalid(showUpdateInvalid)
-          navigate("/employee")}
-      }) 
+          navigate("/employee")
+        }
+      })
     }
   };
 
@@ -193,13 +204,13 @@ const UpdateForm = () => {
 
   if (!data) {
     setshowUpdateInvalid({
-      message: "Something went Wrong! Please try again after some time.", success: true, onClose: ()=>{
+      message: "Something went Wrong! Please try again after some time.", success: true, onClose: () => {
         setshowUpdateInvalid(showUpdateInvalid)
         navigate("/employee")
       }
     })
-    
-    
+
+
   }
   return (
 
@@ -213,7 +224,7 @@ const UpdateForm = () => {
             <SuccessfullyDone
               message={showUpdateSuccess.message}
               onClose={() => {
-                setshowUpdateSuccess(showUpdateInvalid)
+                setshowUpdateSuccess({ message: "", success: false })
                 navigate("/employee");
               }}
             />
@@ -223,7 +234,7 @@ const UpdateForm = () => {
           <div className="fixed inset-0 z-50">
             <InvalidDialogue
               message={showUpdateInvalid.message}
-              onClose={()=>{showUpdateInvalid.onClose()}}
+              onClose={() => { showUpdateInvalid.onClose() }}
             />
           </div>
         )}
@@ -295,7 +306,7 @@ const UpdateForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Mobile Number</label>
                   <input
-                    type="number"
+                    type="tel"
                     value={data.emp_details.e_mobile_number}
                     onChange={(e) => {// Allow only numerical input
                       const value = e.target.value.slice(0, 10); // Truncate to max 10 digits
@@ -307,6 +318,7 @@ const UpdateForm = () => {
                     required
                     pattern="\d*"
                     maxLength={10}
+                    minLength={10}
                   />
                 </div>
 
@@ -382,14 +394,19 @@ const UpdateForm = () => {
                 {/* Group */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Group</label>
-                  <input
-                    type="text"
+                  <select
                     value={data.emp_details.e_group}
                     onChange={(e) => handleInputChange("emp_details", "e_group", e.target.value)}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
-                    maxLength={1}
-                    style={{ textTransform: "capitalize" }}
-                  />
+                  >
+                    <option value="">Select a group</option>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                    <option value="E">E</option>
+                    <option value="F">F</option>
+                  </select>
                 </div>
 
                 {/* date of joining */}
@@ -433,13 +450,14 @@ const UpdateForm = () => {
                       htmlFor="file-upload"
                       className="w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white cursor-pointer hover:text-emerald-600 focus:outline-none"
                     >
-                      Choose a file
+                      {fileName}
                     </label>
                     <input
                       id="file-upload"
                       type="file"
-                      accept=".jpg, .jpeg, .pdf"
-                      onChange={(e) => handleFileUpload("emp_details", "e_photo", e.target.files[0])}
+                      name="e_photo"
+                      accept=".jpg, .jpeg, .png"
+                      onChange={(e) => handleFileUpload("e_photo", e.target.files[0])}
                       className="absolute inset-0 opacity-0 w-full cursor-pointer"
 
                     />
@@ -461,7 +479,7 @@ const UpdateForm = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {/* Bank fields following the same pattern */}
 
-                
+
                 {/* Bank Name */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Bank Name</label>
@@ -503,6 +521,7 @@ const UpdateForm = () => {
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                     required
                     maxLength={10}
+                    minLength={10}
                   />
                 </div>
 
@@ -774,8 +793,8 @@ const UpdateForm = () => {
                 {/* Deduction fields following the same pattern */}
 
 
-                 {/* Deduction CPF */}
-                 <div>
+                {/* Deduction CPF */}
+                <div>
                   <label className="block text-sm font-medium text-gray-700">Deduction CPF</label>
                   <input
                     type="number"

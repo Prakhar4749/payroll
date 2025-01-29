@@ -23,7 +23,7 @@ const ViewEmployee = () => {
     };
 
     // Usage:
-    const buffer = data.emp_details.e_photo; // The buffer you received
+    const buffer = data.e_photo; // The buffer you received
     const imageSrc = getImageFromBuffer(buffer);
     console.log(imageSrc); // Logs the Base64 string
 
