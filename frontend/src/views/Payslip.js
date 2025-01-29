@@ -3,6 +3,7 @@ import Navbar from "../components/layout/Navbar";
 import { useNavigate, useLocation } from "react-router-dom";
 import {ConfirmDialogue} from "../components/common/ConfirmDialogue";
 import {InvalidDialogue} from "../components/common/InvalidDialogue";
+import { SuccessfullyDone } from "../components/common/SuccessfullyDone";
 import { Calendar, UserRound } from 'lucide-react';
 
 export default function Payslip() {
@@ -15,21 +16,31 @@ export default function Payslip() {
   const [e_id, sete_id] = useState(selected_e_id);
   const [salary_month, setsalary_month] = useState(new Date().getMonth() + 1);
   const [salary_year, setsalary_year] = useState(new Date().getFullYear());
-  const [showConfirm, setShowConfirm] = useState(false);
-  const [showInvalid, setShowInvalid] = useState(false);
-  const [invalidMessage, setInvalidMessage] = useState("");
-
+  const [showConfirm, setShowConfirm] = useState({success: false, message: "", onConfirm: ()=>{}});
+  const [showInvalid, setShowInvalid] = useState({success: false, message: "", onClose: ()=>{}});
+  const [showSuccess, setShowSuccess] = useState({success: false, message: "", onClose: ()=>{}});
   
 
-  const validateInputs = () => {
+
+  
+  
+  const onConfirm = () => {
+    navigate("/payslip/payslip_form", {
+      state: { e_id, salary_month, salary_year },
+    });
+  };
+
+
+  const validateInputs = async () => {
+
+
     if (salary_year > new Date().getFullYear() || salary_year < 2015) {
-      setInvalidMessage("Enter a valid salary year.");
-      setShowInvalid(true);
+      setShowInvalid({success: true, message: "Enter a valid salary year.", onClose: ()=>{setShowInvalid(showInvalid)} });
+      
       return false;
     }
     if (salary_year == new Date().getFullYear() && salary_month > new Date().getMonth() + 1) {
-      setInvalidMessage("Enter a valid salary month.");
-      setShowInvalid(true);
+      setShowInvalid({success: true, message: "Enter a valid salary month.", onClose: ()=>{setShowInvalid(showInvalid)} });
       return false;
     }
     return true;
@@ -37,9 +48,11 @@ export default function Payslip() {
 
   const Submit = (e) => {
     e.preventDefault();
-    if (validateInputs()) {
-      setShowConfirm(true);
+    if (!validateInputs()) {
+      return 
     }
+    
+    
   };
 
   const clear = () => {
@@ -48,37 +61,50 @@ export default function Payslip() {
     setsalary_year(new Date().getFullYear());
   };
 
-  const handleConfirm = () => {
-    setShowConfirm(false);
-    navigate("/payslip/payslip_form", {
-      state: { e_id, salary_month, salary_year },
-    });
-  };
+  
 
   const handleCancel = () => {
-    setShowConfirm(false);
+    
   };
 
   const handleInvalidClose = () => {
-    setShowInvalid(false);
+    
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-sky-50">
       <Navbar />
 
-      {showConfirm && (
-        <ConfirmDialogue
-          message="Do you want to proceed?"
-          onConfirm={handleConfirm}
-          onCancel={handleCancel}
-        />
-      )}
-
-      {showInvalid && (
-        <InvalidDialogue message={invalidMessage} onClose={handleInvalidClose} />
-      )}
-
+      {showSuccess.success && (
+          <div className="fixed inset-0 z-50">
+            <SuccessfullyDone
+              message={showSuccess.message}
+              onClose={setShowSuccess.onClose()
+              }
+            />
+          </div>
+        )}
+        {showInvalid.success && (
+          <div className="fixed inset-0 z-50">
+            <InvalidDialogue
+              message={showInvalid.message}
+              onClose={() => { showInvalid.onClose() }}
+            />
+          </div>
+        )}
+        {showConfirm.success && (
+          <div className="fixed inset-0 z-50">
+            <ConfirmDialogue
+              message={showConfirm.message}
+              onConfirm={() => {
+                showConfirm.onConfirm(); // Call the confirm callback
+                setShowConfirm({ message: "", success: false, onConfirm: null }); // Close the dialog
+              }}
+              onCancel={() => setShowConfirm({ message: "", success: false, onConfirm: null }
+              )} // Close without confirming
+            />
+          </div>
+        )}
       <div className="max-w-4xl mx-auto pt-24 px-4 sm:px-6 lg:px-8 pb-12">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">Employee Payslip</h1>
