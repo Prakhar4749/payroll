@@ -1,17 +1,60 @@
 import { checkConnection, pool } from "../config/db.js";
 import fs from "fs";
 
-const formatDateForMySQL =async (date) => {
-  return date;
-  const d = new Date(date);
-  if (isNaN(d.getTime())) {
+const formatDateForMySQL = (date) => {
+  if (!date) {
     throw new Error("Invalid date input");
   }
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, "0"); // Ensure 2-digit month
-  const day = String(d.getDate()).padStart(2, "0"); // Ensure 2-digit day
-  return `${year}-${month}-${day}`;
+
+  let d;
+  let inputYear, inputMonth, inputDay;
+
+  try {
+    if (typeof date === "string") {
+      // Extract date part (remove time)
+      const dateString = date.split(/T|\s/)[0];
+
+      // Try different date patterns
+      const yyyyMatch = dateString.match(/^(\d{4})[\/-](\d{1,2})[\/-](\d{1,2})$/);
+      const ddMatch = dateString.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})$/);
+
+      if (yyyyMatch) {
+        [inputYear, inputMonth, inputDay] = yyyyMatch.slice(1).map(Number);
+      } else if (ddMatch) {
+        [inputDay, inputMonth, inputYear] = ddMatch.slice(1).map(Number);
+      } else {
+        d = new Date(dateString);
+        if (isNaN(d.getTime())) throw new Error();
+      }
+
+      if (!d) {
+        d = new Date(inputYear, inputMonth - 1, inputDay);
+        if (
+          d.getFullYear() !== inputYear ||
+          d.getMonth() + 1 !== inputMonth ||
+          d.getDate() !== inputDay
+        ) {
+          throw new Error();
+        }
+      }
+    } else if (date instanceof Date) {
+      d = new Date(date.getFullYear(), date.getMonth(), date.getDate()); // Local time
+    } else {
+      d = new Date(date);
+    }
+
+    if (!d || isNaN(d.getTime())) throw new Error();
+
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  } catch (error) {
+    throw new Error("Invalid date input");
+  }
 };
+
 
 //chk for the update
 async function chk_for_update(req, res) {
@@ -224,6 +267,7 @@ async function get_all_basic__emp_details(req, res) {
 
 // for geting detail by e_id the emp_details
 async function get_all_e_id_emp_details(req, res) {
+
   const sql_for_emp_details = `SELECT * FROM emp_details  WHERE e_id = '${req.params["e_id"]}' ; 
     SELECT * FROM emp_bank_details  WHERE e_id = '${req.params["e_id"]}' ; 
     SELECT * FROM emp_deduction_details  WHERE e_id = '${req.params["e_id"]}' ; 
@@ -238,10 +282,18 @@ async function get_all_e_id_emp_details(req, res) {
     );
 
    
+    // Formating date
+    // console.log("dob is -->  "+result[0][0].emp_details)
+    result[0][0].e_DOB = formatDateForMySQL(result[0][0].e_DOB)
+    result[0][0].e_date_of_joining = formatDateForMySQL(result[0][0].e_date_of_joining)
+    
+
     // Convert buffer to Base64
     const photo= result[0][0].e_photo.toString('utf8');
+    // console.log(photo)
+    result[0][0].e_photo=null
     res.set('Content-Type', 'application/json');
-    result[0][0].e_photo=null;
+    // result[0][0].e_photo=result[0][0].e_photo.toString('utf8');;
 
     return res.json({
       success: true,
@@ -258,7 +310,7 @@ async function get_all_e_id_emp_details(req, res) {
   } catch (err) {
     res
       .status(500)
-      .json({
+      .json({ 
         success: false,
         result: err,
         message: `There is some problem fetching details of - ${req.params["e_id"]}`,
@@ -469,25 +521,25 @@ async function add_new_emp(req, res) {
 
 //update the emp
 async function update_emp(req, res) {
+  console.log(req.body)
+  console.log(req.file)
   let imgPath = req.file ? req.file.path : "NULL"; // Use the path of the uploaded file
   let imgstr64 = "NULL";
-
+ 
   if (imgPath !== "NULL") {
-    try {
+    try { 
       // Read the file and convert it to base64
       const imgBuffer = fs.readFileSync(imgPath);
       const imgBase64 = imgBuffer.toString("base64");
       imgstr64 = imgBase64;
     } catch (err) {
       console.error("Error reading image file:", err);
-      return res.status(500).send("Error reading image file");
+      let imgstr64 = "NULL";
     }
   }
 
   const data = req.body;
-  const formattedJoiningDate = formatDateForMySQL(
-    data.emp_details.e_date_of_joining
-  );
+  const formattedJoiningDate = formatDateForMySQL(data.emp_details.e_date_of_joining);
   const formattedDOB = formatDateForMySQL(data.emp_details.e_DOB);
 
   const connection = await pool.getConnection(); // Start a new connection for the transaction
