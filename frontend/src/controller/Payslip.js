@@ -2,9 +2,11 @@ import axios from 'axios';
 
 const base_url = process.env.REACT_APP_BASE_URL;
 
-const check_id = async (e_id) => {
+const check_for_payslip_in_archive = async (e_id, salary_month, salary_year) => {
   try {
-    const response = await axios.post(`${base_url}/emp/:e_id`);
+    const response = await axios.post(`${base_url}/payslip/isit`,{e_id: e_id,
+      salary_month: salary_month,
+      salary_year: salary_year} );
 
     console.log(response)
 

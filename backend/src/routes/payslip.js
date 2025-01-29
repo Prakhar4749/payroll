@@ -5,9 +5,9 @@ const route=express.Router()
 
 
 
-route.post("/isit/" , chk_that_payslip_is_generated)
+route.post("/isit" , chk_that_payslip_is_generated)
 
-route.put('/' , update_and_change_in_the_salary_archive )
+route.put('/create_payslip' , update_and_change_in_the_salary_archive )
 
 route.post("/get_pdf", get_data_for_pdf)
 

@@ -34,6 +34,8 @@ export default function Employee() {
       {/* Navbar - Fixed at top */}
       <Navbar />
 
+      
+
       {/* Main content - Pushed below navbar */}
       <div className="flex-1 pt-16"> {/* Add padding-top equal to navbar height */}
         <div className="flex flex-col lg:flex-row h-full">
