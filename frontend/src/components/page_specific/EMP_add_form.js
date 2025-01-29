@@ -45,13 +45,14 @@ const AddForm = () => {
       });
       setshowAddInvalid({
         message: response.message,
-        success: !response.success
+        success: !response.success, onClose: () => {
+        setshowAddInvalid({ message: "", success: false, onClose: () => { } })
+        }
       });
     } catch (err) {
       setshowAddInvalid({
         message: "Something went wrong! Please try again after some time", success: true, onClose: () => {
-          setshowAddInvalid({ message: "", success: false })
-          navigate('/employee')
+          setshowAddInvalid({ message: "", success: false, onClose: () => { } })
         }
       })
     }
@@ -83,8 +84,8 @@ const AddForm = () => {
 
     if (file && (file.type === "image/jpeg" || file.type === "image/png")) {
       const options = {
-        maxSizeMB: 0.04, // Maximum file size in MB
-        maxWidthOrHeight: 800, // Max width or height
+        maxSizeMB: 0.03, // Maximum file size in MB
+        maxWidthOrHeight: 500, // Max width or height
         useWebWorker: true,
       };
 

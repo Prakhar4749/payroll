@@ -44,8 +44,8 @@ export default function Payslip() {
 
   const clear = () => {
     sete_id("");
-    setsalary_month("");
-    setsalary_year("");
+    setsalary_month(new Date().getMonth() + 1);
+    setsalary_year(new Date().getFullYear());
   };
 
   const handleConfirm = () => {
@@ -103,7 +103,7 @@ export default function Payslip() {
                     value={e_id}
                     onChange={(e) => sete_id(e.target.value)}
                     required
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-gray-900 placeholder-gray-400 bg-white"
+                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-gray-900 placeholder-gray-400 bg-white"
                     placeholder="Enter employee ID"
                   />
                 </div>
@@ -124,7 +124,7 @@ export default function Payslip() {
                       value={salary_month}
                       onChange={(e) => setsalary_month(e.target.value)}
                       required
-                      className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-gray-900 bg-white"
+                      className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-gray-900 bg-white"
                     >
                       <option value="" disabled>Select Month</option>
                       <option value="01">January</option>
@@ -157,7 +157,7 @@ export default function Payslip() {
                       value={salary_year}
                       onChange={(e) => setsalary_year(e.target.value)}
                       required
-                      className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-gray-900 bg-white"
+                      className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-gray-900 bg-white"
                     >
                       <option value="" disabled>Select Year</option>
                       {Array.from(
