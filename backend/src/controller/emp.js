@@ -51,10 +51,6 @@ const formatDateForMySQL = (date) => {
 
     return `${year}-${month}-${day}`;
   } catch (error) {
-
-  return date;
-  const d = new Date(date);
-  if (isNaN(d.getTime())) {
     throw new Error("Invalid date input");
   }
 };
@@ -401,8 +397,8 @@ async function add_new_emp(req, res) {
 
   const data = req.body;
   console.log(data)
-  const formattedJoiningDate = formatDateForMySQL(data.emp_details.e_date_of_joining);
-  const formattedDOB = formatDateForMySQL(data.emp_details.e_DOB);
+  const formattedJoiningDate = await formatDateForMySQL(data.emp_details.e_date_of_joining);
+  const formattedDOB = await formatDateForMySQL(data.emp_details.e_DOB);
 
   const connection = await pool.getConnection(); // Get a new connection
   try {
@@ -543,17 +539,8 @@ async function update_emp(req, res) {
   }
 
   const data = req.body;
-
-  // const formattedJoiningDate = formatDateForMySQL(data.emp_details.e_date_of_joining);
-
-  // console.log(data)
-  // const formattedJoiningDate = formatDateForMySQL(
-  //   data.emp_details.e_date_of_joining
-  // );
-
+  const formattedJoiningDate = formatDateForMySQL(data.emp_details.e_date_of_joining);
   const formattedDOB = formatDateForMySQL(data.emp_details.e_DOB);
-  console.log("formatede", formattedDOB );
-  console.log("formatede", formattedJoiningDate )
 
   const connection = await pool.getConnection(); // Start a new connection for the transaction
 
@@ -579,8 +566,8 @@ async function update_emp(req, res) {
       data.emp_details.d_id,
       data.emp_details.e_designation,
       data.emp_details.e_group,
-      data.emp_details.e_date_of_joining,
-      data.emp_details.e_DOB,
+      formattedJoiningDate,
+      formattedDOB,
       data.emp_details.e_id,
     ];
     await connection.query(empDetailsQuery, empDetailsValues);
