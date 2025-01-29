@@ -13,10 +13,11 @@ import imageCompression from "browser-image-compression"
 const UpdateForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const today = new Date().toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD format
+  const today = new Date().toISOString().split("T")[0];
+  console.log("today", today) // Get today's date in YYYY-MM-DD format
   const dateInputRef = useRef(null);
 
-  const [data, setData] = useState(emp_data_model); // State to store employee data
+  const [data, setData] = useState(location.state.data); // State to store employee data
 
   // Set data from location.state only once when the component mounts
   useEffect(() => {
@@ -42,6 +43,7 @@ const UpdateForm = () => {
   const [fileName, setFileName] = useState("Choose a file")
 
   const onUpdateConfirm = async () => {
+    console.log("sent data", data)
     try {
 
       const response = await update_emp_details(data);
@@ -121,14 +123,20 @@ const UpdateForm = () => {
       emp_bank_details: {
         ...prevData.emp_bank_details,
         e_name: prevData.emp_details.e_name,
+        ...prevData.emp_bank_details,
+        e_id: prevData.emp_details.e_id,
       },
       emp_earning_details: {
         ...prevData.emp_earning_details,
         e_name: prevData.emp_details.e_name,
+        ...prevData.emp_earning_details,
+        e_id: prevData.emp_details.e_id,
       },
       emp_deduction_details: {
         ...prevData.emp_deduction_details,
         e_name: prevData.emp_details.e_name,
+        ...prevData.emp_deduction_details,
+        e_id: prevData.emp_details.e_id,
       },
     }));
 
@@ -432,7 +440,7 @@ const UpdateForm = () => {
                     onClick={() => dateInputRef.current.focus()} // Focus the date input when clicking the container
                     ref={dateInputRef} // Attach the ref to the input element
                     type="date"
-                    value={data.emp_details.e_DOB}
+                    value={data.emp_details.e_DOB || ""}
                     onChange={(e) => handleInputChange("emp_details", "e_DOB", e.target.value)}
                     max={today} // Restrict dates greater than today
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 cursor-pointer"
