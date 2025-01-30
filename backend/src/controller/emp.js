@@ -1,6 +1,13 @@
 import { checkConnection, pool } from "../config/db.js";
 import fs from "fs";
 
+
+let to_run_saved =false;
+let data_which_is_not_change =null;
+
+
+
+
 const formatDateForMySQL = (date) => {
   if (!date) {
     throw new Error("Invalid date input");
@@ -237,6 +244,16 @@ async function check_for_data(req, res) {
 
 // to export all emp_details
 async function get_all_basic__emp_details(req, res) {
+
+  if(to_run_saved){
+    return res.json({
+      success: true,
+      result: data_which_is_not_change,
+      message: "Employee basic details fetched successfully",
+    });
+  }
+
+
   console.log(checkConnection());
   const sql =
     "SELECT e_id,e_name,e_mobile_number,e_email,e_address,e_designation  FROM emp_details";
@@ -247,6 +264,8 @@ async function get_all_basic__emp_details(req, res) {
       name: field.name,
       type: field.type,
     }));
+    data_which_is_not_change=results;
+    to_run_saved=true
 
     return res.json({
       success: true,
@@ -320,6 +339,7 @@ async function get_all_e_id_emp_details(req, res) {
 
 // for deleting the e_id from (emp_details, emp_bank_details,emp_deduction_details ,emp_earning_details)
 async function delete_e_id(req, res) {
+  to_run_saved=false
   const e_id = req.params["e_id"];
 
   if (!e_id || e_id.length != 5) {
@@ -360,6 +380,7 @@ async function delete_e_id(req, res) {
 //  add new emp
 async function add_new_emp(req, res) {
   // img processing
+  to_run_saved=false
 
   console.log(req.file)
   let imgPath = req.file ? req.file.path : "NULL"; // Use the path of the uploaded file
@@ -521,6 +542,8 @@ async function add_new_emp(req, res) {
 
 //update the emp
 async function update_emp(req, res) {
+  to_run_saved=false
+
   console.log(req.body);
   console.log(req.file);
 

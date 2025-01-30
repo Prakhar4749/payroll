@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  Building,
-  Building2,
   FilterX,
   Filter,
   PlusCircle,
@@ -75,6 +73,7 @@ const DEPT_aside = ({
     setShowDeleteConfirm({
       message: `Are you sure you want to remove department ID: ${d_id}?`,
       onConfirm: onDeleteConfirm,
+      success:true
     });
   };
 
@@ -88,6 +87,7 @@ const DEPT_aside = ({
   };
 
   function applyFilter() {
+    setdID(null)
     const filteredData = deptData.filter((dept) => {
       const matchesId = dId ? dept.d_id.toString().includes(dId) : true;
       const matchesName = dNamec
@@ -134,16 +134,16 @@ const DEPT_aside = ({
         </div>
       )}
 
-      {showDeleteConfirm.message && (
+      {showDeleteConfirm.success && (
         <div className="fixed inset-0 z-50">
           <ConfirmDialogue
             message={showDeleteConfirm.message}
             onConfirm={() => {
               showDeleteConfirm.onConfirm(d_id);
-              setShowDeleteConfirm({ message: "", onConfirm: null });
+              setShowDeleteConfirm({ message: "", onConfirm: () => {}, success: false });
             }}
-            onClose={() =>
-              setShowDeleteConfirm({ message: "", onConfirm: null })
+            onCancel={() =>
+                setShowDeleteConfirm({ message: "", onConfirm: () => {}, success: false })
             }
           />
         </div>

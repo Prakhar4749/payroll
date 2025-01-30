@@ -451,7 +451,7 @@ const AddForm = () => {
                     />
                   </div>
                   <p className="mt-2 text-sm text-gray-500">
-                    Only JPG and PDF formats are allowed. Max file size: 5MB.
+                    Only JPG and PNG formats are allowed. Max file size: 1MB.
                   </p>
                 </div>
               </div>
@@ -561,6 +561,7 @@ const AddForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Basic Salary</label>
                   <input
+                  
                     type="number"
                     value={data.emp_earning_details.basic_salary || ""}
                     onChange={(e) => {
@@ -570,6 +571,7 @@ const AddForm = () => {
                       }
                     }}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+                    required
                   />
                 </div>
 

@@ -1,10 +1,20 @@
 import { pool } from '../config/db.js';
 
 
+let to_run_saved =false;
+let data_which_is_not_change =null;
+
 
 const SECRET_KEY = process.env.DB_HOST;
 
 async function get_all_dept_details(req, res) {
+  if(to_run_saved){
+    return res.json({
+      success: true ,
+      message:"data has been fetched successfully",
+      result: data_which_is_not_change
+    });
+  }
     
     try {
        
@@ -15,6 +25,9 @@ async function get_all_dept_details(req, res) {
           name: field.name,
           type: field.type,
         }));
+
+        data_which_is_not_change=results
+        to_run_saved=true
 
         return res.json({
           success: true ,
@@ -61,6 +74,7 @@ async function get_d_id_details(req, res) {
 
 
 async function delete_d_id(req, res) {
+  to_run_saved =false
   const { d_id }= req.params;
     try {
        
@@ -85,6 +99,7 @@ async function delete_d_id(req, res) {
 
 
 async function add_new_dept(req, res) {
+  to_run_saved =false
   const { d_id, d_name} = req.body;
     
     try {
@@ -113,7 +128,7 @@ async function add_new_dept(req, res) {
 
 
 async function update_dept(req, res) {
-
+  to_run_saved =false
   const {d_id , new_d_id, new_d_name } = req.body
 
   if (!new_d_id || !new_d_name) {
