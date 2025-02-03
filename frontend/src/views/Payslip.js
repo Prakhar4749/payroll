@@ -14,9 +14,11 @@ export default function Payslip() {
   const selected_e_id = location.state && location.state.selected_e_id
     ? location.state.selected_e_id
     : null;
-  const [e_id, sete_id] = useState(selected_e_id);
-  const [salary_month, setsalary_month] = useState(new Date().getMonth() + 1);
-  const [salary_year, setsalary_year] = useState(new Date().getFullYear());
+ 
+  
+  
+  const [salary_details, setsalary_details] = useState({ e_id: selected_e_id , salary_month: String(new Date().getMonth() + 1).padStart(2, '0') , salary_year: new Date().getFullYear() });
+
   const [showConfirm, setShowConfirm] = useState({ success: false, message: "", onConfirm: () => { } });
   const [showInvalid, setShowInvalid] = useState({ success: false, message: "", onClose: () => { } });
   const [showSuccess, setShowSuccess] = useState({ success: false, message: "", onClose: () => { } });
@@ -25,22 +27,24 @@ export default function Payslip() {
 
 
 
-  const onConfirm = () => {
-    navigate("/payslip/payslip_form", {
-      state: { e_id, salary_month, salary_year },
-    });
-  };
 
-
-  const validateInputs = async () => {
-
-
-    if (salary_year > new Date().getFullYear() || salary_year < 2015) {
+  const validateInputs = async() => {
+    // Check if the employee ID is valid
+    const idResponse = await check_id(salary_details.e_id);
+    if (!idResponse.result.e_id) {
+      setShowInvalid({
+        success: true,
+        message: "Enter a valid Employee ID! e_id does not exist",
+        onClose: () => { setShowInvalid(showInvalid) }
+      });
+      return;
+    }
+    if (salary_details.salary_year > new Date().getFullYear() || salary_details.salary_year < 2015) {
       setShowInvalid({ success: true, message: "Enter a valid salary year.", onClose: () => { setShowInvalid(showInvalid) } });
 
       return false;
     }
-    if (salary_year == new Date().getFullYear() && salary_month > new Date().getMonth() + 1) {
+    if (salary_details.salary_year == new Date().getFullYear() && salary_details.salary_month > new Date().getMonth() + 1) {
       setShowInvalid({ success: true, message: "Enter a valid salary month.", onClose: () => { setShowInvalid(showInvalid) } });
       return false;
     }
@@ -49,33 +53,27 @@ export default function Payslip() {
 
   const Submit = async (e) => {
     e.preventDefault();
+    console.log(salary_details)
 
-    if (!validateInputs()) {
+    if (! await validateInputs()) {
       return;
     }
 
     try {
-      // Check if the employee ID is valid
-      const idResponse = await check_id(e_id);
-      if (!idResponse.result.e_id) {
-        setShowInvalid({
-          success: true,
-          message: "Enter a valid Employee ID! e_id does not exist",
-          onClose: () => { setShowInvalid(showInvalid) }
-        });
-        return;
-      }
+      
 
       // Check if the payslip is generated for the given employee, month, and year
-      const payslipResponse = await check_payslip_in_archive(e_id, salary_month, salary_year);
+      const payslipResponse = await check_payslip_in_archive({
+        e_id: salary_details.e_id,
+        salary_month: salary_details.salary_month,
+        salary_year: salary_details.salary_year
+      });
       if (!payslipResponse.result.payslip) {
         setShowConfirm({
           success: true,
-          message: `Payslip of E_id:${e_id} is not generated yet for ${salary_month}, ${salary_year}. would you like to geberate payslip.`,
+          message: `Payslip of E_id:${salary_details.e_id} is not generated yet for ${salary_details.salary_month}, ${salary_details.salary_year}. would you like to generate payslip.`,
           onConfirm: () => {
-            navigate("/payslip/payslip_form", {
-              state: { e_id, salary_month, salary_year },
-            });
+            navigate("/payslip/form", { state: salary_details });
           }
         });
         return;
@@ -84,10 +82,10 @@ export default function Payslip() {
       if (payslipResponse.result.payslip) {
         setShowConfirm({
           success: true,
-          message: `Payslip of E_id:${e_id} is already generated  for ${salary_month}, ${salary_year}.  would you like to get payslip.` ,
+          message: `Payslip of E_id:${salary_details.e_id} is already generated  for ${salary_details.salary_month}, ${salary_details.salary_year}.  would you like to get payslip.` ,
           onConfirm: () => {
             navigate("/payslip/payslip_pdf", {
-              state: { e_id, salary_month, salary_year },
+              state: salary_details
             });
           }
         });
@@ -108,9 +106,7 @@ export default function Payslip() {
   };
 
   const clear = () => {
-    sete_id("");
-    setsalary_month(new Date().getMonth() + 1);
-    setsalary_year(new Date().getFullYear());
+    setsalary_details({ e_id: "" , salary_month: new Date().getMonth() + 1 , salary_year: new Date().getFullYear() });
   };
 
 
@@ -178,8 +174,11 @@ export default function Payslip() {
                   <input
                     id="e_id"
                     type="text"
-                    value={e_id}
-                    onChange={(e) => sete_id(e.target.value)}
+                    value={salary_details.e_id}
+                    onChange={(e) => setsalary_details((prevDetails) => ({
+                      ...prevDetails,
+                      e_id: e.target.value, // Update only e_id, keep the rest unchanged
+                    }))}
                     required
                     className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-gray-900 placeholder-gray-400 bg-white"
                     placeholder="Enter employee ID"
@@ -199,8 +198,11 @@ export default function Payslip() {
                     </div>
                     <select
                       id="salary_month"
-                      value={salary_month}
-                      onChange={(e) => setsalary_month(e.target.value)}
+                      value={salary_details.salary_month}
+                      onChange={(e) => setsalary_details((prevDetails) => ({
+                        ...prevDetails,
+                        salary_month: e.target.value, // Update only e_id, keep the rest unchanged
+                      }))}
                       required
                       className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-gray-900 bg-white"
                     >
@@ -223,7 +225,7 @@ export default function Payslip() {
 
                 {/* Salary Year Field */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="salary_year">
+                  <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="salary_details.salary_year">
                     Salary Year
                   </label>
                   <div className="relative rounded-lg">
@@ -231,9 +233,12 @@ export default function Payslip() {
                       <Calendar className="h-5 w-5 text-gray-400" />
                     </div>
                     <select
-                      id="salary_year"
-                      value={salary_year}
-                      onChange={(e) => setsalary_year(e.target.value)}
+                      id="salary_details.salary_year"
+                      value={salary_details.salary_year}
+                      onChange={(e) => setsalary_details((prevDetails) => ({
+                        ...prevDetails,
+                        salary_year: e.target.value, // Update only e_id, keep the rest unchanged
+                      }))}
                       required
                       className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-gray-900 bg-white"
                     >

@@ -1,764 +1,659 @@
-import React, { useState } from 'react'
-import { useLocation } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from "react";
+import { create_salary_archive, get_payslip } from "../../controller/Payslip";
+import { view_emp_by_id } from "../../controller/empController";
+import { useLocation, useNavigate } from "react-router-dom";
+import { User, Building, DollarSign, BanknoteIcon as BanknotesIcon, MinusCircle, Save, UserRoundPen, Eraser } from 'lucide-react';
+import Navbar from "../layout/Navbar"
+import { BackButton } from "../common/backButton";
+import { ConfirmDialogue } from "../common/ConfirmDialogue";
+import { SuccessfullyDone } from "../common/SuccessfullyDone";
+import { InvalidDialogue } from "../common/InvalidDialogue";
+import imageCompression from "browser-image-compression"
 
 const Payslip_Form = () => {
+    const navigate = useNavigate();
     const location = useLocation();
-    const {e_id, salary_month, salary_year} = location.state;
-    
+    const today = new Date().toISOString().split("T")[0];
 
-    const [formData, setFormData] = useState({
-       
-      });
-      
+    const dateInputRef = useRef(null);
+    const salary_details = location.state || {};
+    const [data, setData] = useState({ salary_details: salary_details, emp_earning_details: {}, emp_deduction_details: {} }); // State to store employee data
 
-    // Handle input changes
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
+
+    const get_form_data = async () => {
+        try {
+            const response = await view_emp_by_id(data.salary_details.e_id);
+
+            // Check if response.result is not null or undefined
+            if (response && response.result) {
+                setData((prevData) => ({
+                    ...prevData, // Keep previous state (salary_details)
+                    emp_earning_details: response.result.emp_earning_details || {}, // Fallback to empty object if null
+                    emp_deduction_details: response.result.emp_deduction_details || {}, // Fallback to empty object if null
+                }));
+            } else {
+                console.log(response);
+            }
+        } catch (error) {
+            console.error("Error fetching form data:", error);
+        }
     };
-    console.log( "id" ,formData.e_id)
 
-    // Handle form submission
+    useEffect(() => {
+        get_form_data();
+    }, []); // This will only run once on mount
+
+
+
+
+    const [showSuccess, setshowSuccess] = useState({
+        message: "", success: false
+    });
+    const [showInvalid, setshowInvalid] = useState({
+        message: "", success: false, onClose: () => { setshowInvalid(showInvalid) }
+    });
+    const [showConfirm, setShowConfirm] = useState({
+        message: "",
+        success: false,
+        onConfirm: () => { }
+    });
+
+
+    const onConfirm = async () => {
+        console.log("sent data", data)
+        try {
+
+            const response = await create_salary_archive(data);
+
+            setshowSuccess({
+                message: response.message,
+                success: response.success
+            });
+            setshowInvalid({
+                message: response.message,
+                success: !response.success, onClose: () => { setshowInvalid(showInvalid) }
+            });
+        } catch (err) {
+            setshowInvalid({
+                message: "Something went wrong! Please try again after some time.", success: true, onClose: () => {
+                    setshowInvalid(showInvalid)
+                    navigate("/payslip")
+                }
+            })
+        }
+    }
+
+
+
+    const handleInputChange = (section, field, value) => {
+        setData((prevData) => ({
+            ...prevData,
+            [section]: {
+                ...prevData[section],
+                [field]: value,
+            },
+        }));
+    };
+
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        const earnings = [
-            formData.e_basic,
-            formData.e_spc,
-            formData.e_dearness,
-            formData.e_DA,
-            formData.e_ADA,
-            formData.e_IR,
-            formData.e_HRA,
-            formData.e_CCA,
-            formData.e_conv,
-            formData.e_medical,
-            formData.e_wash,
-            formData.e_BDP,
-            formData.e_arrears,
-          ].reduce((sum, value) => sum + parseFloat(value || 0), 0);
-      
-          const deductions = [
-            formData.e_d_CPF,
-            formData.e_GIS,
-            formData.e_house_rent,
-            formData.e_water,
-            formData.e_elect,
-            formData.e_veh,
-            formData.e_HB_loan,
-            formData.e_GPF_loan,
-            formData.e_festv_loan,
-            formData.e_grain,
-            formData.e_bank_adv,
-            formData.e_advance,
-            formData.e_RGPV_adv,
-            formData.e_incom_tax,
-            formData.e_proff_tax,
-          ].reduce((sum, value) => sum + parseFloat(value || 0), 0);
-      
-          const totalSalary = earnings - deductions;
 
-        // Update state with total salary
-        setFormData((prev) => ({
-            ...prev,
-            totalSalary,
-          }));
-      
-          alert("Payslip created successfully! Total Salary: ₹" + totalSalary);
-        };
 
+        setShowConfirm({
+            message: `Are you sure you want to create this payslip ?`,
+            success: true,
+            onConfirm: onConfirm, // Pass the function reference
+        });
+
+    }
+
+
+    // Render a loading spinner or message until data is ready
+
+    if (!data) {
+        setshowInvalid({
+            message: "Something went Wrong! Please try again after some time.", success: true, onClose: () => {
+                setshowInvalid(showInvalid)
+                navigate("/payslip")
+            }
+        })
+
+
+    }
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-100">
-            <div className="w-full p-8 bg-white shadow-lg rounded-lg">
-                <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
-                    Create Payslip
-                </h2>
-                <form onSubmit={handleSubmit} className=" flex flex-col">
-                    <div className='gap-4 '>
 
-                        {/* Personal details  */}
+        <div className="min-h-screen flex flex-col bg-gray-50">
+            <Navbar />
 
-                        <section className='gap-4 flex flex-col align-items-center m-3 '>
-                            <h1 className=''>Personal detail</h1>
-                            <div className='grid grid-cols-3 w-9/12 gap-8 self-center'>
-                                {/* id  */}
-                                <div>
-                                    <label
-                                        htmlFor="e_id"
-                                        className="block text-sm font-medium text-gray-700"
-                                    >
-                                        Employee id
-                                    </label>
-                                    <input
-                                        type="text"
-                                        id="e_id"
-                                        name="e_id"
-                                        value={formData.e_id}
-                                        onChange={handleChange}
-                                        required
-                                        placeholder="Enter employee's id"
-                                        className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    />
-                                </div>
+            {showSuccess.success && (
+                <div className="fixed inset-0 z-50">
+                    <SuccessfullyDone
+                        message={showSuccess.message}
+                        onClose={() => {
+                            setshowSuccess({ message: "", success: false })
+                            navigate("/payslip");
+                        }}
+                    />
+                </div>
+            )}
+            {showInvalid.success && (
+                <div className="fixed inset-0 z-50">
+                    <InvalidDialogue
+                        message={showInvalid.message}
+                        onClose={() => { showInvalid.onClose() }}
+                    />
+                </div>
+            )}
+            {showConfirm.success && (
+                <div className="fixed inset-0 z-50">
+                    <ConfirmDialogue
+                        message={showConfirm.message}
+                        onConfirm={() => {
+                            showConfirm.onConfirm(); // Call the confirm callback
+                            setShowConfirm({ message: "", success: false, onConfirm: null }); // Close the dialog
+                        }}
+                        onCancel={() => setShowConfirm({ message: "", success: false, onConfirm: null }
+                        )} // Close without confirming
+                    />
+                </div>
+            )}
+            <div className="min-h-screen bg-slate-50/50 py-8 px-4">
+                <div className="max-w-6xl mx-auto mt-12">
+                    <div className="bg-white rounded-2xl shadow-2xl overflow-hidden border border-slate-100">
+                        {/* Form Header */}
+                        <div className="relative px-8 py-10 bg-gradient-to-r from-emerald-600 via-teal-600 to-sky-600 overflow-hidden">
+                            {/* Decorative circles */}
+                            <div className="absolute top-0 right-0 w-40 h-40 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
+                            <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2" />
 
-                                {/* name  */}
-                                <div>
-                                    <label
-                                        htmlFor="e_name"
-                                        className="block text-sm font-medium text-gray-700"
-                                    >
-                                        Employee Name
-                                    </label>
-                                    <input
-                                        type="text"
-                                        id="e_name"
-                                        name="e_name"
-                                        value={formData.e_name}
-                                        onChange={handleChange}
-                                        required
-                                        placeholder="Enter employee's name"
-                                        className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    />
-                                </div>
-
-                                {/* department */}
-                                <div>
-                                    <label
-                                        htmlFor="e_dept"
-                                        className="block text-sm font-medium text-gray-700"
-                                    >
-                                        Department
-                                    </label>
-                                    <input
-                                        type="text"
-                                        id="e_dept"
-                                        name="e_dept"
-                                        value={formData.e_dept}
-                                        onChange={handleChange}
-                                        required
-                                        placeholder="Enter department"
-                                        className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    />
-                                </div>
-
-                                {/* Designation*/}
-                                <div>
-                                    <label
-                                        htmlFor="e_desgn"
-                                        className="block text-sm font-medium text-gray-700"
-                                    >
-                                        Designation
-                                    </label>
-                                    <input
-                                        type="text"
-                                        id="e_desgn"
-                                        name="e_desgn"
-                                        value={formData.e_desgn}
-                                        onChange={handleChange}
-                                        required
-                                        placeholder="Enter designation"
-                                        className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    />
-                                </div>
-                                {/* cpf  */}
-                                <div>
-                                    <label
-                                        htmlFor="e_desgn"
-                                        className="block text-sm font-medium text-gray-700"
-                                    >
-                                        CPF/GPF
-                                    </label>
-                                    <input
-                                        type="text"
-                                        id="e_CPF"
-                                        name="e_CPF"
-                                        value={formData.e_CPF}
-                                        onChange={handleChange}
-                                        required
-                                        placeholder="Enter value"
-                                        className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    />
-                                </div>
-                                {/* e_attendence */}
-                                <div>
-                                    <label
-                                        htmlFor="e_attndc"
-                                        className="block text-sm font-medium text-gray-700"
-                                    >
-                                        Attendence
-                                    </label>
-                                    <input
-                                        type="number"
-                                        id="e_attndc"
-                                        name="e_attndc"
-                                        value={formData.e_attndc}
-                                        onChange={handleChange}
-                                        required
-                                        placeholder="Enter value"
-                                        className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    />
-                                </div>
-                                {/* Bank Name */}
-                                <div>
-                                    <label
-                                        htmlFor="e_bank_name"
-                                        className="block text-sm font-medium text-gray-700"
-                                    >
-                                        Bank Name
-                                    </label>
-                                    <input
-                                        type="text"
-                                        id="e_bank_name"
-                                        name="e_bank_name"
-                                        value={formData.e_bank_name}
-                                        onChange={handleChange}
-                                        required
-                                        placeholder="Enter value"
-                                        className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    />
-                                </div>
-                                {/* acc no  */}
-                                <div>
-                                    <label
-                                        htmlFor="e_acc_no"
-                                        className="block text-sm font-medium text-gray-700"
-                                    >
-                                        Account number
-                                    </label>
-                                    <input
-                                        type="number"
-                                        id="e_acc_no"
-                                        name="e_acc_no"
-                                        value={formData.e_acc_no}
-                                        onChange={handleChange}
-                                        required
-                                        placeholder="Enter value"
-                                        className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    />
-                                </div>
-                                {/* pan no  */}
-                                <div>
-                                    <label
-                                        htmlFor="e_pan_no"
-                                        className="block text-sm font-medium text-gray-700"
-                                    >
-                                        IT PAN NO.
-                                    </label>
-                                    <input
-                                        type="text"
-                                        id="e_pan_no"
-                                        name="e_pan_no"
-                                        value={formData.e_pan_no}
-                                        onChange={handleChange}
-                                        required
-                                        placeholder="enter value"
-                                        className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    />
-                                </div>
+                            <div className="relative">
+                                <BackButton />
+                                <h1 className="text-3xl mt-3 font-bold text-white">
+                                    Create Employee Payslip
+                                </h1>
+                                <p className="mt-2 text-white/90 text-sm">
+                                    Please review all details carefully before generating the payslip
+                                </p>
                             </div>
-                        </section>
+                        </div>
 
-                        {/* Earnings  */}
-
-
-                        <section className="gap-4 flex flex-col align-items-center m-3">
-                            <h1 className="">Earnings</h1>
-                            <div className="grid grid-cols-3 w-9/12 gap-8 self-center">
-                                {/* Basic Salary */}
-                                <div>
-                                    <label
-                                        htmlFor="e_basic"
-                                        className="block text-sm font-medium text-gray-700"
-                                    >
-                                        Basic Salary
-                                    </label>
-                                    <input
-                                        type="text"
-                                        id="e_basic"
-                                        name="e_basic"
-                                        value={formData.e_basic}
-                                        onChange={handleChange}
-                                        required
-                                        placeholder="Enter Basic Salary"
-                                        className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    />
-                                </div>
-                                {/* Special Pay */}
-                                <div>
-                                    <label
-                                        htmlFor="e_spc"
-                                        className="block text-sm font-medium text-gray-700"
-                                    >
-                                        Special Pay
-                                    </label>
-                                    <input
-                                        type="text"
-                                        id="e_spc"
-                                        name="e_spc"
-                                        value={formData.e_spc}
-                                        onChange={handleChange}
-                                        required
-                                        placeholder="Enter Special Pay"
-                                        className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    />
-                                </div>
-                                {/* Dearness */}
-                                <div>
-                                    <label
-                                        htmlFor="e_dearness"
-                                        className="block text-sm font-medium text-gray-700"
-                                    >
-                                        Dearness Allowance
-                                    </label>
-                                    <input
-                                        type="text"
-                                        id="e_dearness"
-                                        name="e_dearness"
-                                        value={formData.e_dearness}
-                                        onChange={handleChange}
-                                        required
-                                        placeholder="Enter Dearness Allowance"
-                                        className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    />
-                                </div>
-                                {/* DA */}
-                                <div>
-                                    <label
-                                        htmlFor="e_DA"
-                                        className="block text-sm font-medium text-gray-700"
-                                    >
-                                        DA
-                                    </label>
-                                    <input
-                                        type="text"
-                                        id="e_DA"
-                                        name="e_DA"
-                                        value={formData.e_DA}
-                                        onChange={handleChange}
-                                        required
-                                        placeholder="Enter DA"
-                                        className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    />
-                                </div>
-                                {/* ADA */}
-                                <div>
-                                    <label
-                                        htmlFor="e_ADA"
-                                        className="block text-sm font-medium text-gray-700"
-                                    >
-                                        ADA
-                                    </label>
-                                    <input
-                                        type="text"
-                                        id="e_ADA"
-                                        name="e_ADA"
-                                        value={formData.e_ADA}
-                                        onChange={handleChange}
-                                        required
-                                        placeholder="Enter ADA"
-                                        className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    />
-                                </div>
-                                {/* IR */}
-                                <div>
-                                    <label
-                                        htmlFor="e_IR"
-                                        className="block text-sm font-medium text-gray-700"
-                                    >
-                                        Interim Relief (IR)
-                                    </label>
-                                    <input
-                                        type="text"
-                                        id="e_IR"
-                                        name="e_IR"
-                                        value={formData.e_IR}
-                                        onChange={handleChange}
-                                        required
-                                        placeholder="Enter IR"
-                                        className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    />
-                                </div>
-                                {/* HRA */}
-                                <div>
-                                    <label
-                                        htmlFor="e_HRA"
-                                        className="block text-sm font-medium text-gray-700"
-                                    >
-                                        HRA
-                                    </label>
-                                    <input
-                                        type="text"
-                                        id="e_HRA"
-                                        name="e_HRA"
-                                        value={formData.e_HRA}
-                                        onChange={handleChange}
-                                        required
-                                        placeholder="Enter HRA"
-                                        className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    />
-                                </div>
-                                {/* CCA */}
-                                <div>
-                                    <label
-                                        htmlFor="e_CCA"
-                                        className="block text-sm font-medium text-gray-700"
-                                    >
-                                        CCA
-                                    </label>
-                                    <input
-                                        type="text"
-                                        id="e_CCA"
-                                        name="e_CCA"
-                                        value={formData.e_CCA}
-                                        onChange={handleChange}
-                                        required
-                                        placeholder="Enter CCA"
-                                        className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    />
-                                </div>
-                                {/* Conveyance */}
-                                <div>
-                                    <label
-                                        htmlFor="e_conv"
-                                        className="block text-sm font-medium text-gray-700"
-                                    >
-                                        Conveyance
-                                    </label>
-                                    <input
-                                        type="text"
-                                        id="e_conv"
-                                        name="e_conv"
-                                        value={formData.e_conv}
-                                        onChange={handleChange}
-                                        required
-                                        placeholder="Enter Conveyance"
-                                        className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    />
-                                </div>
-                                {/* Medical */}
-                                <div>
-                                    <label
-                                        htmlFor="e_medical"
-                                        className="block text-sm font-medium text-gray-700"
-                                    >
-                                        Medical
-                                    </label>
-                                    <input
-                                        type="text"
-                                        id="e_medical"
-                                        name="e_medical"
-                                        value={formData.e_medical}
-                                        onChange={handleChange}
-                                        required
-                                        placeholder="Enter Medical Allowance"
-                                        className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    />
-                                </div>
-                                {/* Washing Allowance */}
-                                <div>
-                                    <label
-                                        htmlFor="e_wash"
-                                        className="block text-sm font-medium text-gray-700"
-                                    >
-                                        Washing Allowance
-                                    </label>
-                                    <input
-                                        type="text"
-                                        id="e_wash"
-                                        name="e_wash"
-                                        value={formData.e_wash}
-                                        onChange={handleChange}
-                                        required
-                                        placeholder="Enter Washing Allowance"
-                                        className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    />
-                                </div>
-                                {/* BDP */}
-                                <div>
-                                    <label
-                                        htmlFor="e_BDP"
-                                        className="block text-sm font-medium text-gray-700"
-                                    >
-                                        BDP
-                                    </label>
-                                    <input
-                                        type="text"
-                                        id="e_BDP"
-                                        name="e_BDP"
-                                        value={formData.e_BDP}
-                                        onChange={handleChange}
-                                        required
-                                        placeholder="Enter BDP"
-                                        className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    />
-                                </div>
-                                {/* Arrears */}
-                                <div>
-                                    <label
-                                        htmlFor="e_arrears"
-                                        className="block text-sm font-medium text-gray-700"
-                                    >
-                                        Arrears
-                                    </label>
-                                    <input
-                                        type="text"
-                                        id="e_arrears"
-                                        name="e_arrears"
-                                        value={formData.e_arrears}
-                                        onChange={handleChange}
-                                        required
-                                        placeholder="Enter Arrears"
-                                        className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    />
-                                </div>
-                            </div>
-                        </section>
-                         
-                         {/* deduction */}
-
-                        <section className="gap-4 flex flex-col align-items-center m-3">
-                            <h1 className="">Deductions</h1>
-                            <div className="grid grid-cols-3 w-9/12 gap-8 self-center">
-                                {/* e_d_CPF */}
-                                <div>
-                                    <label
-                                        htmlFor="e_d_CPF"
-                                        className="block text-sm font-medium text-gray-700"
-                                    >
-                                        Deduction CPF
-                                    </label>
-                                    <input
-                                        type="number"
-                                        id="e_d_CPF"
-                                        name="e_d_CPF"
-                                        value={formData.e_d_CPF}
-                                        onChange={handleChange}
-                                        required
-                                        placeholder="Enter value"
-                                        className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    />
-                                </div>
-
-                                {/* e_GIS */}
-                                <div>
-                                    <label
-                                        htmlFor="e_GIS"
-                                        className="block text-sm font-medium text-gray-700"
-                                    >
-                                        GIS
-                                    </label>
-                                    <input
-                                        type="number"
-                                        id="e_GIS"
-                                        name="e_GIS"
-                                        value={formData.e_GIS}
-                                        onChange={handleChange}
-                                        required
-                                        placeholder="Enter value"
-                                        className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    />
-                                </div>
-
-                                {/* e_house_rent */}
-                                <div>
-                                    <label
-                                        htmlFor="e_house_rent"
-                                        className="block text-sm font-medium text-gray-700"
-                                    >
-                                        House Rent
-                                    </label>
-                                    <input
-                                        type="number"
-                                        id="e_house_rent"
-                                        name="e_house_rent"
-                                        value={formData.e_house_rent}
-                                        onChange={handleChange}
-                                        required
-                                        placeholder="Enter value"
-                                        className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    />
-                                </div>
-
-                                {/* e_water */}
-                                <div>
-                                    <label
-                                        htmlFor="e_water"
-                                        className="block text-sm font-medium text-gray-700"
-                                    >
-                                        Water Charges
-                                    </label>
-                                    <input
-                                        type="number"
-                                        id="e_water"
-                                        name="e_water"
-                                        value={formData.e_water}
-                                        onChange={handleChange}
-                                        required
-                                        placeholder="Enter value"
-                                        className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    />
-                                </div>
-
-                                {/* e_elect */}
-                                <div>
-                                    <label
-                                        htmlFor="e_elect"
-                                        className="block text-sm font-medium text-gray-700"
-                                    >
-                                        Electricity Charges
-                                    </label>
-                                    <input
-                                        type="number"
-                                        id="e_elect"
-                                        name="e_elect"
-                                        value={formData.e_elect}
-                                        onChange={handleChange}
-                                        required
-                                        placeholder="Enter value"
-                                        className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    />
-                                </div>
-
-                                {/* e_veh */}
-                                <div>
-                                    <label
-                                        htmlFor="e_veh"
-                                        className="block text-sm font-medium text-gray-700"
-                                    >
-                                        Vehicle Deduction
-                                    </label>
-                                    <input
-                                        type="number"
-                                        id="e_veh"
-                                        name="e_veh"
-                                        value={formData.e_veh}
-                                        onChange={handleChange}
-                                        required
-                                        placeholder="Enter value"
-                                        className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    />
-                                </div>
-
-                                {/* e_HB_loan */}
-                                <div>
-                                    <label
-                                        htmlFor="e_HB_loan"
-                                        className="block text-sm font-medium text-gray-700"
-                                    >
-                                        HB Loan
-                                    </label>
-                                    <input
-                                        type="number"
-                                        id="e_HB_loan"
-                                        name="e_HB_loan"
-                                        value={formData.e_HB_loan}
-                                        onChange={handleChange}
-                                        required
-                                        placeholder="Enter value"
-                                        className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    />
-                                </div>
-
-                                {/* e_GPF_loan */}
-                                <div>
-                                    <label
-                                        htmlFor="e_GPF_loan"
-                                        className="block text-sm font-medium text-gray-700"
-                                    >
-                                        GPF Loan
-                                    </label>
-                                    <input
-                                        type="number"
-                                        id="e_GPF_loan"
-                                        name="e_GPF_loan"
-                                        value={formData.e_GPF_loan}
-                                        onChange={handleChange}
-                                        required
-                                        placeholder="Enter value"
-                                        className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    />
-                                </div>
-
-                                {/* e_festv_loan */}
-                                <div>
-                                    <label
-                                        htmlFor="e_festv_loan"
-                                        className="block text-sm font-medium text-gray-700"
-                                    >
-                                        Festival Loan
-                                    </label>
-                                    <input
-                                        type="number"
-                                        id="e_festv_loan"
-                                        name="e_festv_loan"
-                                        value={formData.e_festv_loan}
-                                        onChange={handleChange}
-                                        required
-                                        placeholder="Enter value"
-                                        className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    />
-                                </div>
-
-                                {/* Additional Fields */}
-                                {[
-                                    { label: "Grain Charges", id: "e_grain" },
-                                    { label: "Bank Advance", id: "e_bank_adv" },
-                                    { label: "Advance", id: "e_advance" },
-                                    { label: "RGPV Advance", id: "e_RGPV_adv" },
-                                    { label: "Income Tax", id: "e_incom_tax" },
-                                    { label: "Professional Tax", id: "e_proff_tax" },
-                                ].map((field) => (
-                                    <div key={field.id}>
-                                        <label
-                                            htmlFor={field.id}
-                                            className="block text-sm font-medium text-gray-700"
-                                        >
-                                            {field.label}
-                                        </label>
-                                        <input
-                                            type="number"
-                                            id={field.id}
-                                            name={field.id}
-                                            value={formData[field.id]}
-                                            onChange={handleChange}
-                                            required
-                                            placeholder="Enter value"
-                                            className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        />
+                        <form onSubmit={handleSubmit} className="p-8" encType="multipart/form-data">
+                            <div className="space-y-10">
+                                {/* Salary Details Section */}
+                                <section className="space-y-6">
+                                    <div className="flex items-center space-x-3 pb-2 border-b border-slate-100">
+                                        <div className="p-2 bg-emerald-50 rounded-lg">
+                                            <User className="h-5 w-5 text-emerald-600" />
+                                        </div>
+                                        <h2 className="text-lg font-semibold text-slate-800">Salary Details</h2>
                                     </div>
-                                ))}
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                        {/* ID Field */}
+                                        <div className="space-y-1.5">
+                                            <label className="block text-sm font-medium text-slate-700">Employee ID</label>
+                                            <input
+                                                type="text"
+                                                value={data.salary_details.e_id}
+                                                onChange={(e) => handleInputChange("salary_details", "e_id", e.target.value)}
+                                                className="block w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl 
+                    focus:outline-none focus:ring-2 focus:ring-emerald-200 focus:border-emerald-500 
+                    cursor-not-allowed text-slate-500"
+                                                disabled
+                                            />
+                                        </div>
+
+                                        {/* Name Field */}
+                                        <div className="space-y-1.5">
+                                            <label className="block text-sm font-medium text-slate-700">Employee Name</label>
+                                            <input
+                                                type="text"
+                                                value={data.emp_earning_details.e_name}
+                                                onChange={(e) => handleInputChange("emp_earning_details", "e_name", e.target.value)}
+                                                className="block w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl 
+                    focus:outline-none focus:ring-2 focus:ring-emerald-200 focus:border-emerald-500 
+                    cursor-not-allowed text-slate-500"
+                                                disabled
+                                                maxLength={30}
+                                                style={{ textTransform: "capitalize" }}
+                                            />
+                                        </div>
+
+                                        {/* Salary Month Field */}
+                                        <div className="space-y-1.5">
+                                            <label className="block text-sm font-medium text-slate-700">Salary Month</label>
+                                            <select
+                                                value={data.salary_details.salary_month}
+                                                onChange={(e) => handleInputChange("salary_details", "salary_month", e.target.value)}
+                                                className="block w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl 
+                    focus:outline-none focus:ring-2 focus:ring-emerald-200 focus:border-emerald-500 
+                    cursor-not-allowed text-slate-500"
+                                                disabled
+                                            >
+                                                <option value="" disabled>Select Month</option>
+                                                <option value="01">January</option>
+                                                <option value="02">February</option>
+                                                <option value="03">March</option>
+                                                <option value="04">April</option>
+                                                <option value="05">May</option>
+                                                <option value="06">June</option>
+                                                <option value="07">July</option>
+                                                <option value="08">August</option>
+                                                <option value="09">September</option>
+                                                <option value="10">October</option>
+                                                <option value="11">November</option>
+                                                <option value="12">December</option>
+                                            </select>
+                                        </div>
+
+                                        {/* Salary Year Field */}
+                                        <div className="space-y-1.5">
+                                            <label className="block text-sm font-medium text-slate-700">Salary Year</label>
+                                            <select
+                                                value={data.salary_details.salary_year}
+                                                onChange={(e) => handleInputChange("salary_details", "salary_year", e.target.value)}
+                                                className="block w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl 
+                    focus:outline-none focus:ring-2 focus:ring-emerald-200 focus:border-emerald-500 
+                    cursor-not-allowed text-slate-500"
+                                                disabled
+                                            >
+                                                <option value="" disabled>Select Year</option>
+                                                {Array.from(
+                                                    { length: new Date().getFullYear() - 2014 },
+                                                    (_, index) => 2015 + index
+                                                ).map((year) => (
+                                                    <option key={year} value={year}>{year}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                {/* Employee Earning Details Section */}
+                                <section className="space-y-6">
+                                    {/* Section Header */}
+                                    <div className="flex items-center space-x-3 pb-2 border-b border-slate-100">
+                                        <div className="p-2 bg-emerald-50 rounded-lg">
+                                            <DollarSign className="h-5 w-5 text-emerald-600" />
+                                        </div>
+                                        <h2 className="text-lg font-semibold text-slate-800">Employee Earnings</h2>
+                                    </div>
+
+                                    {/* Input Fields for Employee Earnings */}
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                        {/* Basic Salary */}
+                                        <div className="space-y-1.5">
+                                            <label className="block text-sm font-medium text-slate-700">Basic Salary</label>
+                                            <input
+                                                type="number"
+                                                value={data.emp_earning_details.basic_salary}
+                                                onChange={(e) => handleInputChange("emp_earning_details", "basic_salary", e.target.value)}
+                                                className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 text-slate-700"
+                                            />
+                                        </div>
+
+                                        {/* Special Pay */}
+                                        <div className="space-y-1.5">
+                                            <label className="block text-sm font-medium text-slate-700">Special Pay</label>
+                                            <input
+                                                type="number"
+                                                value={data.emp_earning_details.special_pay}
+                                                onChange={(e) => handleInputChange("emp_earning_details", "special_pay", e.target.value)}
+                                                className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 text-slate-700"
+                                            />
+                                        </div>
+
+                                        {/* Dearness Allowance */}
+                                        <div className="space-y-1.5">
+                                            <label className="block text-sm font-medium text-slate-700">Dearness Allowance</label>
+                                            <input
+                                                type="number"
+                                                value={data.emp_earning_details.dearness_allowance}
+                                                onChange={(e) => handleInputChange("emp_earning_details", "dearness_allowance", e.target.value)}
+                                                className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 text-slate-700"
+                                            />
+                                        </div>
+
+                                        {/* DA */}
+                                        <div className="space-y-1.5">
+                                            <label className="block text-sm font-medium text-slate-700">DA</label>
+                                            <input
+                                                type="number"
+                                                value={data.emp_earning_details.DA}
+                                                onChange={(e) => handleInputChange("emp_earning_details", "DA", e.target.value)}
+                                                className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 text-slate-700"
+                                            />
+                                        </div>
+
+                                        {/* ADA */}
+                                        <div className="space-y-1.5">
+                                            <label className="block text-sm font-medium text-slate-700">ADA</label>
+                                            <input
+                                                type="number"
+                                                value={data.emp_earning_details.ADA}
+                                                onChange={(e) => handleInputChange("emp_earning_details", "ADA", e.target.value)}
+                                                className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 text-slate-700"
+                                            />
+                                        </div>
+
+                                        {/* Interim Relief */}
+                                        <div className="space-y-1.5">
+                                            <label className="block text-sm font-medium text-slate-700">Interim Relief</label>
+                                            <input
+                                                type="number"
+                                                value={data.emp_earning_details.interim_relief}
+                                                onChange={(e) => handleInputChange("emp_earning_details", "interim_relief", e.target.value)}
+                                                className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 text-slate-700"
+                                            />
+                                        </div>
+
+                                        {/* HRA Field */}
+                                        <div className="space-y-1.5">
+                                            <label className="block text-sm font-medium text-slate-700">HRA</label>
+                                            <input
+                                                type="number"
+                                                value={data.emp_earning_details.HRA}
+                                                onChange={(e) => handleInputChange("emp_earning_details", "HRA", e.target.value)}
+                                                className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 text-slate-700"
+                                            />
+                                        </div>
+
+                                        {/* CCA Field */}
+                                        <div className="space-y-1.5">
+                                            <label className="block text-sm font-medium text-slate-700">CCA</label>
+                                            <input
+                                                type="number"
+                                                value={data.emp_earning_details.CCA}
+                                                onChange={(e) => handleInputChange("emp_earning_details", "CCA", e.target.value)}
+                                                className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 text-slate-700"
+                                            />
+                                        </div>
+
+                                        {/* Conveyance Field */}
+                                        <div className="space-y-1.5">
+                                            <label className="block text-sm font-medium text-slate-700">Conveyance</label>
+                                            <input
+                                                type="number"
+                                                value={data.emp_earning_details.conveyance}
+                                                onChange={(e) => handleInputChange("emp_earning_details", "conveyance", e.target.value)}
+                                                className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 text-slate-700"
+                                            />
+                                        </div>
+
+                                        {/* Medical Allowance Field */}
+                                        <div className="space-y-1.5">
+                                            <label className="block text-sm font-medium text-slate-700">Medical Allowance</label>
+                                            <input
+                                                type="number"
+                                                value={data.emp_earning_details.medical}
+                                                onChange={(e) => handleInputChange("emp_earning_details", "medical", e.target.value)}
+                                                className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 text-slate-700"
+                                            />
+                                        </div>
+
+                                        {/* Washing Allowance Field */}
+                                        <div className="space-y-1.5">
+                                            <label className="block text-sm font-medium text-slate-700">Washing Allowance</label>
+                                            <input
+                                                type="number"
+                                                value={data.emp_earning_details.washing_allowance}
+                                                onChange={(e) => handleInputChange("emp_earning_details", "washing_allowance", e.target.value)}
+                                                className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 text-slate-700"
+                                            />
+                                        </div>
+
+                                        {/* BDP Field */}
+                                        <div className="space-y-1.5">
+                                            <label className="block text-sm font-medium text-slate-700">BDP</label>
+                                            <input
+                                                type="number"
+                                                value={data.emp_earning_details.BDP}
+                                                onChange={(e) => handleInputChange("emp_earning_details", "BDP", e.target.value)}
+                                                className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 text-slate-700"
+                                            />
+                                        </div>
+
+                                        {/* Arrears Field */}
+                                        <div className="space-y-1.5">
+                                            <label className="block text-sm font-medium text-slate-700">Arrears</label>
+                                            <input
+                                                type="number"
+                                                value={data.emp_earning_details.arrears}
+                                                onChange={(e) => handleInputChange("emp_earning_details", "arrears", e.target.value)}
+                                                className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 text-slate-700"
+                                            />
+                                        </div>
+                                    </div>
+                                </section>
+                                {/* Deductions Section */}
+                                <section className="space-y-6">
+                                    <div className="flex items-center space-x-3 pb-2 border-b border-slate-100">
+                                        <div className="p-2 bg-emerald-50 rounded-lg">
+                                            <MinusCircle className="h-5 w-5 text-emerald-600" />
+                                        </div>
+                                        <h2 className="text-lg font-semibold text-slate-800">Deductions Details</h2>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                        {/* Your deductions fields go here */}
+
+                                        {/* Leave Days */}
+                                        <div className="space-y-1.5">
+                                            <label className="block text-sm font-medium text-slate-700">LEAVE DAYS</label>
+                                            <input type="number" value={data.emp_deduction_details.leave_days} onChange={(e) => handleInputChange("emp_deduction_details", "leave_days", e.target.value)} className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-red-500 text-slate-700" />
+                                        </div>
+
+                                        {/* Leave Deduction Amount */}
+                                        <div className="space-y-1.5">
+                                            <label className="block text-sm font-medium text-slate-700">LEAVE DEDUCTION AMOUNT</label>
+                                            <input
+                                                type="number"
+                                                value={data.emp_deduction_details.leave_deduction_amount}
+                                                onChange={(e) => handleInputChange("emp_deduction_details", "leave_deduction_amount", e.target.value)}
+                                                className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-red-500 text-slate-700"
+                                            />
+                                        </div>
+
+                                        {/* Deduction CPF */}
+                                        <div className="space-y-1.5">
+                                            <label className="block text-sm font-medium text-slate-700">DEDUCTION CPF</label>
+                                            <input
+                                                type="number"
+                                                value={data.emp_deduction_details.deduction_CPF}
+                                                onChange={(e) => handleInputChange("emp_deduction_details", "deduction_CPF", e.target.value)}
+                                                className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-red-500 text-slate-700"
+                                            />
+                                        </div>
+
+                                        {/* GIS */}
+                                        <div className="space-y-1.5">
+                                            <label className="block text-sm font-medium text-slate-700">GIS</label>
+                                            <input
+                                                type="number"
+                                                value={data.emp_deduction_details.GIS}
+                                                onChange={(e) => handleInputChange("emp_deduction_details", "GIS", e.target.value)}
+                                                className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-red-500 text-slate-700"
+                                            />
+                                        </div>
+
+                                        {/* House Rent */}
+                                        <div className="space-y-1.5">
+                                            <label className="block text-sm font-medium text-slate-700">HOUSE RENT</label>
+                                            <input
+                                                type="number"
+                                                value={data.emp_deduction_details.house_rent}
+                                                onChange={(e) => handleInputChange("emp_deduction_details", "house_rent", e.target.value)}
+                                                className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-red-500 text-slate-700"
+                                            />
+                                        </div>
+
+                                        {/* Water Charges */}
+                                        <div className="space-y-1.5">
+                                            <label className="block text-sm font-medium text-slate-700">WATER CHARGES</label>
+                                            <input
+                                                type="number"
+                                                value={data.emp_deduction_details.water_charges}
+                                                onChange={(e) => handleInputChange("emp_deduction_details", "water_charges", e.target.value)}
+                                                className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-red-500 text-slate-700"
+                                            />
+                                        </div>
+
+                                        {/* Electricity Charges */}
+                                        <div className="space-y-1.5">
+                                            <label className="block text-sm font-medium text-slate-700">ELECTRICITY CHARGES</label>
+                                            <input
+                                                type="number"
+                                                value={data.emp_deduction_details.electricity_charges}
+                                                onChange={(e) => handleInputChange("emp_deduction_details", "electricity_charges", e.target.value)}
+                                                className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-red-500 text-slate-700"
+                                            />
+                                        </div>
+
+                                        {/* Vehicle Deduction */}
+                                        <div className="space-y-1.5">
+                                            <label className="block text-sm font-medium text-slate-700">VEHICLE DEDUCTION</label>
+                                            <input
+                                                type="number"
+                                                value={data.emp_deduction_details.vehicle_deduction}
+                                                onChange={(e) => handleInputChange("emp_deduction_details", "vehicle_deduction", e.target.value)}
+                                                className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-red-500 text-slate-700"
+                                            />
+                                        </div>
+
+                                        {/* HB Loan */}
+                                        <div className="space-y-1.5">
+                                            <label className="block text-sm font-medium text-slate-700">HB LOAN</label>
+                                            <input
+                                                type="number"
+                                                value={data.emp_deduction_details.HB_loan}
+                                                onChange={(e) => handleInputChange("emp_deduction_details", "HB_loan", e.target.value)}
+                                                className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-red-500 text-slate-700"
+                                            />
+                                        </div>
+
+                                        {/* GPF Loan */}
+                                        <div className="space-y-1.5">
+                                            <label className="block text-sm font-medium text-slate-700">GPF LOAN</label>
+                                            <input
+                                                type="number"
+                                                value={data.emp_deduction_details.GPF_loan}
+                                                onChange={(e) => handleInputChange("emp_deduction_details", "GPF_loan", e.target.value)}
+                                                className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-red-500 text-slate-700"
+                                            />
+                                        </div>
+
+                                        {/* Festival Loan */}
+                                        <div className="space-y-1.5">
+                                            <label className="block text-sm font-medium text-slate-700">FESTIVAL LOAN</label>
+                                            <input
+                                                type="number"
+                                                value={data.emp_deduction_details.festival_loan}
+                                                onChange={(e) => handleInputChange("emp_deduction_details", "festival_loan", e.target.value)}
+                                                className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-red-500 text-slate-700"
+                                            />
+                                        </div>
+
+                                        {/* Grain Charges */}
+                                        <div className="space-y-1.5">
+                                            <label className="block text-sm font-medium text-slate-700">GRAIN CHARGES</label>
+                                            <input
+                                                type="number"
+                                                value={data.emp_deduction_details.grain_charges}
+                                                onChange={(e) => handleInputChange("emp_deduction_details", "grain_charges", e.target.value)}
+                                                className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-red-500 text-slate-700"
+                                            />
+                                        </div>
+
+                                        {/* Bank Advance */}
+                                        <div className="space-y-1.5">
+                                            <label className="block text-sm font-medium text-slate-700">BANK ADVANCE</label>
+                                            <input
+                                                type="number"
+                                                value={data.emp_deduction_details.bank_advance}
+                                                onChange={(e) => handleInputChange("emp_deduction_details", "bank_advance", e.target.value)}
+                                                className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-red-500 text-slate-700"
+                                            />
+                                        </div>
+
+                                        {/* Advance */}
+                                        <div className="space-y-1.5">
+                                            <label className="block text-sm font-medium text-slate-700">ADVANCE</label>
+                                            <input
+                                                type="number"
+                                                value={data.emp_deduction_details.advance}
+                                                onChange={(e) => handleInputChange("emp_deduction_details", "advance", e.target.value)}
+                                                className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-red-500 text-slate-700"
+                                            />
+                                        </div>
+
+                                        {/* RGPV Advance */}
+                                        <div className="space-y-1.5">
+                                            <label className="block text-sm font-medium text-slate-700">RGPV ADVANCE</label>
+                                            <input
+                                                type="number"
+                                                value={data.emp_deduction_details.RGPV_advance}
+                                                onChange={(e) => handleInputChange("emp_deduction_details", "RGPV_advance", e.target.value)}
+                                                className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-red-500 text-slate-700"
+                                            />
+                                        </div>
+
+                                        {/* Income Tax */}
+                                        <div className="space-y-1.5">
+                                            <label className="block text-sm font-medium text-slate-700">INCOME TAX</label>
+                                            <input
+                                                type="number"
+                                                value={data.emp_deduction_details.income_tax}
+                                                onChange={(e) => handleInputChange("emp_deduction_details", "income_tax", e.target.value)}
+                                                className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-red-500 text-slate-700"
+                                            />
+                                        </div>
+
+                                        {/* Professional Tax */}
+                                        <div className="space-y-1.5">
+                                            <label className="block text-sm font-medium text-slate-700">PROFESSIONAL TAX</label>
+                                            <input
+                                                type="number"
+                                                value={data.emp_deduction_details.professional_tax}
+                                                onChange={(e) => handleInputChange("emp_deduction_details", "professional_tax", e.target.value)}
+                                                className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-red-500 text-slate-700"
+                                            />
+                                        </div>
+
+
+
+
+
+
+
+
+
+                                    </div>
+                                </section>
                             </div>
-                        </section>
 
-
+                            {/* Action Buttons */}
+                            <div className="mt-10 flex justify-center">
+                                <button
+                                    type="submit"
+                                    className="px-8 py-3 rounded-xl text-white font-medium
+              bg-gradient-to-r from-emerald-600 via-teal-600 to-sky-600
+              hover:from-emerald-700 hover:via-teal-700 hover:to-sky-700
+              focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2
+              transform transition-all duration-200 hover:scale-[1.02]
+              shadow-lg shadow-emerald-600/20
+              flex items-center space-x-3"
+                                >
+                                    <Save className="h-5 w-5" />
+                                    <span>Generate Payslip</span>
+                                </button>
+                            </div>
+                        </form>
                     </div>
-
-                    {/* Submit Button */}
-                    <button
-                        type="submit"
-                        className="w-3/5 px-4 py-2 m-10 text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 self-center"
-                    >
-                        Generate Payslip
-                    </button>
-                </form>
-
-                {/* Display Result */}
-                {formData.totalSalary && (
-                    <div className="mt-6 p-4 bg-green-100 rounded-md">
-                        <h3 className="text-lg font-semibold text-green-700">Payslip:</h3>
-                        <p className="text-gray-700">
-                            <strong>Name:</strong> {formData.name}
-                        </p>
-                        <p className="text-gray-700">
-                            <strong>Designation:</strong> {formData.designation}
-                        </p>
-                        <p className="text-gray-700">
-                            <strong>Total Salary:</strong> ₹{formData.totalSalary}
-                        </p>
-                    </div>
-                )}
+                </div>
             </div>
-        </div>
-    )
+        </div >
+    );
 }
 
-export default Payslip_Form
+export default Payslip_Form;

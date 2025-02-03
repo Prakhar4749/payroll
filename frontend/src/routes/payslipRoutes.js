@@ -10,4 +10,4 @@ const payslipRoutes = [
   <Route key="payslip_pdf" path="/payslip/payslipPdf" element={<PayslipPdf />} />,
 ];
 
-export default payslipRoutes;
+export default payslipRoutes; 
