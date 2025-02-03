@@ -1,29 +1,30 @@
 import React, { useState } from "react";
 import Navbar from "../components/layout/Navbar";
-import { useNavigate, useLocation } from "react-router-dom";
-import {ConfirmDialogue} from "../components/common/ConfirmDialogue";
-import {InvalidDialogue} from "../components/common/InvalidDialogue";
+import { useNavigate, useLocation, Await } from "react-router-dom";
+import { ConfirmDialogue } from "../components/common/ConfirmDialogue";
+import { InvalidDialogue } from "../components/common/InvalidDialogue";
 import { SuccessfullyDone } from "../components/common/SuccessfullyDone";
 import { Calendar, UserRound } from 'lucide-react';
+import { check_id, check_payslip_in_archive, get_payslip, fetch_form, create_salary_archive } from "../controller/Payslip";
 
 export default function Payslip() {
 
   const navigate = useNavigate();
   const location = useLocation();
   const selected_e_id = location.state && location.state.selected_e_id
-  ? location.state.selected_e_id
-  : null;
+    ? location.state.selected_e_id
+    : null;
   const [e_id, sete_id] = useState(selected_e_id);
   const [salary_month, setsalary_month] = useState(new Date().getMonth() + 1);
   const [salary_year, setsalary_year] = useState(new Date().getFullYear());
-  const [showConfirm, setShowConfirm] = useState({success: false, message: "", onConfirm: ()=>{}});
-  const [showInvalid, setShowInvalid] = useState({success: false, message: "", onClose: ()=>{}});
-  const [showSuccess, setShowSuccess] = useState({success: false, message: "", onClose: ()=>{}});
-  
+  const [showConfirm, setShowConfirm] = useState({ success: false, message: "", onConfirm: () => { } });
+  const [showInvalid, setShowInvalid] = useState({ success: false, message: "", onClose: () => { } });
+  const [showSuccess, setShowSuccess] = useState({ success: false, message: "", onClose: () => { } });
 
 
-  
-  
+
+
+
   const onConfirm = () => {
     navigate("/payslip/payslip_form", {
       state: { e_id, salary_month, salary_year },
@@ -35,24 +36,75 @@ export default function Payslip() {
 
 
     if (salary_year > new Date().getFullYear() || salary_year < 2015) {
-      setShowInvalid({success: true, message: "Enter a valid salary year.", onClose: ()=>{setShowInvalid(showInvalid)} });
-      
+      setShowInvalid({ success: true, message: "Enter a valid salary year.", onClose: () => { setShowInvalid(showInvalid) } });
+
       return false;
     }
     if (salary_year == new Date().getFullYear() && salary_month > new Date().getMonth() + 1) {
-      setShowInvalid({success: true, message: "Enter a valid salary month.", onClose: ()=>{setShowInvalid(showInvalid)} });
+      setShowInvalid({ success: true, message: "Enter a valid salary month.", onClose: () => { setShowInvalid(showInvalid) } });
       return false;
     }
     return true;
   };
 
-  const Submit = (e) => {
+  const Submit = async (e) => {
     e.preventDefault();
+
     if (!validateInputs()) {
-      return 
+      return;
     }
-    
-    
+
+    try {
+      // Check if the employee ID is valid
+      const idResponse = await check_id(e_id);
+      if (!idResponse.result.e_id) {
+        setShowInvalid({
+          success: true,
+          message: "Enter a valid Employee ID! e_id does not exist",
+          onClose: () => { setShowInvalid(showInvalid) }
+        });
+        return;
+      }
+
+      // Check if the payslip is generated for the given employee, month, and year
+      const payslipResponse = await check_payslip_in_archive(e_id, salary_month, salary_year);
+      if (!payslipResponse.result.payslip) {
+        setShowConfirm({
+          success: true,
+          message: `Payslip of E_id:${e_id} is not generated yet for ${salary_month}, ${salary_year}. would you like to geberate payslip.`,
+          onConfirm: () => {
+            navigate("/payslip/payslip_form", {
+              state: { e_id, salary_month, salary_year },
+            });
+          }
+        });
+        return;
+      }
+
+      if (payslipResponse.result.payslip) {
+        setShowConfirm({
+          success: true,
+          message: `Payslip of E_id:${e_id} is already generated  for ${salary_month}, ${salary_year}.  would you like to get payslip.` ,
+          onConfirm: () => {
+            navigate("/payslip/payslip_pdf", {
+              state: { e_id, salary_month, salary_year },
+            });
+          }
+        });
+        return;
+      }
+
+      // Further actions can be added here based on the success of the above checks
+
+    } catch (error) {
+      // Handle any errors that occurred during the API calls
+      console.error("Error during form submission:", error);
+      setShowInvalid({
+        success: false,
+        message: "An unexpected error occurred. Please try again later.",
+        onClose: () => { setShowInvalid(showInvalid) }
+      });
+    }
   };
 
   const clear = () => {
@@ -61,14 +113,14 @@ export default function Payslip() {
     setsalary_year(new Date().getFullYear());
   };
 
-  
+
 
   const handleCancel = () => {
-    
+
   };
 
   const handleInvalidClose = () => {
-    
+
   };
 
   return (
@@ -76,35 +128,35 @@ export default function Payslip() {
       <Navbar />
 
       {showSuccess.success && (
-          <div className="fixed inset-0 z-50">
-            <SuccessfullyDone
-              message={showSuccess.message}
-              onClose={setShowSuccess.onClose()
-              }
-            />
-          </div>
-        )}
-        {showInvalid.success && (
-          <div className="fixed inset-0 z-50">
-            <InvalidDialogue
-              message={showInvalid.message}
-              onClose={() => { showInvalid.onClose() }}
-            />
-          </div>
-        )}
-        {showConfirm.success && (
-          <div className="fixed inset-0 z-50">
-            <ConfirmDialogue
-              message={showConfirm.message}
-              onConfirm={() => {
-                showConfirm.onConfirm(); // Call the confirm callback
-                setShowConfirm({ message: "", success: false, onConfirm: null }); // Close the dialog
-              }}
-              onCancel={() => setShowConfirm({ message: "", success: false, onConfirm: null }
-              )} // Close without confirming
-            />
-          </div>
-        )}
+        <div className="fixed inset-0 z-50">
+          <SuccessfullyDone
+            message={showSuccess.message}
+            onClose={setShowSuccess.onClose()
+            }
+          />
+        </div>
+      )}
+      {showInvalid.success && (
+        <div className="fixed inset-0 z-50">
+          <InvalidDialogue
+            message={showInvalid.message}
+            onClose={() => { showInvalid.onClose() }}
+          />
+        </div>
+      )}
+      {showConfirm.success && (
+        <div className="fixed inset-0 z-50">
+          <ConfirmDialogue
+            message={showConfirm.message}
+            onConfirm={() => {
+              showConfirm.onConfirm(); // Call the confirm callback
+              setShowConfirm({ message: "", success: false, onConfirm: null }); // Close the dialog
+            }}
+            onCancel={() => setShowConfirm({ message: "", success: false, onConfirm: null }
+            )} // Close without confirming
+          />
+        </div>
+      )}
       <div className="max-w-4xl mx-auto pt-24 px-4 sm:px-6 lg:px-8 pb-12">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">Employee Payslip</h1>

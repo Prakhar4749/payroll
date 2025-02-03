@@ -3,35 +3,47 @@ import axios from 'axios';
 const base_url = process.env.REACT_APP_BASE_URL;
 
 export const loginUser = async (user_name, user_password) => {
-  console.log("base url",base_url);
+  console.log("Base URL:", base_url);
 
   try {
     const response = await axios.post(`${base_url}/auth/login`, {
-      "user_name": `${user_name}`,
-      "user_password": `${user_password}`,
+      user_name,
+      user_password
     });
-    
 
-    console.log(response)
+    console.log(response);
 
-    // On success, store token and return response
-    sessionStorage.setItem("token", response.data.result.token);
-    sessionStorage.setItem("login", response.data.success); // For ProtectedRoute
-    sessionStorage.setItem("user_name", response.data.result.user_name); 
-    return response.data;
+    const { success, message, result } = response.data;
+
+    if (success) {
+      sessionStorage.setItem("token", result.token);
+      sessionStorage.setItem("login", success);
+      sessionStorage.setItem("user_name", result.user_name);
+    }
+
+    return { success, message, result };
   } catch (error) {
     if (error.response) {
-      // Backend responded with an error (like 400, 401, 404)
       console.error("Login error:", error.response.data);
-      return error.response.data; // Return error response
+      return {
+        success: false,
+        message: error.response.data.message || "Login failed.",
+        result: null
+      };
     } else if (error.request) {
-      // No response from the server (CORS, network issue)
-      console.error("No response received from server", error.request);
-      return { success: false, message: "No response from server" };
+      console.error("No response received from server:", error.request);
+      return {
+        success: false,
+        message: "No response from server. Please try again.",
+        result: null
+      };
     } else {
-      // Unknown Axios error
-      console.error("Axios error:", error.message);
-      return { success: false, message: "Unexpected error occurred" };
+      console.error("Unexpected error:", error.message);
+      return {
+        success: false,
+        message: "Unexpected error occurred. Please try again.",
+        result: null
+      };
     }
   }
 };
