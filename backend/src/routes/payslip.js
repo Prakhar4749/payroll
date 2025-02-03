@@ -1,5 +1,5 @@
 import express from "express";
-import {chk_that_payslip_is_generated , get_data_for_pdf, update_and_change_in_the_salary_archive} from "../controller/payslip.js"
+import {chk_that_payslip_is_generated , chk_emp_id_exist , get_data_for_pdf, update_in_earning_and_save_in_archive} from "../controller/payslip.js"
 const route=express.Router()
 
 
@@ -7,7 +7,9 @@ const route=express.Router()
 
 route.post("/isit" , chk_that_payslip_is_generated)
 
-route.put('/create_payslip' , update_and_change_in_the_salary_archive )
+route.get("/isit/:e_id" , chk_emp_id_exist)
+
+route.put('/create_payslip' , update_in_earning_and_save_in_archive )
 
 route.post("/get_pdf", get_data_for_pdf)
 
