@@ -7,20 +7,43 @@ const SECRET_KEY = "admin";
 async function register_user(req, res) {
     const { user_name, user_password } = req.body;
 
+    // Check if username and password are provided
     if (!user_name || !user_password) {
         return res.status(400).json({
             success: false,
             message: "user_name and user_password are required",
-            result: error
+            result: ""
         });
     }
+
     try {
-        // Hash the password
+        // Check if the username already exists in the database
+        const sql1 = `SELECT COUNT(*) AS user_name FROM user_login_details WHERE user_name= '${user_name}'`;
+        const [re1] = await pool.query(sql1);
+
+        if (re1[0].user_name > 0) {
+            return res.json({
+                success: false,
+                message: "Username already exists",
+                result: false
+            });
+        }
+    } catch (err) {
+        console.error("Database query error:", err);
+        return res.json({
+            success: false,
+            message: "Error checking username availability",
+            result: err
+        });
+    }
+
+    try {
+        // Hash the password before storing it in the database
         const hashed_password = await bcrypt.hash(user_password, 10);
 
+        // Insert new user into the database
         const sql = `INSERT INTO user_login_details (user_name, user_password) VALUES (?, ?)`;
         await pool.query(sql, [user_name, hashed_password]);
-
 
         return res.json({
             success: true,
@@ -31,11 +54,12 @@ async function register_user(req, res) {
         console.error("Database query error:", err);
         return res.json({
             success: false,
-            message: "Error during registration:",
+            message: "Error during registration",
             result: err
         });
     }
 }
+
 
 
 async function change_password(req, res) {
@@ -124,6 +148,29 @@ async function change_user_name(req, res) {
             success: false,
             message: "current and new username cant be same",
             result: error
+        });
+    }
+
+    // for chk that user name is present or not
+
+    try{
+        const sql1=`SELECT COUNT(*) AS user_name FROM user_login_details Where user_name= ${user_name} `;
+        const [re1] = await pool.query(sql1)
+
+        if(results[0][0].user_name > 0){
+            return res.json({
+                success: false,
+                message: "user name alrady exist ...",
+                result: false
+            }); 
+        }
+
+    }catch(err){
+        console.error("Database query error:", err);
+        return res.json({
+            success: false,
+            message: "Error during changinf usename:",
+            result: err
         });
     }
 
@@ -242,6 +289,18 @@ async function login_user(req, res) {
     }
 }
 
+
+
+async function getallusers(req,res) {
+   const sql = 'select * from user_login_details '
+
+   const [r,f]  = await pool.query(sql)
+
+   res.json(r);
+
+    
+}
+
 export {
-    login_user, register_user, change_password, change_user_name
+    login_user, register_user, change_password, change_user_name , getallusers
 }
