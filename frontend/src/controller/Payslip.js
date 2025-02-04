@@ -89,7 +89,38 @@ const get_payslip = async ({e_id, salary_month, salary_year}) => {
   }
 };
 
+const send_pdf_to_email = async ({to,subject,text,html,file,file_name}) => {
+  try {
+    const formData = new FormData();
+    formData.append("to", to);
+    formData.append("subject", subject);
+    formData.append("text", text);
+    formData.append("html", html);
+    formData.append("file", file, file_name);
+
+    const response = await axios.post("http://localhost:5000/payslip/send_email", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    console.log(response.data);
+    return response.data
+
+  } catch (error) {
+    console.error("Error sending email:", error);
+  
+    return {
+      success: false,
+      message: error.response?.data?.message || "Something went wrong",
+      result: null
+    };
+  }
+};
+
+
+
 
 export {
-  check_id,check_payslip_in_archive,create_salary_archive,get_payslip
+  check_id,check_payslip_in_archive,create_salary_archive,get_payslip,send_pdf_to_email
 }
