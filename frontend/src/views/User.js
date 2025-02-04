@@ -1,4 +1,4 @@
-import React, { useState , useEffect } from 'react';
+import React, { useState } from 'react';
 import Navbar from '../components/layout/Navbar';
 import { useParams } from 'react-router-dom';
 import UserAside from '../components/page_specific/User_aside';
@@ -53,7 +53,7 @@ export default function User() {
               )
             }
 
-            <UserField add_new_user={add_new_user} change_uId={change_uId} change_uId_password={change_uId_password}  />
+            <UserField add_new_user={add_new_user} change_uId={change_uId} change_uId_password={change_uId_password} current_user_name={user_name}  />
           </main>
 
         </div>

@@ -1,238 +1,334 @@
-import React, { useState } from 'react';
-import { Eraser, Save } from 'lucide-react';
+import React, { useState } from "react";
+import { Eraser, Save } from "lucide-react";
+import {
+  fadd_new_user,
+  update_password,
+  update_userName,
+} from "../../controller/user.controlle";
 
-export default ({ add_new_user, change_uId, change_uId_password }) => {
-  const [formData, setFormData] = useState({
-    departmentId: '',
-    departmentName: '',
-    newUserId: '',
-    newPassword: '',
-    confirmPassword: '',
+import { SuccessfullyDone } from "../common/SuccessfullyDone";
+import { InvalidDialogue } from "../common/InvalidDialogue";
+
+export default ({ add_new_user, change_uId, change_uId_password ,current_user_name }) => {
+
+    const [showSuccess, setshowSuccess] = useState({
+        message: "",
+        success: false,
+      });
+      const [showInvalid, setShowInvalid] = useState({
+        message: "",
+        success: false,
+      });
+
+  const [for_add_u, set_add_u] = useState({
+    user_name: "",
+    user_password: "",
+    confirm_password: "",
+  });
+
+  const [for_change_password, set_change_password] = useState({
+    user_name: current_user_name,
+    current_password: "",
+    new_password: "",
+    confirm_password: "",
+  });
+
+  const [for_change_user_name, set_change_user_name] = useState({
+    current_user_name: current_user_name,
+    new_user_name: "",
+    user_password: "",
   });
 
   const [showPassword, setShowPassword] = useState({
-    newPassword: false,
-    confirmPassword: false,
+    user_password: false,
+    confirm_password: false,
+    current_password: false,
+    new_password: false,
   });
 
-  const handleChange = (e) => {
+  const handleChange = (e, setState) => {
     const { name, value } = e.target;
-    setFormData((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
+    setState((prevState) => ({ ...prevState, [name]: value }));
   };
 
-  const clearForm = () => {
-    setFormData({
-      departmentId: '',
-      departmentName: '',
-      newUserId: '',
-      newPassword: '',
-      confirmPassword: '',
-    });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (add_new_user) {
-      if (formData.newPassword !== formData.confirmPassword) {
-        alert('Passwords do not match!');
-        return;
-      }
-      console.log('New User Added:', formData);
-    } else if (change_uId) {
-      console.log('User ID Changed:', formData.newUserId);
-    } else if (change_uId_password) {
-      if (formData.newPassword === formData.confirmPassword) {
-        console.log('Password Changed:', formData.newPassword);
-      } else {
-        alert('Passwords do not match!');
-      }
+  const add_submit = async () => {
+    if (for_add_u.user_password !== for_add_u.confirm_password) {
+        setShowInvalid({ message: "Passwords do not match!", success: true })
+      return;
     }
+    console.log("Adding new user:", for_add_u);
+    const result = await fadd_new_user(for_add_u.user_name, for_add_u.user_password);
+    if(result.data.success){
+
+        setshowSuccess({
+            message: result.message,
+            success: true,
+          })
+
+
+    }else{
+
+        setShowInvalid({ message: result.message, success: true })
+
+
+    }
+
+  };
+
+  const update_password_submit = async () => {
+    if (for_change_password.new_password !== for_change_password.confirm_password) {
+      alert("Passwords do not match!");
+      return;
+    }
+    console.log("Updating password:", for_change_password);
+    await update_password(for_change_password.user_name, for_change_password.current_password, for_change_password.new_password);
+  };
+
+  const update_username_submit = async () => {
+    if (!for_change_user_name.new_user_name) {
+      alert("New username is required!");
+      return;
+    }
+    console.log("Updating username:", for_change_user_name);
+    await update_userName(for_change_user_name.current_user_name, for_change_user_name.new_user_name, for_change_user_name.user_password);
   };
 
   const togglePasswordVisibility = (field) => {
-    setShowPassword((prev) => ({
-      ...prev,
-      [field]: !prev[field],
-    }));
+    setShowPassword((prev) => ({ ...prev, [field]: !prev[field] }));
   };
+
+  const clearForm = (setState, initialState) => {
+    setState(initialState);
+    setShowPassword({
+      user_password: false,
+      confirm_password: false,
+      current_password: false,
+      new_password: false,
+    });
+  };
+
+
+  
 
   return (
     <>
-      {/* Add New User Form */}
+
+{showSuccess.success && <SuccessfullyDone message={showSuccess.message} onClose={() => setshowSuccess({ message: "", success: false })} />}
+{showInvalid.success && <InvalidDialogue message={showInvalid.message} onClose={() => setShowInvalid({ message: "", success: false })} />}
+
+
+
+
+
+
       {add_new_user && (
-        <form onSubmit={handleSubmit} className="px-6 py-8 space-y-8">
-          <div className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">New User Name</label>
-              <input
-                type="text"
-                name="departmentId"
-                maxLength="4"
-                value={formData.departmentId}
-                onChange={handleChange}
-                className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Password</label>
-              <div className="relative">
-                <input
-                  type={showPassword.newPassword ? 'text' : 'password'}
-                  name="departmentName"
-                  value={formData.departmentName}
-                  onChange={handleChange}
-                  className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => togglePasswordVisibility('newPassword')}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none transition-colors duration-200 p-1"
-                >
-                  {showPassword.newPassword ? 'Hide' : 'Show'}
-                </button>
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Confirm Password</label>
-              <div className="relative">
-                <input
-                  type={showPassword.confirmPassword ? 'text' : 'password'}
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => togglePasswordVisibility('confirmPassword')}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none transition-colors duration-200 p-1"
-                >
-                  {showPassword.confirmPassword ? 'Hide' : 'Show'}
-                </button>
-              </div>
-            </div>
+        <form onSubmit={add_submit} className="px-6 py-8 space-y-8">
+          <h2 className="text-xl font-semibold">Add New User</h2>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Username</label>
+            <input
+              type="text"
+              name="user_name"
+              value={for_add_u.user_name}
+              onChange={(e) => handleChange(e, set_add_u)}
+              required
+              className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-md"
+            />
           </div>
 
-          <div className="flex flex-col md:flex-row gap-4 mt-6 items-center justify-around">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Password</label>
+            <input
+              type={showPassword.user_password ? "text" : "password"}
+              name="user_password"
+              value={for_add_u.user_password}
+              onChange={(e) => handleChange(e, set_add_u)}
+              required
+              className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-md"
+            />
             <button
               type="button"
-              onClick={clearForm}
-              className="w-full md:w-auto px-7 py-3 bg-gray-100 rounded-lg shadow-lg text-gray-600 flex items-center gap-3"
+              onClick={() => togglePasswordVisibility("user_password")}
+              className="text-sm text-blue-500 mt-2"
             >
-              <Eraser className="h-6 w-6" /> Clear
+              {showPassword.user_password ? "Hide" : "Show"} Password
             </button>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Confirm Password</label>
+            <input
+              type={showPassword.confirm_password ? "text" : "password"}
+              name="confirm_password"
+              value={for_add_u.confirm_password}
+              onChange={(e) => handleChange(e, set_add_u)}
+              required
+              className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-md"
+            />
             <button
-              type="submit"
-              className="w-full md:w-auto px-8 py-3 bg-gradient-to-r from-emerald-500 via-teal-500 to-sky-500 text-white rounded-lg shadow-lg flex items-center gap-3"
+              type="button"
+              onClick={() => togglePasswordVisibility("confirm_password")}
+              className="text-sm text-blue-500 mt-2"
             >
+              {showPassword.confirm_password ? "Hide" : "Show"} Password
+            </button>
+          </div>
+
+          <div className="flex space-x-4">
+            <button
+              type="button"
+              onClick={() => clearForm(set_add_u, { user_name: "", user_password: "", confirm_password: "" })}
+              className="px-4 py-2 bg-gray-200 rounded-lg"
+            >
+              <Eraser className="h-5 w-5" /> Clear
+            </button>
+            <button type="submit" className="px-8 py-3 bg-blue-500 text-white rounded-lg">
               <Save className="h-6 w-6" /> Submit
             </button>
           </div>
         </form>
       )}
 
-      {/* Change User ID Form */}
       {change_uId && (
-        <form onSubmit={handleSubmit} className="px-6 py-8 space-y-8">
-          <div className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">New User ID</label>
-              <input
-                type="text"
-                name="newUserId"
-                value={formData.newUserId}
-                onChange={handleChange}
-                className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500"
-                required
-              />
-            </div>
+        <form onSubmit={update_username_submit} className="px-6 py-8 space-y-8">
+          <h2 className="text-xl font-semibold">Change Username</h2>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Current Username</label>
+            <input
+              type="text"
+              name="current_user_name"
+              value={for_change_user_name.current_user_name}
+              onChange={(e) => handleChange(e, set_change_user_name)}
+              required
+              className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-md"
+              disabled
+            />
           </div>
 
-          <div className="flex flex-col md:flex-row gap-4 mt-6 items-center justify-around">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">New Username</label>
+            <input
+              type="text"
+              name="new_user_name"
+              value={for_change_user_name.new_user_name}
+              onChange={(e) => handleChange(e, set_change_user_name)}
+              required
+              className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-md"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Password</label>
+            <input
+              type="password"
+              name="user_password"
+              value={for_change_user_name.user_password}
+              onChange={(e) => handleChange(e, set_change_user_name)}
+              required
+              className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-md"
+            />
+          </div>
+
+          <div className="flex space-x-4">
             <button
               type="button"
-              onClick={clearForm}
-              className="w-full md:w-auto px-7 py-3 bg-gray-100 rounded-lg shadow-lg text-gray-600 flex items-center gap-3"
+              onClick={() => clearForm(set_change_user_name, { current_user_name: "", new_user_name: "", user_password: "" })}
+              className="px-4 py-2 bg-gray-200 rounded-lg"
             >
-              <Eraser className="h-6 w-6" /> Clear
+              <Eraser className="h-5 w-5" /> Clear
             </button>
-            <button
-              type="submit"
-              className="w-full md:w-auto px-8 py-3 bg-gradient-to-r from-emerald-500 via-teal-500 to-sky-500 text-white rounded-lg shadow-lg flex items-center gap-3"
-            >
+            <button type="submit" className="px-8 py-3 bg-blue-500 text-white rounded-lg">
               <Save className="h-6 w-6" /> Submit
             </button>
           </div>
         </form>
       )}
 
-      {/* Change User Password Form */}
       {change_uId_password && (
-        <form onSubmit={handleSubmit} className="px-6 py-8 space-y-8">
-          <div className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">New Password</label>
-              <div className="relative">
-                <input
-                  type={showPassword.newPassword ? 'text' : 'password'}
-                  name="newPassword"
-                  value={formData.newPassword}
-                  onChange={handleChange}
-                  className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => togglePasswordVisibility('newPassword')}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none transition-colors duration-200 p-1"
-                >
-                  {showPassword.newPassword ? 'Hide' : 'Show'}
-                </button>
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Confirm Password</label>
-              <div className="relative">
-                <input
-                  type={showPassword.confirmPassword ? 'text' : 'password'}
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => togglePasswordVisibility('confirmPassword')}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none transition-colors duration-200 p-1"
-                >
-                  {showPassword.confirmPassword ? 'Hide' : 'Show'}
-                </button>
-              </div>
-            </div>
+        <form onSubmit={update_password_submit} className="px-6 py-8 space-y-8">
+          <h2 className="text-xl font-semibold">Change Password</h2>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Username</label>
+            <input
+              type="text"
+              name="user_name"
+              value={for_change_password.user_name}
+              onChange={(e) => handleChange(e, set_change_password)}
+              required
+              className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-md"
+              disabled
+            />
           </div>
 
-          <div className="flex flex-col md:flex-row gap-4 mt-6 items-center justify-around">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Current Password</label>
+            <input
+              type={showPassword.current_password ? "text" : "password"}
+              name="current_password"
+              value={for_change_password.current_password}
+              onChange={(e) => handleChange(e, set_change_password)}
+              required
+              className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-md"
+            />
             <button
               type="button"
-              onClick={clearForm}
-              className="w-full md:w-auto px-7 py-3 bg-gray-100 rounded-lg shadow-lg text-gray-600 flex items-center gap-3"
+              onClick={() => togglePasswordVisibility("current_password")}
+              className="text-sm text-blue-500 mt-2"
             >
-              <Eraser className="h-6 w-6" /> Clear
+              {showPassword.current_password ? "Hide" : "Show"} Password
             </button>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">New Password</label>
+            <input
+              type={showPassword.new_password ? "text" : "password"}
+              name="new_password"
+              value={for_change_password.new_password}
+              onChange={(e) => handleChange(e, set_change_password)}
+              required
+              className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-md"
+            />
             <button
-              type="submit"
-              className="w-full md:w-auto px-8 py-3 bg-gradient-to-r from-emerald-500 via-teal-500 to-sky-500 text-white rounded-lg shadow-lg flex items-center gap-3"
+              type="button"
+              onClick={() => togglePasswordVisibility("new_password")}
+              className="text-sm text-blue-500 mt-2"
             >
+              {showPassword.new_password ? "Hide" : "Show"} Password
+            </button>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Confirm New Password</label>
+            <input
+              type={showPassword.confirm_password ? "text" : "password"}
+              name="confirm_password"
+              value={for_change_password.confirm_password}
+              onChange={(e) => handleChange(e, set_change_password)}
+              required
+              className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-md"
+            />
+            <button
+              type="button"
+              onClick={() => togglePasswordVisibility("confirm_password")}
+              className="text-sm text-blue-500 mt-2"
+            >
+              {showPassword.confirm_password ? "Hide" : "Show"} Password
+            </button>
+          </div>
+
+          <div className="flex space-x-4">
+            <button
+              type="button"
+              onClick={() => clearForm(set_change_password, { user_name: "", current_password: "", new_password: "", confirm_password: "" })}
+              className="px-4 py-2 bg-gray-200 rounded-lg"
+            >
+              <Eraser className="h-5 w-5" /> Clear
+            </button>
+            <button type="submit" className="px-8 py-3 bg-blue-500 text-white rounded-lg">
               <Save className="h-6 w-6" /> Submit
             </button>
           </div>

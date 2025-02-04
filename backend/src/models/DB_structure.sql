@@ -93,7 +93,7 @@ CREATE TABLE salary_archive (
     salary_month VARCHAR(10) NOT NULL,
     salary_year INT NOT NULL,
     e_name VARCHAR(30) NOT NULL,
-    paslip_issue_date DATETIME NOT NULL,
+    payslip_issue_date DATETIME NOT NULL,
     basic_salary INT NOT NULL,
     special_pay INT DEFAULT NULL,
     dearness_allowance INT DEFAULT NULL,
