@@ -52,7 +52,7 @@ async function change_password(req, res) {
     if (new_password === current_password) {
         return res.status(400).json({
             success: false,
-            message: " current and new password cant be same",
+            message: "current and new password cant be same",
             result: error
         });
     }
@@ -81,7 +81,7 @@ async function change_password(req, res) {
         if (!isMatch) {
             return res.status(401).json({
                 success: false,
-                message: " invalid current password",
+                message: "invalid current password",
                 result: error
             });
         }

@@ -33,6 +33,7 @@ export default function Login() {
     //   setShowSuccess( {success: false, message:"", onClose:()=>{} });
     //   navigate('/payslip'); // Redirect after closing
     // }, 1000);
+    sessionStorage.setItem('user_name', user_name );
     navigate('/payslip');
     
     } else {
