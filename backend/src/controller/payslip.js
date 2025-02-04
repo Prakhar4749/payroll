@@ -149,7 +149,7 @@ async function chk_emp_id_exist(req, res) {
       // Insert into salary_archive
       const insertSalaryArchiveSQL = `
         INSERT INTO salary_archive (
-            e_id, salary_month, salary_year, e_name, paslip_issue_date, basic_salary, special_pay, dearness_allowance, DA, ADA, 
+            e_id, salary_month, salary_year, e_name, payslip_issue_date, basic_salary, special_pay, dearness_allowance, DA, ADA, 
             interim_relief, HRA, CCA, conveyance, medical, washing_allowance, BDP, arrears, 
             leave_days, leave_deduction_amount, deduction_CPF, GIS, house_rent, water_charges, 
             electricity_charges, vehicle_deduction, HB_loan, GPF_loan, festival_loan, grain_charges, 

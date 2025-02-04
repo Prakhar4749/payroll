@@ -46,17 +46,10 @@ const Payslip_Form = () => {
 
 
 
-    const [showSuccess, setshowSuccess] = useState({
-        message: "", success: false
-    });
-    const [showInvalid, setshowInvalid] = useState({
-        message: "", success: false, onClose: () => { setshowInvalid(showInvalid) }
-    });
-    const [showConfirm, setShowConfirm] = useState({
-        message: "",
-        success: false,
-        onConfirm: () => { }
-    });
+    const [showConfirm, setShowConfirm] = useState({ success: false, message: "", onConfirm: () => { } });
+    const [showInvalid, setshowInvalid] = useState({ success: false, message: "", onClose: () => { } });
+    const [showSuccess, setshowSuccess] = useState({ success: false, message: "", onClose: () => { } });
+
 
 
     const onConfirm = async () => {
@@ -67,7 +60,22 @@ const Payslip_Form = () => {
 
             setshowSuccess({
                 message: response.message,
-                success: response.success
+                success: response.success,
+                onClose: async () => {
+                    let response = {}
+                    try {
+                        response = await get_payslip(salary_details);
+                        if (response.success) {
+                            console.log(response.result);
+
+                        } else {
+                            console.error("Error:", response.message);
+                        }
+                    } catch (error) {
+                        console.error("API call failed:", error);
+                    }
+                    navigate("/payslip/payslip_pdf", { state: response.result });
+                }
             });
             setshowInvalid({
                 message: response.message,
@@ -130,10 +138,7 @@ const Payslip_Form = () => {
                 <div className="fixed inset-0 z-50">
                     <SuccessfullyDone
                         message={showSuccess.message}
-                        onClose={() => {
-                            setshowSuccess({ message: "", success: false })
-                            navigate("/payslip");
-                        }}
+                        onClose={showSuccess.onClose}
                     />
                 </div>
             )}
@@ -149,9 +154,8 @@ const Payslip_Form = () => {
                 <div className="fixed inset-0 z-50">
                     <ConfirmDialogue
                         message={showConfirm.message}
-                        onConfirm={() => {
-                            showConfirm.onConfirm(); // Call the confirm callback
-                            setShowConfirm({ message: "", success: false, onConfirm: null }); // Close the dialog
+                        onConfirm={()=>{showConfirm.onConfirm();
+                            setShowConfirm({ success: false, message: "", onConfirm: () => { } })
                         }}
                         onCancel={() => setShowConfirm({ message: "", success: false, onConfirm: null }
                         )} // Close without confirming
