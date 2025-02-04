@@ -66,7 +66,7 @@ const create_salary_archive = async(data)=>{
 
 }
 
-const get_payslip = async (e_id, salary_month, salary_year) => {
+const get_payslip = async ({e_id, salary_month, salary_year}) => {
   try {
     const response = await axios.post(`${base_url}/payslip/get_pdf`, {
       e_id,

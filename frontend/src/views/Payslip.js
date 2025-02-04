@@ -83,10 +83,21 @@ export default function Payslip() {
         setShowConfirm({
           success: true,
           message: `Payslip of E_id:${salary_details.e_id} is already generated  for ${salary_details.salary_month}, ${salary_details.salary_year}.  would you like to get payslip.` ,
-          onConfirm: () => {
-            navigate("/payslip/payslip_pdf", {
-              state: salary_details
-            });
+          onConfirm: async () => {
+            let response = {}
+           
+                try {
+                  response = await get_payslip(salary_details);
+                  if (response.success) {
+                    console.log(response.result);
+                    
+                  } else {
+                    console.error("Error:", response.message);
+                  }
+                } catch (error) {
+                  console.error("API call failed:", error);
+                }
+            navigate("/payslip/payslip_pdf", { state: response.result });
           }
         });
         return;
