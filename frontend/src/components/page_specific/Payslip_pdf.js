@@ -29,7 +29,7 @@ export default function Payslip_pdf() {
     const buttons = document.querySelector(".pdf-buttons");
     if (buttons) buttons.style.display = "none";
 
-    const canvas = await html2canvas(input, { scale: 2, useCORS: true });
+    const canvas = await html2canvas(input, { scale: 3, useCORS: true });
     const imgData = canvas.toDataURL("image/jpeg");
 
     const pdf = new jsPDF("p", "mm", "a4");
