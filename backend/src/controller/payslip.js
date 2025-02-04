@@ -140,19 +140,39 @@ async function update_in_earning_and_save_in_archive(req, res) {
     await connection.query(updateEarningSQL, earningParams);
 
     // Calculate total earning and deduction
-    const total_earning = emp_earning_details.basic_salary + emp_earning_details.special_pay +
-      emp_earning_details.dearness_allowance + emp_earning_details.DA + emp_earning_details.ADA +
-      emp_earning_details.interim_relief + emp_earning_details.HRA + emp_earning_details.CCA +
-      emp_earning_details.conveyance + emp_earning_details.medical + emp_earning_details.washing_allowance +
-      emp_earning_details.BDP + emp_earning_details.arrears;
+    const total_earning = 
+    Number(emp_earning_details.basic_salary) + 
+    Number(emp_earning_details.special_pay) + 
+    Number(emp_earning_details.dearness_allowance) + 
+    Number(emp_earning_details.DA) + 
+    Number(emp_earning_details.ADA) + 
+    Number(emp_earning_details.interim_relief) + 
+    Number(emp_earning_details.HRA) + 
+    Number(emp_earning_details.CCA) + 
+    Number(emp_earning_details.conveyance) + 
+    Number(emp_earning_details.medical) + 
+    Number(emp_earning_details.washing_allowance) + 
+    Number(emp_earning_details.BDP) + 
+    Number(emp_earning_details.arrears);
 
-    const total_deduction = emp_deduction_details.leave_deduction_amount + emp_deduction_details.deduction_CPF +
-      emp_deduction_details.GIS + emp_deduction_details.house_rent + emp_deduction_details.water_charges +
-      emp_deduction_details.electricity_charges + emp_deduction_details.vehicle_deduction +
-      emp_deduction_details.HB_loan + emp_deduction_details.GPF_loan + emp_deduction_details.festival_loan +
-      emp_deduction_details.grain_charges + emp_deduction_details.bank_advance + emp_deduction_details.advance +
-      emp_deduction_details.RGPV_advance + emp_deduction_details.income_tax + emp_deduction_details.professional_tax;
 
+    const total_deduction = 
+    Number(emp_deduction_details.leave_deduction_amount) + 
+    Number(emp_deduction_details.deduction_CPF) + 
+    Number(emp_deduction_details.GIS) + 
+    Number(emp_deduction_details.house_rent) + 
+    Number(emp_deduction_details.water_charges) + 
+    Number(emp_deduction_details.electricity_charges) + 
+    Number(emp_deduction_details.vehicle_deduction) + 
+    Number(emp_deduction_details.HB_loan) + 
+    Number(emp_deduction_details.GPF_loan) + 
+    Number(emp_deduction_details.festival_loan) + 
+    Number(emp_deduction_details.grain_charges) + 
+    Number(emp_deduction_details.bank_advance) + 
+    Number(emp_deduction_details.advance) + 
+    Number(emp_deduction_details.RGPV_advance) + 
+    Number(emp_deduction_details.income_tax) + 
+    Number(emp_deduction_details.professional_tax);
     const net_payable = total_earning - total_deduction;
 
     // Insert into salary_archive
@@ -316,12 +336,7 @@ const send_pdf_to_email = async (req, res) => {
     };
 
     // Send email
-    const info = await transporter.sendMail(mailOptions);
-
-    // ✅ Check if email was delivered
-    if (info.accepted.length === 0) {
-      return res.status(400).json({ success: false, message: "Email delivery failed!" });
-    }
+    const info =  transporter.sendMail(mailOptions);
 
     console.log("Email sent: ", info.response);
     res.json({ success: true, message: "Email with PDF attachment sent successfully!" });
