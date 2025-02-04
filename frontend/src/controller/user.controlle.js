@@ -11,7 +11,7 @@ async function fadd_new_user(new_uid,new_password){
       try{
 
         const response = await axios.post(`${base_url}/auth/register`,data)
-        return response;
+        return response.data;
 
       }catch(err){
         console.log(err)

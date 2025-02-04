@@ -15,11 +15,11 @@ export default function User() {
 
 
 
-  const { x } = useParams();
+  
   const user_name = sessionStorage.getItem('user_name');
 
 
-  console.log("this is x -> " + x);
+  console.log("this is x -> " );
   console.log("this is user name -> " + user_name);
   // add_new_user, change_uId, change_uId_password
   
@@ -29,7 +29,7 @@ export default function User() {
       
       {/* Main container */}
       <div className="container mx-auto px-4 py-6">
-        <h1 className="text-2xl font-semibold text-gray-800 mb-4">User: {user_name || x}</h1>
+        <h1 className="text-2xl font-semibold text-gray-800 mb-4">User: {user_name}</h1>
         
       
         {/* Flexbox layout for sidebar and main content */}

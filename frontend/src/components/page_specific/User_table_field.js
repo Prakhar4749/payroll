@@ -8,17 +8,14 @@ import {
 
 import { SuccessfullyDone } from "../common/SuccessfullyDone";
 import { InvalidDialogue } from "../common/InvalidDialogue";
+import { ConfirmDialogue } from "../common/ConfirmDialogue";
+
 
 export default ({ add_new_user, change_uId, change_uId_password ,current_user_name }) => {
 
-    const [showSuccess, setshowSuccess] = useState({
-        message: "",
-        success: false,
-      });
-      const [showInvalid, setShowInvalid] = useState({
-        message: "",
-        success: false,
-      });
+      const [showConfirm, setShowConfirm] = useState({ success: false, message: "", onConfirm: () => { } });
+      const [showInvalid, setshowInvalid] = useState({ success: false, message: "", onClose: () => { } });
+      const [showSuccess, setshowSuccess] = useState({ success: false, message: "", onClose: () => { } });
 
   const [for_add_u, set_add_u] = useState({
     user_name: "",
@@ -51,29 +48,29 @@ export default ({ add_new_user, change_uId, change_uId_password ,current_user_na
     setState((prevState) => ({ ...prevState, [name]: value }));
   };
 
-  const add_submit = async () => {
+  const add_submit = (e) => {
+    e.preventDefault();
     if (for_add_u.user_password !== for_add_u.confirm_password) {
-        setShowInvalid({ message: "Passwords do not match!", success: true })
-      return;
+      console.log("Passwords do not match!")
+        setshowInvalid({ message: "Passwords do not match!", success: true, onClose: ()=>{ setshowInvalid({ success: false, message: "", onClose: () => { } })}  });
+        return;
     }
-    console.log("Adding new user:", for_add_u);
-    const result = await fadd_new_user(for_add_u.user_name, for_add_u.user_password);
-    if(result.data.success){
+    setShowConfirm({message: "are you really want add new user", success: true, onConfirm: async ()=>{
+      try {
+        const result = await fadd_new_user(for_add_u.user_name, for_add_u.user_password);
 
-        setshowSuccess({
-            message: result.message,
-            success: true,
-          })
-
-
-    }else{
-
-        setShowInvalid({ message: result.message, success: true })
-
-
+        
+            setshowSuccess({ message: result.message, success: result.success, onClose: ()=>{ setshowSuccess({ success: false, message: "", onClose: () => { } })} });
+       
+            setshowInvalid({ message: result.message || "Something went wrong", success: !result.success, onClose: ()=>{ setshowInvalid({ success: false, message: "", onClose: () => { } })}  });
+       
+    } catch (error) {
+        console.error("Error adding user:", error);
+        setshowInvalid({ message: "An error occurred while adding the user", success: true });
     }
 
-  };
+    }})
+};
 
   const update_password_submit = async () => {
     if (for_change_password.new_password !== for_change_password.confirm_password) {
@@ -113,8 +110,34 @@ export default ({ add_new_user, change_uId, change_uId_password ,current_user_na
   return (
     <>
 
-{showSuccess.success && <SuccessfullyDone message={showSuccess.message} onClose={() => setshowSuccess({ message: "", success: false })} />}
-{showInvalid.success && <InvalidDialogue message={showInvalid.message} onClose={() => setShowInvalid({ message: "", success: false })} />}
+{showSuccess.success && (
+                      <div className="fixed inset-0 z-50">
+                          <SuccessfullyDone
+                              message={showSuccess.message}
+                              onClose={showSuccess.onClose}
+                          />
+                      </div>
+                  )}
+                  {showInvalid.success && (
+                      <div className="fixed inset-0 z-50">
+                          <InvalidDialogue
+                              message={showInvalid.message}
+                              onClose={() => { showInvalid.onClose() }}
+                          />
+                      </div>
+                  )}
+                  {showConfirm.success && (
+                      <div className="fixed inset-0 z-50">
+                          <ConfirmDialogue
+                              message={showConfirm.message}
+                              onConfirm={()=>{showConfirm.onConfirm();
+                                  setShowConfirm({ success: false, message: "", onConfirm: () => { } })
+                              }}
+                              onCancel={() => setShowConfirm({ message: "", success: false, onConfirm: null }
+                              )} // Close without confirming
+                          />
+                      </div>
+                  )}
 
 
 
