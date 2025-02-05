@@ -177,7 +177,7 @@ export default function Payslip_pdf() {
 
 
   return (
-    <div className=" min-h-screen flex flex-col bg-slate-50/50 ">
+    <div className="min-h-screen flex flex-col bg-gray-50">
       <Navbar />
       {/* Success Dialog */}
       {showSuccess.success && (
@@ -242,9 +242,7 @@ export default function Payslip_pdf() {
     padding: 8px;
     border: 2px solid black;
   }
-  .bg-gray-50 {
-    background-color: #F9FAFB !important;
-  }
+  
 }
     `}
       </style>

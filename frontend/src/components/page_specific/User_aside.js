@@ -1,11 +1,15 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { delete_user } from '../../controller/user.controlle';
+import { InvalidDialogue } from "../common/InvalidDialogue";
+import { SuccessfullyDone } from "../common/SuccessfullyDone";
 import { ConfirmDialogue } from "../common/ConfirmDialogue";
 import { UserCog, UserPlus, LockKeyhole, LogOut, UserMinus } from "lucide-react";
 
 const UserActions = ({ set_add, set_change_uId, set_change_uId_password, current_user_name }) => {
-    const [showConfirm, setShowConfirm] = useState({ success: false, message: "", onConfirm: () => {} });
+     const [showConfirm, setShowConfirm] = useState({ success: false, message: "", onConfirm: () => { } });
+      const [showInvalid, setshowInvalid] = useState({ success: false, message: "", onClose: () => { } });
+      const [showSuccess, setshowSuccess] = useState({ success: false, message: "", onClose: () => { } });
     const navigate = useNavigate();
 
     const handleUpdateUsername = () => {
@@ -50,56 +54,106 @@ const UserActions = ({ set_add, set_change_uId, set_change_uId_password, current
     };
 
     return (
-        <aside className="w-full bg-white shadow-lg rounded-lg overflow-hidden p-6 flex flex-col gap-4">
-            {showConfirm.success && (
-                <div className="fixed inset-0 z-50">
-                    <ConfirmDialogue
-                        message={showConfirm.message}
-                        onConfirm={() => {
-                            showConfirm.onConfirm();
-                            setShowConfirm({ success: false, message: "", onConfirm: () => {} });
-                        }}
-                        onCancel={() => setShowConfirm({ message: "", success: false, onConfirm: null })}
-                    />
-                </div>
-            )}
 
-            {/* Buttons */}
-            <button
-                onClick={handleUpdateUsername}
-                className="w-full px-6 py-3 text-white font-medium rounded-xl bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transform transition-all duration-200 hover:scale-[1.05] shadow-lg shadow-blue-600/30 flex items-center justify-center gap-3 text-base"
-            >
-                <UserCog className="w-5 h-5" /> Update Username
-            </button>
+        <>
+        {showSuccess.success && (
+        <div className="fixed inset-0 z-50">
+          <SuccessfullyDone
+            message={showSuccess.message}
+            onClose={showSuccess.onClose}
+          />
+        </div>
+      )}
+      {showInvalid.success && (
+        <div className="fixed inset-0 z-50">
+          <InvalidDialogue
+            message={showInvalid.message}
+            onClose={() => { showInvalid.onClose() }}
+          />
+        </div>
+      )}
+      {showConfirm.success && (
+        <div className="fixed inset-0 z-50">
+          <ConfirmDialogue
+            message={showConfirm.message}
+            onConfirm={() => {
+              showConfirm.onConfirm();
+              setShowConfirm({ success: false, message: "", onConfirm: () => { } })
+            }}
+            onCancel={() => setShowConfirm({ message: "", success: false, onConfirm: null })}
+          />
+        </div>
+      )}
+        
+        <aside className="w-full max-w-md mx-auto shadow-2xl rounded-2xl overflow-hidden p-4 sm:p-6 flex flex-col gap-3 sm:gap-4">
 
-            <button
-                onClick={handleChangePassword}
-                className="w-full px-6 py-3 text-white font-medium rounded-xl bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transform transition-all duration-200 hover:scale-[1.05] shadow-lg shadow-green-600/30 flex items-center justify-center gap-3 text-base"
-            >
-                <LockKeyhole className="w-5 h-5" /> Change Password
-            </button>
 
-            <button
-                onClick={handleAddNewUser}
-                className="w-full px-6 py-3 text-white font-medium rounded-xl bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 transform transition-all duration-200 hover:scale-[1.05] shadow-lg shadow-yellow-600/30 flex items-center justify-center gap-3 text-base"
-            >
-                <UserPlus className="w-5 h-5" /> Add New User
-            </button>
-
-            <button
-                onClick={handleLogout}
-                className="w-full px-6 py-3 text-white font-medium rounded-xl bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transform transition-all duration-200 hover:scale-[1.05] shadow-lg shadow-red-600/30 flex items-center justify-center gap-3 text-base"
-            >
-                <LogOut className="w-5 h-5" /> Logout
-            </button>
-
-            <button
-                onClick={handleDeleteUser}
-                className="w-full px-6 py-3 text-white font-medium rounded-xl bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transform transition-all duration-200 hover:scale-[1.05] shadow-lg shadow-red-700/30 flex items-center justify-center gap-3 text-base"
-            >
-                <UserMinus className="w-5 h-5" /> Delete Your Account
-            </button>
-        </aside>
+        {/* Profile Management Section */}
+        <div className="space-y-3 sm:space-y-4 mb-2">
+          <button
+            onClick={handleUpdateUsername}
+            className="w-full px-4 py-4 font-medium rounded-xl
+                transition-all duration-200 flex items-center justify-center gap-2 text-sm
+               bg-sky-600 text-white hover:bg-sky-700 \
+         focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 \
+         transform hover:scale-[1.02] shadow-lg shadow-sky-600/20"
+          >
+            <UserCog className="w-4 h-4 sm:w-5 sm:h-5" /> Update Username
+          </button>
+  
+          <button
+            onClick={handleChangePassword}
+            className="w-full px-4 py-4 font-medium rounded-xl
+                transition-all duration-200 flex items-center justify-center gap-2 text-sm
+                bg-violet-600 text-white hover:bg-violet-700
+                focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2
+                transform hover:scale-[1.02] shadow-lg shadow-violet-600/20"
+            
+          >
+            <LockKeyhole className="w-4 h-4 sm:w-5 sm:h-5" /> Change Password
+          </button>
+        </div>
+  
+        {/* User Management Section */}
+        <div className="space-y-3 sm:space-y-4 mb-2">
+          <button
+            onClick={handleAddNewUser}
+            className="w-full px-4 py-4 font-medium rounded-xl
+                transition-all duration-200 flex items-center justify-center gap-2 text-sm
+                bg-emerald-600 text-white hover:bg-emerald-700
+                focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2
+                transform hover:scale-[1.02] shadow-lg shadow-emerald-600/20"
+          >
+            <UserPlus className="w-4 h-4 sm:w-5 sm:h-5" /> Add New User
+          </button>
+        </div>
+  
+        {/* Danger Zone Section */}
+        <div className="pt-2 sm:pt-3 mt-2 sm:mt-3 border-t border-neutral-200/10 space-y-3 sm:space-y-4">
+          <button
+            onClick={handleLogout}
+            className="w-full px-4 py-4 font-medium rounded-xl
+                transition-all duration-200 flex items-center justify-center gap-2 text-sm
+                bg-amber-600 text-white hover:bg-amber-700
+                focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2
+                transform hover:scale-[1.02] shadow-lg shadow-amber-600/20"
+          >
+            <LogOut className="w-4 h-4 sm:w-5 sm:h-5" /> Logout
+          </button>
+  
+          <button
+            onClick={handleDeleteUser}
+            className="w-full px-4 py-4 font-medium rounded-xl
+                transition-all duration-200 flex items-center justify-center gap-2 text-sm
+                bg-red-600 text-white hover:bg-red-700
+                focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2
+                transform hover:scale-[1.02] shadow-lg shadow-red-600/20"
+          >
+            <UserMinus className="w-4 h-4 sm:w-5 sm:h-5 group-hover:animate-pulse" /> Delete Your Account
+          </button>
+        </div>
+      </aside>
+      </>
     );
 };
 
