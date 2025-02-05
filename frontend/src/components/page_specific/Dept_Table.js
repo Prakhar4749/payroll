@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { ArrowUpDown, Check } from "lucide-react";
 
-const Dept_Table = ({ data, onRowSelect }) => {
-  const [selectedId, setSelectedId] = useState(null);
+const Dept_Table = ({ data, onRowSelect , selectedId ,setSelectedId }) => {
+  
   const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
 
   if (!Array.isArray(data)) {
@@ -15,8 +15,21 @@ const Dept_Table = ({ data, onRowSelect }) => {
 
   const handleRowClick = (id) => {
     const newSelectedId = selectedId === id ? null : id;
+    // const filterMatch = data.some(
+    //   (did)=> did.d_id === dId_selected
+    // )
+    // if(!filterMatch) {
+     
+    //   setSelectedId(null);
+    // }
+    // else {
+    //   setSelectedId(newSelectedId);
+    //   onRowSelect(newSelectedId);
+    // }
+
     setSelectedId(newSelectedId);
     onRowSelect(newSelectedId);
+    
   };
 
   const handleSort = (key) => {

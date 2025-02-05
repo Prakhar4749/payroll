@@ -87,7 +87,7 @@ const DEPT_aside = ({
   };
 
   function applyFilter() {
-    setdID(null)
+    
     const filteredData = deptData.filter((dept) => {
       const matchesId = dId ? dept.d_id.toString().includes(dId) : true;
       const matchesName = dNamec
@@ -96,11 +96,16 @@ const DEPT_aside = ({
       return matchesId && matchesName;
     });
     setdeptDatacopy(filteredData);
+
+    const filteredMatch = filteredData.some(
+      (dept) => dept.d_id === dId
+    );
+    if (!filteredMatch) setd_id(null);
   }
 
   function clearFilter() {
-    setdID("");
-    setdNamec("");
+    setdID(null);
+    setdNamec(null);
     setdeptDatacopy(deptData);
   }
 
@@ -150,7 +155,12 @@ const DEPT_aside = ({
       )}
       <div className="p-6 flex flex-col gap-4">
         <button
-          className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 px-4 rounded-md text-sm transition-all duration-200 flex items-center justify-center gap-2"
+          className="w-full px-4 py-2.5 text-white font-medium rounded-xl
+          bg-emerald-600 hover:bg-emerald-700
+          focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2
+          transform transition-all duration-200 hover:scale-[1.02]
+          shadow-lg shadow-emerald-600/20
+          flex items-center justify-center gap-2 text-sm"
           onClick={addDept}
         >
           <PlusCircle className="w-4 h-4" />
@@ -158,11 +168,14 @@ const DEPT_aside = ({
         </button>
 
         <button
-          className={`w-full font-medium py-2.5 px-4 rounded-md text-sm transition-all duration-200 flex items-center justify-center gap-2 ${
-            d_id
-              ? "bg-teal-600 hover:bg-teal-700 text-white"
-              : "bg-gray-100 text-gray-400 cursor-not-allowed"
-          }`}
+          className={`w-full px-4 py-2.5 font-medium rounded-xl
+            transition-all duration-200 flex items-center justify-center gap-2 text-sm
+            ${d_id
+                      ? "bg-teal-600 text-white hover:bg-teal-700 \
+                 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 \
+                 transform hover:scale-[1.02] shadow-lg shadow-teal-600/20"
+                      : "bg-slate-100 text-slate-400 cursor-not-allowed"
+                    }`}
           disabled={!d_id}
           onClick={updateDept}
         >
@@ -171,11 +184,14 @@ const DEPT_aside = ({
         </button>
 
         <button
-          className={`w-full font-medium py-2.5 px-4 rounded-md text-sm transition-all duration-200 flex items-center justify-center gap-2 ${
-            d_id
-              ? "bg-rose-600 hover:bg-rose-700 text-white"
-              : "bg-gray-100 text-gray-400 cursor-not-allowed"
-          }`}
+          className={`w-full px-4 py-2.5 font-medium rounded-xl
+            transition-all duration-200 flex items-center justify-center gap-2 text-sm
+            ${d_id
+                      ? "bg-rose-600 text-white hover:bg-rose-700 \
+                 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2 \
+                 transform hover:scale-[1.02] shadow-lg shadow-rose-600/20"
+                      : "bg-slate-100 text-slate-400 cursor-not-allowed"
+                    }`}
           disabled={!d_id}
           onClick={removeDept}
         >
