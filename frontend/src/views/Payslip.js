@@ -14,10 +14,10 @@ export default function Payslip() {
   const selected_e_id = location.state && location.state.selected_e_id
     ? location.state.selected_e_id
     : null;
- 
-  
-  
-  const [salary_details, setsalary_details] = useState({ e_id: selected_e_id , salary_month: String(new Date().getMonth() + 1).padStart(2, '0') , salary_year: new Date().getFullYear() });
+
+
+
+  const [salary_details, setsalary_details] = useState({ e_id: selected_e_id, salary_month: String(new Date().getMonth() + 1).padStart(2, '0'), salary_year: new Date().getFullYear() });
 
   const [showConfirm, setShowConfirm] = useState({ success: false, message: "", onConfirm: () => { } });
   const [showInvalid, setShowInvalid] = useState({ success: false, message: "", onClose: () => { } });
@@ -28,7 +28,7 @@ export default function Payslip() {
 
 
 
-  const validateInputs = async() => {
+  const validateInputs = async () => {
     // Check if the employee ID is valid
     const idResponse = await check_id(salary_details.e_id);
     if (!idResponse.result.e_id) {
@@ -60,7 +60,7 @@ export default function Payslip() {
     }
 
     try {
-      
+
 
       // Check if the payslip is generated for the given employee, month, and year
       const payslipResponse = await check_payslip_in_archive({
@@ -69,34 +69,62 @@ export default function Payslip() {
         salary_year: salary_details.salary_year
       });
       if (!payslipResponse.result.payslip) {
-        setShowConfirm({
-          success: true,
-          message: `Payslip of E_id:${salary_details.e_id} is not generated yet for ${salary_details.salary_month}, ${salary_details.salary_year}. would you like to generate payslip.`,
-          onConfirm: () => {
-            navigate("/payslip/form", { state: salary_details });
-          }
-        });
+        // Get current date
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear();
+        const currentMonth = currentDate.getMonth() + 1; // JavaScript months are 0-based
+
+        // Determine current financial year (April to March)
+        const financialYearStart = currentMonth >= 4 ? currentYear : currentYear - 1;
+        const financialYearEnd = financialYearStart + 1;
+
+        // Extract salary year and month
+        const selectedYear = parseInt(salary_details.salary_year);
+        const selectedMonth = parseInt(salary_details.salary_month);
+
+        // Check if the selected month and year fall within the current financial year
+        if (
+          (selectedYear === financialYearStart && selectedMonth >= 4) ||
+          (selectedYear === financialYearEnd && selectedMonth <= 3)
+        ) {
+          setShowConfirm({
+            success: true,
+            message: `Payslip of E_id:${salary_details.e_id} is not generated yet for ${salary_details.salary_month}, ${salary_details.salary_year}. Would you like to generate payslip?`,
+            onConfirm: () => {
+              navigate("/payslip/form", { state: salary_details });
+            }
+          });
+        } else {
+          setShowInvalid({
+            success: true,
+            message: "New payslips cannot be generated for any period prior to the current financial year.",
+            onClose: () => {
+              setShowInvalid(showInvalid)
+            }
+          });
+        }
+
         return;
       }
 
       if (payslipResponse.result.payslip) {
         setShowConfirm({
           success: true,
-          message: `Payslip of E_id:${salary_details.e_id} is already generated  for ${salary_details.salary_month}, ${salary_details.salary_year}.  would you like to get payslip.` ,
+          message: `Payslip of E_id:${salary_details.e_id} is already generated  for ${salary_details.salary_month}, ${salary_details.salary_year}.  would you like to get payslip.`,
           onConfirm: async () => {
             let response = {}
-           
-                try {
-                  response = await get_payslip(salary_details);
-                  if (response.success) {
-                    console.log(response.result);
-                    
-                  } else {
-                    console.error("Error:", response.message);
-                  }
-                } catch (error) {
-                  console.error("API call failed:", error);
-                }
+
+            try {
+              response = await get_payslip(salary_details);
+              if (response.success) {
+                console.log(response.result);
+
+              } else {
+                console.error("Error:", response.message);
+              }
+            } catch (error) {
+              console.error("API call failed:", error);
+            }
             navigate("/payslip/payslip_pdf", { state: response.result });
           }
         });
@@ -117,7 +145,7 @@ export default function Payslip() {
   };
 
   const clear = () => {
-    setsalary_details({ e_id: "" , salary_month: new Date().getMonth() + 1 , salary_year: new Date().getFullYear() });
+    setsalary_details({ e_id: "", salary_month: new Date().getMonth() + 1, salary_year: new Date().getFullYear() });
   };
 
 
@@ -188,7 +216,7 @@ export default function Payslip() {
                     value={salary_details.e_id}
                     onChange={(e) => setsalary_details((prevDetails) => ({
                       ...prevDetails,
-                      e_id: e.target.value, // Update only e_id, keep the rest unchanged
+                      e_id: e.target.value.toUpperCase(), // Update only e_id, keep the rest unchanged
                     }))}
                     required
                     className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-gray-900 placeholder-gray-400 bg-white"

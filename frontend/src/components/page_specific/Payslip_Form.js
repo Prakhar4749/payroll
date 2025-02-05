@@ -8,6 +8,7 @@ import { BackButton } from "../common/backButton";
 import { ConfirmDialogue } from "../common/ConfirmDialogue";
 import { SuccessfullyDone } from "../common/SuccessfullyDone";
 import { InvalidDialogue } from "../common/InvalidDialogue";
+import { NoticeDialogue } from "../common/NoticeDialogue";
 import imageCompression from "browser-image-compression"
 
 const Payslip_Form = () => {
@@ -20,18 +21,54 @@ const Payslip_Form = () => {
     const [data, setData] = useState({ salary_details: salary_details, emp_earning_details: {}, emp_deduction_details: {} }); // State to store employee data
 
 
+    const [showConfirm, setShowConfirm] = useState({ success: false, message: "", onConfirm: () => { } });
+    const [showInvalid, setshowInvalid] = useState({ success: false, message: "", onClose: () => { } });
+    const [showSuccess, setshowSuccess] = useState({ success: false, message: "", onClose: () => { } });
+    const [showNotice, setshowNotice] = useState({ success: false, message: "", onClose: () => { } });
+
+
     const get_form_data = async () => {
         try {
             const response = await view_emp_by_id(data.salary_details.e_id);
 
             // Check if response.result is not null or undefined
             if (response && response.result) {
+
+                
                 setData((prevData) => ({
                     ...prevData, // Keep previous state (salary_details)
                     emp_earning_details: response.result.emp_earning_details || {}, // Fallback to empty object if null
                     emp_deduction_details: response.result.emp_deduction_details || {}, // Fallback to empty object if null
                 }));
-            } else {
+
+                if(Number(data.salary_details.salary_month) == 2  ){
+
+                    console.log("increament", data)
+                    
+            
+                    let new_basic_salary = parseInt(Number(response.result.emp_earning_details.basic_salary) +( Number(response.result.emp_earning_details.basic_salary)* 0.12))
+            
+                    setData((prev) => ({
+                        ...prev,
+                        emp_earning_details: {
+                            ...prev.emp_earning_details, // Keep other deduction details unchanged
+                            basic_salary: new_basic_salary,
+                        },
+                    }));
+                    setshowNotice({
+                        message: "The system has updated the employee's salary details based on the annual increment rate. Please take a moment to review it before generating the payslip!",
+                        success: true,
+                        onClose: () => {
+                            setshowNotice(showInvalid)
+                        }
+                    });
+                    
+                }
+            }
+
+            
+            
+            else {
                 console.log(response);
             }
         } catch (error) {
@@ -39,18 +76,42 @@ const Payslip_Form = () => {
         }
     };
 
-    useEffect(() => {
-        get_form_data();
+    useEffect( () => {
+         get_form_data();
+
+        
+
     }, []); // This will only run once on mount
 
+    
+
+
+    // leave deduction amount Formula 
+    useEffect(() => {
+        let salary_per_day = parseInt(
+            (
+                + Number(data.emp_earning_details.basic_salary)
+                + Number(data.emp_earning_details.DA)
+                - Number(data.emp_deduction_details.deduction_CPF)
+            ) / 30
+        )
+        setData((prev) => ({
+            ...prev,
+            emp_deduction_details: {
+                ...prev.emp_deduction_details, // Keep other deduction details unchanged
+                leave_deduction_amount: salary_per_day * Number(data.emp_deduction_details.leave_days),
+            },
+        }));
+
+    }, [data.emp_earning_details.basic_salary, data.emp_deduction_details.deduction_CPF, data.emp_earning_details.DA, data.emp_deduction_details.leave_days]); // This will only run once on mount
 
 
 
-    const [showConfirm, setShowConfirm] = useState({ success: false, message: "", onConfirm: () => { } });
-    const [showInvalid, setshowInvalid] = useState({ success: false, message: "", onClose: () => { } });
-    const [showSuccess, setshowSuccess] = useState({ success: false, message: "", onClose: () => { } });
+
+   
 
 
+    
 
     const onConfirm = async () => {
         console.log("sent data", data)
@@ -117,6 +178,8 @@ const Payslip_Form = () => {
     }
 
 
+
+
     // Render a loading spinner or message until data is ready
 
     if (!data) {
@@ -142,6 +205,14 @@ const Payslip_Form = () => {
                     />
                 </div>
             )}
+            {showNotice.success && (
+                <div className="fixed inset-0 z-50">
+                    <NoticeDialogue
+                        message={showNotice.message}
+                        onClose={showNotice.onClose}
+                    />
+                </div>
+            )}
             {showInvalid.success && (
                 <div className="fixed inset-0 z-50">
                     <InvalidDialogue
@@ -154,7 +225,8 @@ const Payslip_Form = () => {
                 <div className="fixed inset-0 z-50">
                     <ConfirmDialogue
                         message={showConfirm.message}
-                        onConfirm={()=>{showConfirm.onConfirm();
+                        onConfirm={() => {
+                            showConfirm.onConfirm();
                             setShowConfirm({ success: false, message: "", onConfirm: () => { } })
                         }}
                         onCancel={() => setShowConfirm({ message: "", success: false, onConfirm: null }
@@ -456,6 +528,7 @@ const Payslip_Form = () => {
                                                 value={data.emp_deduction_details.leave_deduction_amount}
                                                 onChange={(e) => handleInputChange("emp_deduction_details", "leave_deduction_amount", e.target.value)}
                                                 className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-red-500 text-slate-700"
+                                                disabled
                                             />
                                         </div>
 

@@ -284,58 +284,60 @@ async function get_all_basic__emp_details(req, res) {
   }
 }
 
-// for geting detail by e_id the emp_details
 async function get_all_e_id_emp_details(req, res) {
-
-  const sql_for_emp_details = `SELECT * FROM emp_details  WHERE e_id = '${req.params["e_id"]}' ; 
-    SELECT * FROM emp_bank_details  WHERE e_id = '${req.params["e_id"]}' ; 
-    SELECT * FROM emp_deduction_details  WHERE e_id = '${req.params["e_id"]}' ; 
-    SELECT * FROM emp_earning_details  WHERE e_id = '${req.params["e_id"]}' ;  `;
   try {
-    const [result, fildes1] = await pool.query(sql_for_emp_details);
+    const e_id = req.params["e_id"];
 
-    // for gatin the dept_details
-    // console.log(result[0][0])
-    const [dept_details, fi] = await pool.query(
-      `SELECT * FROM dept_details WHERE d_id = '${result[0][0].d_id}'`
-    );
+    // Fetch all details using parameterized queries
+    const [emp_details] = await pool.query(`SELECT * FROM emp_details WHERE e_id = ?`, [e_id]);
+    const [emp_bank_details] = await pool.query(`SELECT * FROM emp_bank_details WHERE e_id = ?`, [e_id]);
+    const [emp_deduction_details] = await pool.query(`SELECT * FROM emp_deduction_details WHERE e_id = ?`, [e_id]);
+    const [emp_earning_details] = await pool.query(`SELECT * FROM emp_earning_details WHERE e_id = ?`, [e_id]);
 
-   
-    // Formating date
-    // console.log("dob is -->  "+result[0][0].emp_details)
-    result[0][0].e_DOB = formatDateForMySQL(result[0][0].e_DOB)
-    result[0][0].e_date_of_joining = formatDateForMySQL(result[0][0].e_date_of_joining)
-    
+    if (emp_details.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: `No details found for employee ID - ${e_id}`,
+      });
+    }
 
-    // Convert buffer to Base64
-    const photo= result[0][0].e_photo.toString('utf8');
-    // console.log(photo)
-    result[0][0].e_photo=null
-    res.set('Content-Type', 'application/json');
-    // result[0][0].e_photo=result[0][0].e_photo.toString('utf8');;
+    // Fetch department details using employee's department ID
+    const [dept_details] = await pool.query(`SELECT * FROM dept_details WHERE d_id = ?`, [emp_details[0].d_id]);
+
+    // Format date fields
+    emp_details[0].e_DOB = formatDateForMySQL(emp_details[0].e_DOB);
+    emp_details[0].e_date_of_joining = formatDateForMySQL(emp_details[0].e_date_of_joining);
+
+    // Convert photo buffer to Base64 if it exists
+    let photo = "";
+    if (emp_details[0].e_photo) {
+      photo = emp_details[0].e_photo.toString("utf8"); // Convert to string format
+      emp_details[0].e_photo = ""; // Remove binary data to avoid issues in response
+    }
 
     return res.json({
       success: true,
       result: {
-        e_photo:photo,
-        emp_details: result[0][0],
-        dept_details: dept_details[0],
-        emp_bank_details: result[1][0],
-        emp_deduction_details: result[2][0],
-        emp_earning_details: result[3][0],
+        e_photo: photo || "",
+        emp_details: emp_details[0],
+        dept_details: dept_details[0] || null,
+        emp_bank_details: emp_bank_details[0] || null,
+        emp_deduction_details: emp_deduction_details[0] || null,
+        emp_earning_details: emp_earning_details[0] || null,
       },
-      message: `Here are the details of ${req.params["e_id"]}`,
+      message: `Here are the details of ${e_id}`,
     });
+
   } catch (err) {
-    res
-      .status(500)
-      .json({ 
-        success: false,
-        result: err,
-        message: `There is some problem fetching details of - ${req.params["e_id"]}`,
-      });
+    console.error("Error fetching employee details:", err);
+    res.status(500).json({
+      success: false,
+      result: err,
+      message: `There is some problem fetching details of - ${req.params["e_id"]}`,
+    });
   }
 }
+
 
 // for deleting the e_id from (emp_details, emp_bank_details,emp_deduction_details ,emp_earning_details)
 async function delete_e_id(req, res) {
@@ -475,8 +477,8 @@ async function add_new_emp(req, res) {
     await connection.query(empDeductionQuery, [
       new_e_id,
       data.emp_deduction_details.e_name,
-      data.emp_deduction_details.leave_days,
-      data.emp_deduction_details.leave_deduction_amount,
+      0,
+      0,
       data.emp_deduction_details.deduction_CPF,
       data.emp_deduction_details.GIS,
       data.emp_deduction_details.house_rent,
@@ -644,8 +646,8 @@ async function update_emp(req, res) {
     `;
     const empDeductionValues = [
       data.emp_details.e_name,
-      data.emp_deduction_details.leave_days,
-      data.emp_deduction_details.leave_deduction_amount,
+      0,
+      0,
       data.emp_deduction_details.deduction_CPF,
       data.emp_deduction_details.GIS,
       data.emp_deduction_details.house_rent,
