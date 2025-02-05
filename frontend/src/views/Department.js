@@ -9,6 +9,8 @@ export default function Department() {
   const [deptDatacopy, setdeptDatacopy] = useState([]);
   const [d_id, setd_id] = useState("");
 
+  
+
   useEffect(() => {
     async function getDeptData() {
       try {
@@ -25,9 +27,13 @@ export default function Department() {
     getDeptData();
   }, []);
 
+  const [selectedId, setSelectedId] = useState(null);
+
   function onRowSelect(dId) {
     setd_id(dId);
   }
+
+
 
   return (
     <div>
@@ -47,7 +53,7 @@ export default function Department() {
 
         <main className="w-full lg:w-3/4 p-6 bg-gray-50">
           <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-            <Dept_Table data={deptDatacopy} onRowSelect={onRowSelect} />
+            <Dept_Table data={deptDatacopy} onRowSelect={onRowSelect} selectedId={d_id} setSelectedId={setd_id} />
           </div>
         </main>
       </div>
