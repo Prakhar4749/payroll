@@ -92,6 +92,7 @@ const EMP_aside = ({ setalldata, alldata, setempData, selected_e_id, setselected
 
 
   const ViewEmp = async () => {
+    console.log(selected_e_id)
     if (!selected_e_id) {
       console.error("No employee ID selected.");
       return; // Avoid making the API call if no ID is selected

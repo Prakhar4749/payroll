@@ -109,7 +109,7 @@ async function update_in_earning_and_save_in_archive(req, res) {
       `;
 
     const deductionParams = [
-      emp_deduction_details.leave_days, emp_deduction_details.leave_deduction_amount,
+      0, 0,
       emp_deduction_details.deduction_CPF, emp_deduction_details.GIS, emp_deduction_details.house_rent,
       emp_deduction_details.water_charges, emp_deduction_details.electricity_charges, emp_deduction_details.vehicle_deduction,
       emp_deduction_details.HB_loan, emp_deduction_details.GPF_loan, emp_deduction_details.festival_loan,
