@@ -63,168 +63,154 @@ async function register_user(req, res) {
 
 
 async function change_password(req, res) {
-    const { user_name, current_password, new_password
-    } = req.body;
+    const { user_name, current_password, new_password } = req.body;
 
+    // Check if passwords are provided
     if (!new_password || !current_password) {
-        return res.status(400).json({
+        return res.json({
             success: false,
-            message: "please enter valid current and new password ",
-            result: error
+            message: "Please enter valid current and new passwords.",
         });
     }
+
+    // Check if the new password is the same as the current one
     if (new_password === current_password) {
-        return res.status(400).json({
+        return res.json({
             success: false,
-            message: "current and new password cant be same",
-            result: error
+            message: "Current and new passwords cannot be the same.",
         });
     }
+
+    // Query to get the user from the database
     const sql_get_password = `SELECT * FROM user_login_details WHERE user_name = ?`;
 
     try {
-
+        // Retrieve the user details based on the username
         const [results] = await pool.query(sql_get_password, [user_name]);
 
         if (results.length === 0) {
-            return res.status(404).json({
+            return res.json({
                 success: false,
-                message: "user not found",
-                result: error
+                message: "User not found.",
             });
         }
 
         const user = results[0];
 
-
-
+        // Compare the current password with the stored hashed password
         const isMatch = await bcrypt.compare(current_password, user.user_password);
 
-
-
         if (!isMatch) {
-            return res.status(401).json({
+            return res.json({
                 success: false,
-                message: "invalid current password",
-                result: error
+                message: "Invalid current password.",
             });
         }
 
+        // Hash the new password
         const hashed_password = await bcrypt.hash(new_password, 10);
 
+        // Update the password in the database
         const sql_change_password = `UPDATE user_login_details SET user_password = ? WHERE user_name = ?`;
         await pool.query(sql_change_password, [hashed_password, user_name]);
 
-
-
         return res.json({
             success: true,
-            message: "Password changed succesfully",
-            result: ""
-        });
-    } catch (err) {
-        console.error("Database query error:", err);
-        return res.json({
-            success: false,
-            message: "Error in changing password ",
-            result: err
-        });
-    }
-}
-
-async function change_user_name(req, res) {
-    const { current_user_name, new_user_name, user_password
-    } = req.body;
-
-    if (!new_user_name || !user_password) {
-        return res.status(400).json({
-            success: false,
-            message: "please enter valid new user name and password ",
-            result: error
-        });
-    }
-    if (new_user_name === current_user_name) {
-        return res.status(400).json({
-            success: false,
-            message: "current and new username cant be same",
-            result: error
-        });
-    }
-
-    // for chk that user name is present or not
-
-    try{
-        const sql1=`SELECT COUNT(*) AS user_name FROM user_login_details Where user_name= ${user_name} `;
-        const [re1] = await pool.query(sql1)
-
-        if(results[0][0].user_name > 0){
-            return res.json({
-                success: false,
-                message: "user name alrady exist ...",
-                result: false
-            }); 
-        }
-
-    }catch(err){
-        console.error("Database query error:", err);
-        return res.json({
-            success: false,
-            message: "Error during changinf usename:",
-            result: err
-        });
-    }
-
-    const sql_get_password = `SELECT * FROM user_login_details WHERE user_name = ?`;
-
-    try {
-
-        const [results] = await pool.query(sql_get_password, [current_user_name]);
-
-        if (results.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: "user not found",
-                result: error
-            });
-        }
-
-        const user = results[0];
-
-
-
-        const isMatch = await bcrypt.compare(user_password, user.user_password);
-
-
-
-        if (!isMatch) {
-            return res.status(401).json({
-                success: false,
-                message: " invalid  password",
-                result: error
-            });
-        }
-
-
-
-        const sql_change_user_name = `UPDATE user_login_details SET user_name = ? WHERE user_name = ?`;
-        await pool.query(sql_change_user_name, [new_user_name, current_user_name]);
-
-
-
-        return res.json({
-            success: true,
-            message: "User name changed succesfully",
-            result: ""
+            message: "Password changed successfully.",
         });
     } catch (err) {
         console.error("Database query error:", err);
         return res.status(500).json({
             success: false,
-            message: "Error during change username ",
-            result: err
+            message: "Error in changing password.",
+            result: err,  // Provide the error message instead of 'error'
         });
     }
 }
+
+
+async function change_user_name(req, res) {
+    const { current_user_name, new_user_name, user_password } = req.body;
+
+    // Check if required fields are provided
+    if (!new_user_name || !user_password) {
+        return res.json({
+            success: false,
+            message: "Please enter a valid new username and password.",
+        });
+    }
+
+    // Check if the current username is the same as the new username
+    if (new_user_name === current_user_name) {
+        return res.json({
+            success: false,
+            message: "Current and new usernames cannot be the same.",
+        });
+    }
+
+    // Check if the new username already exists in the database
+    try {
+        const sql_check_user_name = `SELECT COUNT(*) AS user_count FROM user_login_details WHERE user_name = ?`;
+        const [checkResult] = await pool.query(sql_check_user_name, [new_user_name]);
+
+        if (checkResult[0].user_count > 0) {
+            return res.json({
+                success: false,
+                message: "Username already exists.",
+            });
+        }
+    } catch (err) {
+        console.error("Database query error:", err);
+        return res.json({
+            success: false,
+            message: "Error checking username availability.",
+            result: err,
+        });
+    }
+
+    // Get user details based on current username
+    const sql_get_user = `SELECT * FROM user_login_details WHERE user_name = ?`;
+
+    try {
+        const [userResults] = await pool.query(sql_get_user, [current_user_name]);
+
+        if (userResults.length === 0) {
+            return res.json({
+                success: false,
+                message: "User not found.",
+            });
+        }
+
+        const user = userResults[0];
+
+        // Compare the provided password with the stored password
+        const isMatch = await bcrypt.compare(user_password, user.user_password);
+
+        if (!isMatch) {
+            return res.json({
+                success: false,
+                message: "Invalid password.",
+            });
+        }
+
+        // Update the username in the database
+        const sql_update_user_name = `UPDATE user_login_details SET user_name = ? WHERE user_name = ?`;
+        await pool.query(sql_update_user_name, [new_user_name, current_user_name]);
+
+        return res.json({
+            success: true,
+            message: "Username changed successfully.",
+        });
+    } catch (err) {
+        console.error("Database query error:", err);
+        return res.status(500).json({
+            success: false,
+            message: "Error during username change.",
+            result: err,
+        });
+    }
+}
+
 
 
 async function login_user(req, res) {
@@ -294,13 +280,41 @@ async function login_user(req, res) {
 async function getallusers(req,res) {
    const sql = 'select * from user_login_details '
 
-   const [r,f]  = await pool.query(sql)
+   const [r,f]  = await pool.query(sql) 
 
    res.json(r);
 
     
 }
 
+
+async function delete_user(req,res) {
+    const user_name = req.params["user_name"]
+    console.log(user_name)
+
+    try{
+        const sql =`DELETE FROM user_login_details WHERE user_name =  '${user_name}'`
+
+        await pool.query(sql)
+
+        return res.json({
+            success: true,
+            message: "User deleted ",
+        })
+
+
+    }catch(err){
+        return res.json({
+            success: false,
+            message: "User is not deleted ",
+        })
+
+
+
+    }
+
+}
+
 export {
-    login_user, register_user, change_password, change_user_name , getallusers
+    login_user, register_user, change_password, change_user_name , getallusers , delete_user
 }

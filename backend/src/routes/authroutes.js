@@ -1,5 +1,5 @@
 import express from "express";
-import {login_user,register_user,change_password,change_user_name ,  getallusers  } from '../controller/authcontroller.js'
+import {login_user,register_user,change_password,change_user_name ,  getallusers ,delete_user  } from '../controller/authcontroller.js'
 const route = express.Router();
 
 
@@ -63,12 +63,14 @@ route.put("/change_password",change_password);
  *  {
  *    "current_user_name": "johndoe",
  *    "new_user_name": "john_doe_updated"
- *    "user_password": "654321"
+ *    "user_password": "654321" 
  *  }
  */
 route.put("/change_user_name",change_user_name);
 
 
 route.get("/getalluser",getallusers )
+
+route.delete("/deleteuser/:user_name" , delete_user) 
 
 export default route;

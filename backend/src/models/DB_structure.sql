@@ -135,4 +135,4 @@ CREATE TABLE salary_archive (
 CREATE TABLE user_login_details (
     user_name VARCHAR(50) NOT NULL UNIQUE,
     user_password VARCHAR() NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci; 

@@ -22,13 +22,21 @@ async function fadd_new_user(new_uid,new_password){
 async function update_userName(current_user_name,new_user_name,user_password){
 
     const data ={
-        "current_user_name": current_user_name,
-        "new_user_name": new_user_name,
-        "user_password": user_password
+        current_user_name: current_user_name,
+        new_user_name: new_user_name,
+        user_password: user_password
       }
 
+      const token = sessionStorage.getItem("token");
+
       try{
-        const response = await axios.put(`${base_url}/auth/change_user_name`,data)
+        const response = await axios.put(`${base_url}/auth/change_user_name`,data ,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`, // Include token here
+            },
+          })
         return response.data;
       }catch(err){
         console.log(err)
@@ -42,10 +50,10 @@ async function update_userName(current_user_name,new_user_name,user_password){
 
 async function update_password(user_name,current_password,new_password){
     const data={
-        "user_name": user_name,
-        "current_password": current_password,
-        "new_password": new_password
-      }
+       user_name: user_name,
+        current_password: current_password,
+        new_password: new_password
+      } 
 
       try{
         const response = await axios.put(`${base_url}/auth/change_password`,data)
@@ -58,7 +66,14 @@ async function update_password(user_name,current_password,new_password){
 }
 
 
-async function  delete_user(){
+async function  delete_user(uname){
+
+  try{
+    const response = await axios.delete(`${base_url}/auth/deleteuser/${uname}`)
+    return response.data;
+  }catch(err){
+    console.log(err)
+  }
 
  return ;
 }
