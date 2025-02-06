@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import Navbar from "../components/layout/Navbar";
-import { useNavigate, useLocation, Await } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { ConfirmDialogue } from "../components/common/ConfirmDialogue";
 import { InvalidDialogue } from "../components/common/InvalidDialogue";
 import { SuccessfullyDone } from "../components/common/SuccessfullyDone";
 import { Calendar, UserRound } from 'lucide-react';
-import { check_id, check_payslip_in_archive, get_payslip, fetch_form, create_salary_archive } from "../controller/Payslip";
+import { check_id, check_payslip_in_archive, get_payslip } from "../controller/Payslip";
 
 export default function Payslip() {
 
@@ -44,7 +44,7 @@ export default function Payslip() {
 
       return false;
     }
-    if (salary_details.salary_year == new Date().getFullYear() && salary_details.salary_month > new Date().getMonth() + 1) {
+    if (salary_details.salary_year === new Date().getFullYear() && salary_details.salary_month > new Date().getMonth() + 1) {
       setShowInvalid({ success: true, message: "Enter a valid salary month.", onClose: () => { setShowInvalid(showInvalid) } });
       return false;
     }
@@ -154,13 +154,13 @@ export default function Payslip() {
 
 
 
-  const handleCancel = () => {
+  // const handleCancel = () => {
 
-  };
+  // };
 
-  const handleInvalidClose = () => {
+  // const handleInvalidClose = () => {
 
-  };
+  // };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-sky-50">

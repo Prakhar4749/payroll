@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { send_pdf_to_email } from "../../controller/Payslip";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ArrowLeft, Mail, Download, FileText, Calendar } from "lucide-react";
+import { ArrowLeft, Mail, Download, Calendar } from "lucide-react";
 import { useRef } from "react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";

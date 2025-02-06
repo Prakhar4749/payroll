@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import { delete_user } from '../../controller/user.controlle';
-import { InvalidDialogue } from "../common/InvalidDialogue";
-import { SuccessfullyDone } from "../common/SuccessfullyDone";
-import { ConfirmDialogue } from "../common/ConfirmDialogue";
+// import { InvalidDialogue } from "../common/InvalidDialogue";
+// import { SuccessfullyDone } from "../common/SuccessfullyDone";
+// import { ConfirmDialogue } from "../common/ConfirmDialogue";
 import { UserCog, UserPlus, LockKeyhole, LogOut, UserMinus } from "lucide-react";
 
 const UserActions = ({ set_add, set_change_uId, set_change_uId_password, current_user_name, set_add_u, set_change_password,set_change_user_name ,setShowConfirm,setshowInvalid,setshowSuccess}) => {

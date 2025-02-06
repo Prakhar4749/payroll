@@ -2,14 +2,14 @@ import React, { useState, useEffect, useRef } from "react";
 import { create_salary_archive, get_payslip } from "../../controller/Payslip";
 import { view_emp_by_id } from "../../controller/empController";
 import { useLocation, useNavigate } from "react-router-dom";
-import { User, Building, DollarSign, BanknoteIcon as BanknotesIcon, MinusCircle, Save, UserRoundPen, Eraser } from 'lucide-react';
+import { User, DollarSign, MinusCircle, Save } from 'lucide-react';
 import Navbar from "../layout/Navbar"
 import { BackButton } from "../common/backButton";
 import { ConfirmDialogue } from "../common/ConfirmDialogue";
 import { SuccessfullyDone } from "../common/SuccessfullyDone";
 import { InvalidDialogue } from "../common/InvalidDialogue";
 import { NoticeDialogue } from "../common/NoticeDialogue";
-import imageCompression from "browser-image-compression"
+// import imageCompression from "browser-image-compression"
 
 const Payslip_Form = () => {
     const navigate = useNavigate();
@@ -41,7 +41,7 @@ const Payslip_Form = () => {
                     emp_deduction_details: response.result.emp_deduction_details || {}, // Fallback to empty object if null
                 }));
 
-                if(Number(data.salary_details.salary_month) == 2  ){
+                if(Number(data.salary_details.salary_month) === 2  ){
 
                     // console.log("increament", data)
                     

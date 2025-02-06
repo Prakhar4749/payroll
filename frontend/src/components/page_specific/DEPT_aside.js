@@ -5,7 +5,7 @@ import {
   Filter,
   PlusCircle,
   Edit,
-  Trash2,
+  Trash2
 } from "lucide-react";
 import { removeFromDept } from "../../controller/department.controller";
 import { ConfirmDialogue } from "../common/ConfirmDialogue";
@@ -18,7 +18,7 @@ const DEPT_aside = ({
   setdeptDatacopy,
   d_id,
   setdeptData,
-  setd_id1,
+  setd_id1
 }) => {
   const [showDeleteSuccess, setshowDeleteSuccess] = useState({
     message: "",
