@@ -27,7 +27,7 @@ const add_emp_details = async (data) => {
         "Content-Type": "multipart/form-data",
       },
     });
-    console.log(response.data);
+    // console.log(response.data);
     return response.data;
   } catch (error) {
     console.error("Axios request failed:", error);
@@ -40,7 +40,7 @@ const check_for_update_emp = async (raw_data) => {
       `${base_url}/emp/chk_for_update`,
       raw_data
     );
-    console.log(response.data);
+    // console.log(response.data);
     return response.data;
   } catch (error) {
     console.error("Axios request failed:", error);
@@ -62,9 +62,9 @@ const update_emp_details = async (data) => {
 
 const delete_emp_details = async (e_id) => {
   try {
-    console.log("conroller", e_id);
+    // console.log("conroller", e_id);
     const response = await axios.delete(`${base_url}/emp/delete/${e_id}`);
-    console.log("conroller", response.data);
+    // console.log("conroller", response.data);
     return response.data;
   } catch (error) {
     console.error("Axios request failed:", error);

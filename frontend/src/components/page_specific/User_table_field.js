@@ -6,35 +6,14 @@ import {
   update_userName,
 } from "../../controller/user.controlle";
 
-import { SuccessfullyDone } from "../common/SuccessfullyDone";
-import { InvalidDialogue } from "../common/InvalidDialogue";
-import { ConfirmDialogue } from "../common/ConfirmDialogue";
 
 
-export default ({ add_new_user, change_uId, change_uId_password, current_user_name, set_add, set_change_uId, set_change_uId_password }) => {
 
-  const [showConfirm, setShowConfirm] = useState({ success: false, message: "", onConfirm: () => { } });
-  const [showInvalid, setshowInvalid] = useState({ success: false, message: "", onClose: () => { } });
-  const [showSuccess, setshowSuccess] = useState({ success: false, message: "", onClose: () => { } });
+export default ({ add_new_user, change_uId, change_uId_password, current_user_name, set_add, set_change_uId, set_change_uId_password, for_add_u, set_add_u, for_change_password, set_change_password, for_change_user_name,set_change_user_name,setShowConfirm,setshowInvalid,setshowSuccess, }) => {
 
-  const [for_add_u, set_add_u] = useState({
-    user_name: "",
-    user_password: "",
-    confirm_password: "",
-  });
 
-  const [for_change_password, set_change_password] = useState({
-    user_name: current_user_name,
-    current_password: "",
-    new_password: "",
-    confirm_password: "",
-  });
 
-  const [for_change_user_name, set_change_user_name] = useState({
-    current_user_name: current_user_name,
-    new_user_name: "",
-    user_password: "",
-  });
+  
 
   const [showPassword, setShowPassword] = useState({
     user_password: false,
@@ -96,7 +75,7 @@ export default ({ add_new_user, change_uId, change_uId_password, current_user_na
       return;
     }
 
-    console.log("Updating password:", for_change_password);
+    // console.log("Updating password:", for_change_password);
 
     setShowConfirm({
       message: "are you really want to update user password", success: true, onConfirm: async () => {
@@ -155,7 +134,7 @@ export default ({ add_new_user, change_uId, change_uId_password, current_user_na
       return;
     }
 
-    console.log("Updating username:", for_change_user_name);
+    // console.log("Updating username:", for_change_user_name);
 
     setShowConfirm({
       message: "are you really want to update UserName", success: true, onConfirm: async () => {
@@ -245,35 +224,8 @@ export default ({ add_new_user, change_uId, change_uId_password, current_user_na
 
 
   return (
-    <>
-      {showSuccess.success && (
-        <div className="fixed inset-0 z-50">
-          <SuccessfullyDone
-            message={showSuccess.message}
-            onClose={showSuccess.onClose}
-          />
-        </div>
-      )}
-      {showInvalid.success && (
-        <div className="fixed inset-0 z-50">
-          <InvalidDialogue
-            message={showInvalid.message}
-            onClose={() => { showInvalid.onClose() }}
-          />
-        </div>
-      )}
-      {showConfirm.success && (
-        <div className="fixed inset-0 z-50">
-          <ConfirmDialogue
-            message={showConfirm.message}
-            onConfirm={() => {
-              showConfirm.onConfirm();
-              setShowConfirm({ success: false, message: "", onConfirm: () => { } })
-            }}
-            onCancel={() => setShowConfirm({ message: "", success: false, onConfirm: null })}
-          />
-        </div>
-      )}
+    <div className="">
+      
 
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
@@ -418,7 +370,7 @@ export default ({ add_new_user, change_uId, change_uId_password, current_user_na
                       value={for_add_u.user_name}
                       onChange={(e) => handleChange(e, set_add_u)}
                       required
-                      className="mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
+                      className="mt-1 block w-full focus:outline-none px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
                       
                     />
                   </div>
@@ -432,7 +384,7 @@ export default ({ add_new_user, change_uId, change_uId_password, current_user_na
                         value={for_add_u.user_password}
                         onChange={(e) => handleChange(e, set_add_u)}
                         required
-                         className="mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
+                         className="mt-1 block w-full focus:outline-none px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
                       />
                       <button
                         type="button"
@@ -518,7 +470,7 @@ export default ({ add_new_user, change_uId, change_uId_password, current_user_na
                       onChange={(e) => handleChange(e, set_change_user_name)}
                       required
                       disabled
-                      className="mt-1 block w-full px-4 py-3 bg-gray-100 border border-gray-300 rounded-lg text-gray-500"
+                      className="mt-1 block w-full focus:outline-none px-4 py-3 bg-gray-100 border border-gray-300 rounded-lg text-gray-500"
                     />
                   </div>
 
@@ -530,20 +482,29 @@ export default ({ add_new_user, change_uId, change_uId_password, current_user_na
                       value={for_change_user_name.new_user_name}
                       onChange={(e) => handleChange(e, set_change_user_name)}
                       required
-                      className="mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                      className="mt-1 block w-full focus:outline-none px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                     />
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700">Current Password</label>
+                    <div className="relative">
                     <input
-                      type="password"
+                      type={showPassword.user_password ? "text" : "password"}
                       name="user_password"
                       value={for_change_user_name.user_password}
                       onChange={(e) => handleChange(e, set_change_user_name)}
                       required
-                      className="mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                      className="mt-1 block w-full focus:outline-none px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                     />
+                    <button
+                        type="button"
+                        onClick={() => togglePasswordVisibility("user_password")}
+                         className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-emerald-600 hover:text-emerald-700"
+                      >
+                        {showPassword.user_password ? "Hide" : "Show"}
+                      </button>
+                    </div>
                   </div>
                 </div>
 
@@ -595,7 +556,7 @@ export default ({ add_new_user, change_uId, change_uId_password, current_user_na
                       onChange={(e) => handleChange(e, set_change_password)}
                       required
                       disabled
-                      className="mt-1 block w-full px-4 py-3 bg-gray-100 border border-gray-300 rounded-lg text-gray-500"
+                      className="mt-1 block w-full focus:outline-none px-4 py-3 bg-gray-100 border border-gray-300 rounded-lg text-gray-500"
                     />
                   </div>
 
@@ -630,7 +591,7 @@ export default ({ add_new_user, change_uId, change_uId_password, current_user_na
                         value={for_change_password.new_password}
                         onChange={(e) => handleChange(e, set_change_password)}
                         required
-                         className="mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition-colors"
+                         className="mt-1 block w-full focus:outline-none px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition-colors"
                         
                       />
                       <button
@@ -689,7 +650,7 @@ export default ({ add_new_user, change_uId, change_uId_password, current_user_na
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 
 };

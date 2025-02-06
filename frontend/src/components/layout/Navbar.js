@@ -18,7 +18,7 @@ function Navbar() {
     { path: '/payslip', label: 'Payslip', icon: <FileText className="w-4 h-4" /> },
     { path: '/employee', label: 'Employee', icon: <Users className="w-4 h-4" /> },
     { path: '/department', label: 'Department', icon: <Building className="w-4 h-4" /> },
-    { path: '/user/4565', label: 'User', icon: <User className="w-4 h-4" /> },
+    { path: '/user', label: 'User', icon: <User className="w-4 h-4" /> },
   ];
 
   return (

@@ -6,28 +6,58 @@ import { SuccessfullyDone } from "../common/SuccessfullyDone";
 import { ConfirmDialogue } from "../common/ConfirmDialogue";
 import { UserCog, UserPlus, LockKeyhole, LogOut, UserMinus } from "lucide-react";
 
-const UserActions = ({ set_add, set_change_uId, set_change_uId_password, current_user_name }) => {
-     const [showConfirm, setShowConfirm] = useState({ success: false, message: "", onConfirm: () => { } });
-      const [showInvalid, setshowInvalid] = useState({ success: false, message: "", onClose: () => { } });
-      const [showSuccess, setshowSuccess] = useState({ success: false, message: "", onClose: () => { } });
+const UserActions = ({ set_add, set_change_uId, set_change_uId_password, current_user_name, set_add_u, set_change_password,set_change_user_name ,setShowConfirm,setshowInvalid,setshowSuccess}) => {
+    
     const navigate = useNavigate();
 
     const handleUpdateUsername = () => {
         set_change_uId_password(false);
         set_add(false);
         set_change_uId(true);
+        set_add_u({
+          user_name: "",
+          user_password: "",
+          confirm_password: "",
+        });
+        set_change_password({
+          user_name: current_user_name,
+          current_password: "",
+          new_password: "",
+          confirm_password: "",
+        });
     };
 
     const handleChangePassword = () => {
         set_change_uId_password(true);
         set_add(false);
         set_change_uId(false);
+        set_change_user_name({
+          current_user_name: current_user_name,
+          new_user_name: "",
+          user_password: "",
+        });
+        set_add_u({
+          user_name: "",
+          user_password: "",
+          confirm_password: "",
+        });
     };
 
     const handleAddNewUser = () => {
         set_change_uId_password(false);
         set_add(true);
         set_change_uId(false);
+        set_change_user_name({
+          current_user_name: current_user_name,
+          new_user_name: "",
+          user_password: "",
+        });
+        set_change_password({
+          user_name: current_user_name,
+          current_password: "",
+          new_password: "",
+          confirm_password: "",
+        });
     };
 
     const handleDeleteUser = async () => {
@@ -56,34 +86,7 @@ const UserActions = ({ set_add, set_change_uId, set_change_uId_password, current
     return (
 
         <>
-        {showSuccess.success && (
-        <div className="fixed inset-0 z-50">
-          <SuccessfullyDone
-            message={showSuccess.message}
-            onClose={showSuccess.onClose}
-          />
-        </div>
-      )}
-      {showInvalid.success && (
-        <div className="fixed inset-0 z-50">
-          <InvalidDialogue
-            message={showInvalid.message}
-            onClose={() => { showInvalid.onClose() }}
-          />
-        </div>
-      )}
-      {showConfirm.success && (
-        <div className="fixed inset-0 z-50">
-          <ConfirmDialogue
-            message={showConfirm.message}
-            onConfirm={() => {
-              showConfirm.onConfirm();
-              setShowConfirm({ success: false, message: "", onConfirm: () => { } })
-            }}
-            onCancel={() => setShowConfirm({ message: "", success: false, onConfirm: null })}
-          />
-        </div>
-      )}
+        
         
         <aside className="w-full max-w-md mx-auto shadow-2xl rounded-2xl overflow-hidden p-4 sm:p-6 flex flex-col gap-3 sm:gap-4">
 

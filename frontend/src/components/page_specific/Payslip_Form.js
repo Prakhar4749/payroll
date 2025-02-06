@@ -43,7 +43,7 @@ const Payslip_Form = () => {
 
                 if(Number(data.salary_details.salary_month) == 2  ){
 
-                    console.log("increament", data)
+                    // console.log("increament", data)
                     
             
                     let new_basic_salary = parseInt(Number(response.result.emp_earning_details.basic_salary) +( Number(response.result.emp_earning_details.basic_salary)* 0.12))
@@ -114,7 +114,7 @@ const Payslip_Form = () => {
     
 
     const onConfirm = async () => {
-        console.log("sent data", data)
+        // console.log("sent data", data)
         try {
 
             const response = await create_salary_archive(data);

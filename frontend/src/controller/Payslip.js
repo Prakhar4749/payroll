@@ -6,7 +6,7 @@ const check_id = async(e_id)=>{
   try {
     const response = await axios.get(`${base_url}/payslip/isit/${e_id}`);
 
-    console.log(response);
+    // console.log(response);
 
     const { success, message, result } = response.data;
     return { success, message, result };
@@ -30,7 +30,7 @@ const check_payslip_in_archive = async ({e_id, salary_month, salary_year}) => {
       salary_year
     });
 
-    console.log(response);
+    // console.log(response);
 
     const { success, message, result } = response.data;
     return { success, message, result };
@@ -50,7 +50,7 @@ const create_salary_archive = async(data)=>{
   try {
     const response = await axios.put(`${base_url}/payslip/create_payslip`,data);
 
-    console.log(response);
+    // console.log(response);
 
     const { success, message, result } = response.data;
     return { success, message, result };
@@ -74,7 +74,7 @@ const get_payslip = async ({e_id, salary_month, salary_year}) => {
       salary_year
     });
 
-    console.log(response);
+    // console.log(response);
 
     const { success, message, result } = response.data;
     return { success, message, result };
@@ -104,7 +104,7 @@ const send_pdf_to_email = async ({to,subject,text,html,file,file_name}) => {
       },
     });
 
-    console.log(response.data);
+    // console.log(response.data);
     return response.data
 
   } catch (error) {
