@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { update_emp_details, check_for_update_emp } from "../../controller/empController";
 import { useLocation, useNavigate } from "react-router-dom";
 import { emp_data_model } from "../../models/EmpModel";
-import { User, Building, DollarSign, BanknoteIcon as BanknotesIcon, MinusCircle, Save, UserRoundPen, Eraser } from 'lucide-react';
+import { User, Building, DollarSign, MinusCircle, Save, UserRoundPen, Eraser } from 'lucide-react';
 import Navbar from "../layout/Navbar"
 import { BackButton } from "../common/backButton";
 import { ConfirmDialogue } from "../common/ConfirmDialogue";
@@ -14,7 +14,7 @@ const UpdateForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const today = new Date().toISOString().split("T")[0];
-  console.log("today", today) // Get today's date in YYYY-MM-DD format
+  // console.log("today", today) // Get today's date in YYYY-MM-DD format
   const dateInputRef = useRef(null);
 
   const [data, setData] = useState(location.state.data); // State to store employee data
@@ -43,7 +43,7 @@ const UpdateForm = () => {
   const [fileName, setFileName] = useState("Choose a file")
 
   const onUpdateConfirm = async () => {
-    console.log("sent data", data)
+    // console.log("sent data", data)
     try {
 
       const response = await update_emp_details(data);
@@ -82,7 +82,7 @@ const UpdateForm = () => {
   };
 
   const handleFileUpload = async (section, file) => {
-    console.log(file)
+    // console.log(file)
 
     if (file && (file.type === "image/jpeg" || file.type === "image/png")) {
       const options = {
@@ -95,7 +95,7 @@ const UpdateForm = () => {
         const compressedImage = await imageCompression(file, options);
         setFile_to_sand(compressedImage);
         setFileName(file.name)
-        console.log("Compressed file:", compressedImage);
+        // console.log("Compressed file:", compressedImage);
         setData((prevData) => ({
           ...prevData,
           e_photo: compressedImage,

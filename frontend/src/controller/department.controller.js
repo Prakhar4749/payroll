@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const ip="http://localhost:5000"
+// const ip="http://localhost:5000"
+const ip = process.env.REACT_APP_BASE_URL;
 
 async function fetchAllDeptData() {
   try {
@@ -54,7 +55,7 @@ const addToDepartment = async (to_add)=>{
 const removeFromDept = async (d_id)=>{
     try{
       const result = await axios.delete(`${ip}/dept/delete_d_id/${d_id}`)
-      console.log(result)
+      // console.log(result)
       return result.data;
     }catch(err){
       console.log(err)
