@@ -288,32 +288,55 @@ async function getallusers(req,res) {
 }
 
 
-async function delete_user(req,res) {
-    const user_name = req.params["user_name"]
-    console.log(user_name)
+async function delete_user(req, res) {
+    const { user_name, password } = req.params;
+    console.log(user_name )
+    console.log(password )
 
-    try{
-        const sql =`DELETE FROM user_login_details WHERE user_name =  '${user_name}'`
+    console.log("Attempting to delete user:", user_name);
 
-        await pool.query(sql)
+    try {
+        // Check if user exists and get stored hashed password
+        const userQuery = "SELECT user_password FROM user_login_details WHERE user_name = ?";
+        const [rows] = await pool.query(userQuery, [user_name]);
+
+        if (rows.length === 0) {
+            return res.json({
+                success: false,
+                message: "User not found",
+            }); 
+        }
+
+        const storedPassword = rows[0].user_password;
+
+        // Compare passwords (assuming stored passwords are hashed)
+        const isPasswordMatch = await bcrypt.compare(password, storedPassword);
+
+        if (!isPasswordMatch) {
+            return res.json({
+                success: false,
+                message: "Incorrect password",
+            });
+        }
+
+        // Delete the user if password matches
+        const deleteQuery = "DELETE FROM user_login_details WHERE user_name = ?";
+        await pool.query(deleteQuery, [user_name]);
 
         return res.json({
             success: true,
-            message: "User deleted ",
-        })
+            message: "User deleted successfully",
+        });
 
-
-    }catch(err){
-        return res.json({
+    } catch (err) {
+        console.error("Error deleting user:", err);
+        return res.status(500).json({
             success: false,
-            message: "User is not deleted ",
-        })
-
-
-
+            message: "Internal server error",
+        });
     }
-
 }
+
 
 export {
     login_user, register_user, change_password, change_user_name , getallusers , delete_user

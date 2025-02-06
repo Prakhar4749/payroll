@@ -71,6 +71,6 @@ route.put("/change_user_name",change_user_name);
 
 route.get("/getalluser",getallusers )
 
-route.delete("/deleteuser/:user_name" , delete_user) 
+route.delete("/deleteuser/:user_name/:password" , delete_user) 
 
 export default route;

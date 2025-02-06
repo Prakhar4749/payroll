@@ -66,10 +66,10 @@ async function update_password(user_name,current_password,new_password){
 }
 
 
-async function  delete_user(uname){
+async function  delete_user(password,uname){
 
   try{
-    const response = await axios.delete(`${base_url}/auth/deleteuser/${uname}`)
+    const response = await axios.delete(`${base_url}/auth/deleteuser/${uname}/${password}`)
     return response.data;
   }catch(err){
     console.log(err)
