@@ -20,9 +20,9 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(user_name,",", user_password)
+    // console.log(user_name,",", user_password)
     const response = await loginUser(user_name, user_password);
-    console.log(response)
+    // console.log(response)
 
     if (response.success) {
     //   setShowSuccess({success: true, message: response.message, onClose: ()=>{

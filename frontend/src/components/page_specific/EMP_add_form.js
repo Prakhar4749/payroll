@@ -580,7 +580,7 @@ const AddForm = () => {
                   <label className="block text-sm font-medium text-gray-700">Special Pay</label>
                   <input
                     type="number"
-                    value={data.emp_earning_details.special_pay || ""}
+                    value={data.emp_earning_details.special_pay || 0}
                     onChange={(e) => {
                       const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {
@@ -596,7 +596,7 @@ const AddForm = () => {
                   <label className="block text-sm font-medium text-gray-700">Dearness Allowance</label>
                   <input
                     type="number"
-                    value={data.emp_earning_details.dearness_allowance || ""}
+                    value={data.emp_earning_details.dearness_allowance || 0}
                     onChange={(e) => {
                       const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {
@@ -628,7 +628,7 @@ const AddForm = () => {
                   <label className="block text-sm font-medium text-gray-700">ADA</label>
                   <input
                     type="number"
-                    value={data.emp_earning_details.ADA || ""}
+                    value={data.emp_earning_details.ADA || 0}
                     onChange={(e) => {
                       const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {
@@ -644,7 +644,7 @@ const AddForm = () => {
                   <label className="block text-sm font-medium text-gray-700">Interim Relief</label>
                   <input
                     type="number"
-                    value={data.emp_earning_details.interim_relief || ""}
+                    value={data.emp_earning_details.interim_relief || 0}
                     onChange={(e) => {
                       const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {
@@ -660,7 +660,7 @@ const AddForm = () => {
                   <label className="block text-sm font-medium text-gray-700">HRA</label>
                   <input
                     type="number"
-                    value={data.emp_earning_details.HRA || ""}
+                    value={data.emp_earning_details.HRA || 0}
                     onChange={(e) => {
                       const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {
@@ -676,7 +676,7 @@ const AddForm = () => {
                   <label className="block text-sm font-medium text-gray-700">CCA</label>
                   <input
                     type="number"
-                    value={data.emp_earning_details.CCA || ""}
+                    value={data.emp_earning_details.CCA || 0}
                     onChange={(e) => {
                       const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {
@@ -692,7 +692,7 @@ const AddForm = () => {
                   <label className="block text-sm font-medium text-gray-700">Conveyance</label>
                   <input
                     type="number"
-                    value={data.emp_earning_details.conveyance || ""}
+                    value={data.emp_earning_details.conveyance || 0}
                     onChange={(e) => {
                       const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {
@@ -708,7 +708,7 @@ const AddForm = () => {
                   <label className="block text-sm font-medium text-gray-700">Medical</label>
                   <input
                     type="number"
-                    value={data.emp_earning_details.medical || ""}
+                    value={data.emp_earning_details.medical || 0}
                     onChange={(e) => {
                       const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {
@@ -724,7 +724,7 @@ const AddForm = () => {
                   <label className="block text-sm font-medium text-gray-700">Washing Allowance</label>
                   <input
                     type="number"
-                    value={data.emp_earning_details.washing_allowance || ""}
+                    value={data.emp_earning_details.washing_allowance || 0}
                     onChange={(e) => {
                       const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {
@@ -740,7 +740,7 @@ const AddForm = () => {
                   <label className="block text-sm font-medium text-gray-700">BDP</label>
                   <input
                     type="number"
-                    value={data.emp_earning_details.BDP || ""}
+                    value={data.emp_earning_details.BDP || 0}
                     onChange={(e) => {
                       const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {
@@ -756,7 +756,7 @@ const AddForm = () => {
                   <label className="block text-sm font-medium text-gray-700">Arrears</label>
                   <input
                     type="number"
-                    value={data.emp_earning_details.arrears || ""}
+                    value={data.emp_earning_details.arrears || 0}
                     onChange={(e) => {
                       const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {
@@ -802,7 +802,7 @@ const AddForm = () => {
                   <label className="block text-sm font-medium text-gray-700">GIS</label>
                   <input
                     type="number"
-                    value={data.emp_deduction_details.GIS || ""}
+                    value={data.emp_deduction_details.GIS || 0}
                     onChange={(e) => {
                       const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {
@@ -818,7 +818,7 @@ const AddForm = () => {
                   <label className="block text-sm font-medium text-gray-700">House Rent</label>
                   <input
                     type="number"
-                    value={data.emp_deduction_details.house_rent || ""}
+                    value={data.emp_deduction_details.house_rent || 0}
                     onChange={(e) => {
                       const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {
@@ -834,7 +834,7 @@ const AddForm = () => {
                   <label className="block text-sm font-medium text-gray-700">Water Charges</label>
                   <input
                     type="number"
-                    value={data.emp_deduction_details.water_charges || ""}
+                    value={data.emp_deduction_details.water_charges || 0}
                     onChange={(e) => {
                       const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {
@@ -850,7 +850,7 @@ const AddForm = () => {
                   <label className="block text-sm font-medium text-gray-700">Electricity Charges</label>
                   <input
                     type="number"
-                    value={data.emp_deduction_details.electricity_charges || ""}
+                    value={data.emp_deduction_details.electricity_charges || 0}
                     onChange={(e) => {
                       const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {
@@ -866,7 +866,7 @@ const AddForm = () => {
                   <label className="block text-sm font-medium text-gray-700">Vehicle Deduction</label>
                   <input
                     type="number"
-                    value={data.emp_deduction_details.vehicle_deduction || ""}
+                    value={data.emp_deduction_details.vehicle_deduction || 0}
                     onChange={(e) => {
                       const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {
@@ -882,7 +882,7 @@ const AddForm = () => {
                   <label className="block text-sm font-medium text-gray-700">HB Loan</label>
                   <input
                     type="number"
-                    value={data.emp_deduction_details.HB_loan || ""}
+                    value={data.emp_deduction_details.HB_loan || 0}
                     onChange={(e) => {
                       const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {
@@ -898,7 +898,7 @@ const AddForm = () => {
                   <label className="block text-sm font-medium text-gray-700">GPF Loan</label>
                   <input
                     type="number"
-                    value={data.emp_deduction_details.GPF_loan || ""}
+                    value={data.emp_deduction_details.GPF_loan || 0}
                     onChange={(e) => {
                       const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {
@@ -914,7 +914,7 @@ const AddForm = () => {
                   <label className="block text-sm font-medium text-gray-700">Festival Loan</label>
                   <input
                     type="number"
-                    value={data.emp_deduction_details.festival_loan || ""}
+                    value={data.emp_deduction_details.festival_loan || 0}
                     onChange={(e) => {
                       const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {
@@ -930,7 +930,7 @@ const AddForm = () => {
                   <label className="block text-sm font-medium text-gray-700">Grain Charges</label>
                   <input
                     type="number"
-                    value={data.emp_deduction_details.grain_charges || ""}
+                    value={data.emp_deduction_details.grain_charges || 0}
                     onChange={(e) => {
                       const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {
@@ -946,7 +946,7 @@ const AddForm = () => {
                   <label className="block text-sm font-medium text-gray-700">Bank Advance</label>
                   <input
                     type="number"
-                    value={data.emp_deduction_details.bank_advance || ""}
+                    value={data.emp_deduction_details.bank_advance || 0}
                     onChange={(e) => {
                       const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {
@@ -962,7 +962,7 @@ const AddForm = () => {
                   <label className="block text-sm font-medium text-gray-700">Advance</label>
                   <input
                     type="number"
-                    value={data.emp_deduction_details.advance || ""}
+                    value={data.emp_deduction_details.advance || 0}
                     onChange={(e) => {
                       const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {
@@ -978,7 +978,7 @@ const AddForm = () => {
                   <label className="block text-sm font-medium text-gray-700">RGPV Advance</label>
                   <input
                     type="number"
-                    value={data.emp_deduction_details.RGPV_advance || ""}
+                    value={data.emp_deduction_details.RGPV_advance || 0}
                     onChange={(e) => {
                       const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {
@@ -994,7 +994,7 @@ const AddForm = () => {
                   <label className="block text-sm font-medium text-gray-700">Income Tax</label>
                   <input
                     type="number"
-                    value={data.emp_deduction_details.income_tax || ""}
+                    value={data.emp_deduction_details.income_tax || 0}
                     onChange={(e) => {
                       const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {
@@ -1010,7 +1010,7 @@ const AddForm = () => {
                   <label className="block text-sm font-medium text-gray-700">Professional Tax</label>
                   <input
                     type="number"
-                    value={data.emp_deduction_details.professional_tax || ""}
+                    value={data.emp_deduction_details.professional_tax || 0}
                     onChange={(e) => {
                       const value = e.target.value.slice(0, 10);
                       if (/^\d*$/.test(value)) {

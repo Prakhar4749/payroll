@@ -119,12 +119,12 @@ export default function Payslip_pdf() {
     };
 
     try {
-      console.log(data_to_send)
-      console.log("start")
+      // console.log(data_to_send)
+      // console.log("start")
 
       const response = await send_pdf_to_email(data_to_send)
-      console.log("end")
-      console.log("checking email", response)
+      // console.log("end")
+      // console.log("checking email", response)
       setshowSuccess({
         message: response.message,
         success: response.success,

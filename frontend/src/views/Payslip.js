@@ -53,7 +53,7 @@ export default function Payslip() {
 
   const Submit = async (e) => {
     e.preventDefault();
-    console.log(salary_details)
+    // console.log(salary_details)
 
     if (! await validateInputs()) {
       return;
@@ -117,7 +117,7 @@ export default function Payslip() {
             try {
               response = await get_payslip(salary_details);
               if (response.success) {
-                console.log(response.result);
+                // console.log(response.result);
 
               } else {
                 console.error("Error:", response.message);
@@ -145,7 +145,11 @@ export default function Payslip() {
   };
 
   const clear = () => {
-    setsalary_details({ e_id: "", salary_month: new Date().getMonth() + 1, salary_year: new Date().getFullYear() });
+    setsalary_details({
+      e_id: "",
+      salary_month: String(new Date().getMonth() + 1).padStart(2, "0"),
+      salary_year: new Date().getFullYear()
+    });
   };
 
 
@@ -213,12 +217,13 @@ export default function Payslip() {
                   <input
                     id="e_id"
                     type="text"
-                    value={salary_details.e_id}
+                    value={salary_details.e_id || ""}
                     onChange={(e) => setsalary_details((prevDetails) => ({
                       ...prevDetails,
                       e_id: e.target.value.toUpperCase(), // Update only e_id, keep the rest unchanged
                     }))}
                     required
+                    maxLength={5}
                     className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-gray-900 placeholder-gray-400 bg-white"
                     placeholder="Enter employee ID"
                   />
@@ -237,7 +242,7 @@ export default function Payslip() {
                     </div>
                     <select
                       id="salary_month"
-                      value={salary_details.salary_month}
+                      value={salary_details.salary_month  || ""}
                       onChange={(e) => setsalary_details((prevDetails) => ({
                         ...prevDetails,
                         salary_month: e.target.value, // Update only e_id, keep the rest unchanged
@@ -273,7 +278,7 @@ export default function Payslip() {
                     </div>
                     <select
                       id="salary_details.salary_year"
-                      value={salary_details.salary_year}
+                      value={salary_details.salary_year  || ""}
                       onChange={(e) => setsalary_details((prevDetails) => ({
                         ...prevDetails,
                         salary_year: e.target.value, // Update only e_id, keep the rest unchanged
