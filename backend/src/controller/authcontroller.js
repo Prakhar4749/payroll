@@ -290,10 +290,10 @@ async function getallusers(req,res) {
 
 async function delete_user(req, res) {
     const { user_name, password } = req.params;
-    console.log(user_name )
-    console.log(password )
+    // console.log(user_name )
+    // console.log(password )
 
-    console.log("Attempting to delete user:", user_name);
+    // console.log("Attempting to delete user:", user_name);
 
     try {
         // Check if user exists and get stored hashed password

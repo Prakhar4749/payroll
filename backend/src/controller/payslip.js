@@ -338,7 +338,7 @@ const send_pdf_to_email = async (req, res) => {
     // Send email
     const info =  transporter.sendMail(mailOptions);
 
-    console.log("Email sent: ", info.response);
+    // console.log("Email sent: ", info.response); 
     res.json({ success: true, message: "Email with PDF attachment sent successfully!" });
 
   } catch (error) {
