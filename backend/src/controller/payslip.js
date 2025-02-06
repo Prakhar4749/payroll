@@ -109,12 +109,23 @@ async function update_in_earning_and_save_in_archive(req, res) {
       `;
 
     const deductionParams = [
-      0, 0,
-      emp_deduction_details.deduction_CPF, emp_deduction_details.GIS, emp_deduction_details.house_rent,
-      emp_deduction_details.water_charges, emp_deduction_details.electricity_charges, emp_deduction_details.vehicle_deduction,
-      emp_deduction_details.HB_loan, emp_deduction_details.GPF_loan, emp_deduction_details.festival_loan,
-      emp_deduction_details.grain_charges, emp_deduction_details.bank_advance, emp_deduction_details.advance,
-      emp_deduction_details.RGPV_advance, emp_deduction_details.income_tax, emp_deduction_details.professional_tax,
+      0,
+      0,
+      parseInt(emp_deduction_details.deduction_CPF) || 0,
+      parseInt(emp_deduction_details.GIS) || 0,
+      parseInt(emp_deduction_details.house_rent) || 0,
+      parseInt(emp_deduction_details.water_charges) || 0,
+      parseInt(emp_deduction_details.electricity_charges) || 0,
+      parseInt(emp_deduction_details.vehicle_deduction) || 0,
+      parseInt(emp_deduction_details.HB_loan) || 0,
+      parseInt(emp_deduction_details.GPF_loan) || 0,
+      parseInt(emp_deduction_details.festival_loan) || 0,
+      parseInt(emp_deduction_details.grain_charges) || 0,
+      parseInt(emp_deduction_details.bank_advance) || 0,
+      parseInt(emp_deduction_details.advance) || 0,
+      parseInt(emp_deduction_details.RGPV_advance || 0),
+      parseInt(emp_deduction_details.income_tax) || 0,
+      parseInt(emp_deduction_details.professional_tax) || 0,
       emp_deduction_details.e_id
     ];
 
@@ -130,49 +141,57 @@ async function update_in_earning_and_save_in_archive(req, res) {
       `;
 
     const earningParams = [
-      emp_earning_details.basic_salary, emp_earning_details.special_pay,
-      emp_earning_details.dearness_allowance, emp_earning_details.DA, emp_earning_details.ADA,
-      emp_earning_details.interim_relief, emp_earning_details.HRA, emp_earning_details.CCA,
-      emp_earning_details.conveyance, emp_earning_details.medical, emp_earning_details.washing_allowance,
-      emp_earning_details.BDP, emp_earning_details.arrears, emp_earning_details.e_id
+      parseInt(emp_earning_details.basic_salary) || 0,
+      parseInt(emp_earning_details.special_pay) || 0,
+      parseInt(emp_earning_details.dearness_allowance) || 0,
+      parseInt(emp_earning_details.DA) || 0,
+      parseInt(emp_earning_details.ADA) || 0,
+      parseInt(emp_earning_details.interim_relief) || 0,
+      parseInt(emp_earning_details.HRA) || 0,
+      parseInt(emp_earning_details.CCA) || 0,
+      parseInt(emp_earning_details.conveyance) || 0,
+      parseInt(emp_earning_details.medical) || 0,
+      parseInt(emp_earning_details.washing_allowance) || 0,
+      parseInt(emp_earning_details.BDP) || 0,
+      parseInt(emp_earning_details.arrears) || 0,
     ];
 
     await connection.query(updateEarningSQL, earningParams);
 
     // Calculate total earning and deduction
-    const total_earning = 
-    Number(emp_earning_details.basic_salary) + 
-    Number(emp_earning_details.special_pay) + 
-    Number(emp_earning_details.dearness_allowance) + 
-    Number(emp_earning_details.DA) + 
-    Number(emp_earning_details.ADA) + 
-    Number(emp_earning_details.interim_relief) + 
-    Number(emp_earning_details.HRA) + 
-    Number(emp_earning_details.CCA) + 
-    Number(emp_earning_details.conveyance) + 
-    Number(emp_earning_details.medical) + 
-    Number(emp_earning_details.washing_allowance) + 
-    Number(emp_earning_details.BDP) + 
-    Number(emp_earning_details.arrears);
+    const total_earning =
+      parseInt(emp_earning_details.basic_salary) +
+      parseInt(emp_earning_details.special_pay) +
+      parseInt(emp_earning_details.dearness_allowance) +
+      parseInt(emp_earning_details.DA) +
+      parseInt(emp_earning_details.ADA) +
+      parseInt(emp_earning_details.interim_relief) +
+      parseInt(emp_earning_details.HRA) +
+      parseInt(emp_earning_details.CCA) +
+      parseInt(emp_earning_details.conveyance) +
+      parseInt(emp_earning_details.medical) +
+      parseInt(emp_earning_details.washing_allowance) +
+      parseInt(emp_earning_details.BDP) +
+      parseInt(emp_earning_details.arrears);
 
 
-    const total_deduction = 
-    Number(emp_deduction_details.leave_deduction_amount) + 
-    Number(emp_deduction_details.deduction_CPF) + 
-    Number(emp_deduction_details.GIS) + 
-    Number(emp_deduction_details.house_rent) + 
-    Number(emp_deduction_details.water_charges) + 
-    Number(emp_deduction_details.electricity_charges) + 
-    Number(emp_deduction_details.vehicle_deduction) + 
-    Number(emp_deduction_details.HB_loan) + 
-    Number(emp_deduction_details.GPF_loan) + 
-    Number(emp_deduction_details.festival_loan) + 
-    Number(emp_deduction_details.grain_charges) + 
-    Number(emp_deduction_details.bank_advance) + 
-    Number(emp_deduction_details.advance) + 
-    Number(emp_deduction_details.RGPV_advance) + 
-    Number(emp_deduction_details.income_tax) + 
-    Number(emp_deduction_details.professional_tax);
+    const total_deduction =
+      parseInt(emp_deduction_details.leave_deduction_amount) +
+      parseInt(emp_deduction_details.deduction_CPF) +
+      parseInt(emp_deduction_details.GIS) +
+      parseInt(emp_deduction_details.house_rent) +
+      parseInt(emp_deduction_details.water_charges) +
+      parseInt(emp_deduction_details.electricity_charges) +
+      parseInt(emp_deduction_details.vehicle_deduction) +
+      parseInt(emp_deduction_details.HB_loan) +
+      parseInt(emp_deduction_details.GPF_loan) +
+      parseInt(emp_deduction_details.festival_loan) +
+      parseInt(emp_deduction_details.grain_charges) +
+      parseInt(emp_deduction_details.bank_advance) +
+      parseInt(emp_deduction_details.advance) +
+      parseInt(emp_deduction_details.RGPV_advance) +
+      parseInt(emp_deduction_details.income_tax) +
+      parseInt(emp_deduction_details.professional_tax);
     const net_payable = total_earning - total_deduction;
 
     // Insert into salary_archive
@@ -189,16 +208,38 @@ async function update_in_earning_and_save_in_archive(req, res) {
 
     const archiveParams = [
       salary_details.e_id, salary_details.salary_month, salary_details.salary_year, emp_earning_details.e_name, formattedDate,
-      emp_earning_details.basic_salary, emp_earning_details.special_pay, emp_earning_details.dearness_allowance,
-      emp_earning_details.DA, emp_earning_details.ADA, emp_earning_details.interim_relief, emp_earning_details.HRA,
-      emp_earning_details.CCA, emp_earning_details.conveyance, emp_earning_details.medical, emp_earning_details.washing_allowance,
-      emp_earning_details.BDP, emp_earning_details.arrears, emp_deduction_details.leave_days,
-      emp_deduction_details.leave_deduction_amount, emp_deduction_details.deduction_CPF, emp_deduction_details.GIS,
-      emp_deduction_details.house_rent, emp_deduction_details.water_charges, emp_deduction_details.electricity_charges,
-      emp_deduction_details.vehicle_deduction, emp_deduction_details.HB_loan, emp_deduction_details.GPF_loan,
-      emp_deduction_details.festival_loan, emp_deduction_details.grain_charges, emp_deduction_details.bank_advance,
-      emp_deduction_details.advance, emp_deduction_details.RGPV_advance, emp_deduction_details.income_tax,
-      emp_deduction_details.professional_tax, total_earning, total_deduction, net_payable
+      parseInt(emp_earning_details.basic_salary) || 0,
+      parseInt(emp_earning_details.special_pay) || 0,
+      parseInt(emp_earning_details.dearness_allowance) || 0,
+      parseInt(emp_earning_details.DA) || 0,
+      parseInt(emp_earning_details.ADA) || 0,
+      parseInt(emp_earning_details.interim_relief) || 0,
+      parseInt(emp_earning_details.HRA) || 0,
+      parseInt(emp_earning_details.CCA) || 0,
+      parseInt(emp_earning_details.conveyance) || 0,
+      parseInt(emp_earning_details.medical) || 0,
+      parseInt(emp_earning_details.washing_allowance) || 0,
+      parseInt(emp_earning_details.BDP) || 0,
+      parseInt(emp_earning_details.arrears) || 0,
+      parseInt(emp_deduction_details.leave_days),
+      parseInt(emp_deduction_details.leave_deduction_amount), parseInt(emp_deduction_details.deduction_CPF) || 0,
+      parseInt(emp_deduction_details.GIS) || 0,
+      parseInt(emp_deduction_details.house_rent) || 0,
+      parseInt(emp_deduction_details.water_charges) || 0,
+      parseInt(emp_deduction_details.electricity_charges) || 0,
+      parseInt(emp_deduction_details.vehicle_deduction) || 0,
+      parseInt(emp_deduction_details.HB_loan) || 0,
+      parseInt(emp_deduction_details.GPF_loan) || 0,
+      parseInt(emp_deduction_details.festival_loan) || 0,
+      parseInt(emp_deduction_details.grain_charges) || 0,
+      parseInt(emp_deduction_details.bank_advance) || 0,
+      parseInt(emp_deduction_details.advance) || 0,
+      parseInt(emp_deduction_details.RGPV_advance || 0),
+      parseInt(emp_deduction_details.income_tax) || 0,
+      parseInt(emp_deduction_details.professional_tax) || 0,
+      parseInt(total_earning),
+      parseInt(total_deduction),
+      parseInt(net_payable)
     ];
 
     await connection.query(insertSalaryArchiveSQL, archiveParams);
@@ -336,7 +377,7 @@ const send_pdf_to_email = async (req, res) => {
     };
 
     // Send email
-    const info =  transporter.sendMail(mailOptions);
+    const info = transporter.sendMail(mailOptions);
 
     // console.log("Email sent: ", info.response); 
     res.json({ success: true, message: "Email with PDF attachment sent successfully!" });

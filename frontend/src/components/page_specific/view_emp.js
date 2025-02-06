@@ -116,7 +116,7 @@ const ViewEmployee = () => {
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700">Mobile Number</label>
                                     <input
-                                        type="tel"
+                                        type="number"
                                         value={data.emp_details.e_mobile_number}
                                         disabled
                                         className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
@@ -266,7 +266,7 @@ const ViewEmployee = () => {
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700">Bank Account Number</label>
                                     <input
-                                        type="tel"
+                                        type="number"
                                         value={data.emp_bank_details.e_bank_acc_number || ""}
                                         disabled
                                         className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
@@ -302,7 +302,7 @@ const ViewEmployee = () => {
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700">CPF/GPF Number</label>
                                     <input
-                                        type="tel"
+                                        type="number"
                                         value={data.emp_bank_details.e_cpf_or_gpf_number || ""}
                                         disabled
                                         className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
@@ -328,8 +328,8 @@ const ViewEmployee = () => {
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700">Basic Salary</label>
                                     <input
-                                        type="tel"
-                                        value={data.emp_earning_details.basic_salary || ""}
+                                        type="number"
+                                        value={data.emp_earning_details.basic_salary || 0}
                                         disabled
                                         className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                                     />
@@ -339,8 +339,8 @@ const ViewEmployee = () => {
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700">Special Pay</label>
                                     <input
-                                        type="tel"
-                                        value={data.emp_earning_details.special_pay || ""}
+                                        type="number"
+                                        value={data.emp_earning_details.special_pay || 0}
                                         disabled
                                         className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                                     />
@@ -350,8 +350,8 @@ const ViewEmployee = () => {
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700">Dearness Allowance</label>
                                     <input
-                                        type="tel"
-                                        value={data.emp_earning_details.dearness_allowance || ""}
+                                            type="number"
+                                            value={data.emp_earning_details.dearness_allowance || 0}
                                         disabled
                                         className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                                     />
@@ -361,8 +361,8 @@ const ViewEmployee = () => {
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700">DA</label>
                                     <input
-                                        type="tel"
-                                        value={data.emp_earning_details.DA || ""}
+                                        type="number"
+                                        value={data.emp_earning_details.DA || 0}
                                         disabled
                                         className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                                     />
@@ -372,8 +372,8 @@ const ViewEmployee = () => {
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700">ADA</label>
                                     <input
-                                        type="tel"
-                                        value={data.emp_earning_details.ADA || ""}
+                                        type="number"
+                                        value={data.emp_earning_details.ADA || 0}
                                         disabled
                                         className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                                     />
@@ -383,8 +383,8 @@ const ViewEmployee = () => {
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700">Interim Relief</label>
                                     <input
-                                        type="tel"
-                                        value={data.emp_earning_details.interim_relief || ""}
+                                        type="number"
+                                        value={data.emp_earning_details.interim_relief || 0}
                                         disabled
                                         className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                                     />
@@ -394,8 +394,8 @@ const ViewEmployee = () => {
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700">HRA</label>
                                     <input
-                                        type="tel"
-                                        value={data.emp_earning_details.HRA || ""}
+                                        type="number"
+                                        value={data.emp_earning_details.HRA || 0}
                                         disabled
                                         className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                                     />
@@ -405,8 +405,8 @@ const ViewEmployee = () => {
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700">CCA</label>
                                     <input
-                                        type="tel"
-                                        value={data.emp_earning_details.CCA || ""}
+                                        type="number"
+                                        value={data.emp_earning_details.CCA || 0}
                                         disabled
                                         className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                                     />
@@ -416,8 +416,8 @@ const ViewEmployee = () => {
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700">Conveyance</label>
                                     <input
-                                        type="tel"
-                                        value={data.emp_earning_details.conveyance || ""}
+                                        type="number"
+                                        value={data.emp_earning_details.conveyance || 0}
                                         disabled
                                         className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                                     />
@@ -427,8 +427,8 @@ const ViewEmployee = () => {
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700">Medical</label>
                                     <input
-                                        type="tel"
-                                        value={data.emp_earning_details.medical || ""}
+                                        type="number"
+                                        value={data.emp_earning_details.medical || 0}
                                         disabled
                                         className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                                     />
@@ -438,8 +438,8 @@ const ViewEmployee = () => {
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700">Washing Allowance</label>
                                     <input
-                                        type="tel"
-                                        value={data.emp_earning_details.washing_allowance || ""}
+                                        type="number"
+                                        value={data.emp_earning_details.washing_allowance || 0}
                                         disabled
                                         className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                                     />
@@ -449,8 +449,8 @@ const ViewEmployee = () => {
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700">BDP</label>
                                     <input
-                                        type="tel"
-                                        value={data.emp_earning_details.BDP || ""}
+                                        type="number"
+                                        value={data.emp_earning_details.BDP || 0}
                                         disabled
                                         className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                                     />
@@ -460,8 +460,8 @@ const ViewEmployee = () => {
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700">Arrears</label>
                                     <input
-                                        type="tel"
-                                        value={data.emp_earning_details.arrears || ""}
+                                        type="number"
+                                        value={data.emp_earning_details.arrears || 0}
                                         disabled
                                         className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                                     />
@@ -485,8 +485,8 @@ const ViewEmployee = () => {
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700">Deduction CPF</label>
                                     <input
-                                        type="tel"
-                                        value={data.emp_deduction_details.deduction_CPF || ""}
+                                        type="number"
+                                        value={data.emp_deduction_details.deduction_CPF || 0}
                                         disabled
                                         className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                                     />
@@ -496,8 +496,8 @@ const ViewEmployee = () => {
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700">GIS</label>
                                     <input
-                                        type="tel"
-                                        value={data.emp_deduction_details.GIS || ""}
+                                        type="number"
+                                        value={data.emp_deduction_details.GIS || 0}
                                         disabled
                                         className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                                     />
@@ -507,8 +507,8 @@ const ViewEmployee = () => {
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700">House Rent</label>
                                     <input
-                                        type="tel"
-                                        value={data.emp_deduction_details.house_rent || ""}
+                                        type="number"
+                                        value={data.emp_deduction_details.house_rent || 0}
                                         disabled
                                         className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                                     />
@@ -518,8 +518,8 @@ const ViewEmployee = () => {
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700">Water Charges</label>
                                     <input
-                                        type="tel"
-                                        value={data.emp_deduction_details.water_charges || ""}
+                                        type="number"
+                                        value={data.emp_deduction_details.water_charges || 0}
                                         disabled
                                         className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                                     />
@@ -529,8 +529,8 @@ const ViewEmployee = () => {
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700">Electricity Charges</label>
                                     <input
-                                        type="tel"
-                                        value={data.emp_deduction_details.electricity_charges || ""}
+                                        type="number"
+                                        value={data.emp_deduction_details.electricity_charges || 0}
                                         disabled
                                         className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                                     />
@@ -540,8 +540,8 @@ const ViewEmployee = () => {
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700">Vehicle Deduction</label>
                                     <input
-                                        type="tel"
-                                        value={data.emp_deduction_details.vehicle_deduction || ""}
+                                        type="number"
+                                        value={data.emp_deduction_details.vehicle_deduction || 0}
                                         disabled
                                         className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                                     />
@@ -551,8 +551,8 @@ const ViewEmployee = () => {
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700">HB Loan</label>
                                     <input
-                                        type="tel"
-                                        value={data.emp_deduction_details.HB_loan || ""}
+                                        type="number"
+                                        value={data.emp_deduction_details.HB_loan || 0}
                                         disabled
                                         className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                                     />
@@ -562,8 +562,8 @@ const ViewEmployee = () => {
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700">GPF Loan</label>
                                     <input
-                                        type="tel"
-                                        value={data.emp_deduction_details.GPF_loan || ""}
+                                        type="number"
+                                        value={data.emp_deduction_details.GPF_loan || 0}
                                         disabled
                                         className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                                     />
@@ -573,8 +573,8 @@ const ViewEmployee = () => {
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700">Festival Loan</label>
                                     <input
-                                        type="tel"
-                                        value={data.emp_deduction_details.festival_loan || ""}
+                                        type="number"
+                                        value={data.emp_deduction_details.festival_loan || 0}
                                         disabled
                                         className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                                     />
@@ -584,8 +584,8 @@ const ViewEmployee = () => {
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700">Grain Charges</label>
                                     <input
-                                        type="tel"
-                                        value={data.emp_deduction_details.grain_charges || ""}
+                                        type="number"
+                                        value={data.emp_deduction_details.grain_charges || 0}
                                         disabled
                                         className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                                     />
@@ -595,8 +595,8 @@ const ViewEmployee = () => {
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700">Bank Advance</label>
                                     <input
-                                        type="tel"
-                                        value={data.emp_deduction_details.bank_advance || ""}
+                                        type="number"
+                                        value={data.emp_deduction_details.bank_advance || 0}
                                         disabled
                                         className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                                     />
@@ -606,8 +606,8 @@ const ViewEmployee = () => {
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700">Advance</label>
                                     <input
-                                        type="tel"
-                                        value={data.emp_deduction_details.advance || ""}
+                                        type="number"
+                                        value={data.emp_deduction_details.advance || 0}
                                         disabled
                                         className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                                     />
@@ -617,8 +617,8 @@ const ViewEmployee = () => {
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700">RGPV Advance</label>
                                     <input
-                                        type="tel"
-                                        value={data.emp_deduction_details.RGPV_advance || ""}
+                                        type="number"
+                                        value={data.emp_deduction_details.RGPV_advance || 0}
                                         disabled
                                         className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                                     />
@@ -628,8 +628,8 @@ const ViewEmployee = () => {
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700">Income Tax</label>
                                     <input
-                                        type="tel"
-                                        value={data.emp_deduction_details.income_tax || ""}
+                                        type="number"
+                                        value={data.emp_deduction_details.income_tax || 0}
                                         disabled
                                         className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                                     />
@@ -639,8 +639,8 @@ const ViewEmployee = () => {
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700">Professional Tax</label>
                                     <input
-                                        type="tel"
-                                        value={data.emp_deduction_details.professional_tax || ""}
+                                        type="number"
+                                        value={data.emp_deduction_details.professional_tax || 0}
                                         disabled
                                         className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                                     />
