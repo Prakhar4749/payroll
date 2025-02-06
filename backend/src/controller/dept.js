@@ -161,7 +161,7 @@ async function update_dept(req, res) {
 
 async function chk_isit_present(req, res) {
   let { d_id, d_name } = req.body;  // Destructure incoming data
-  console.log("Received data:", req.body);
+  // console.log("Received data:", req.body);
 
   // Remove spaces and convert to uppercase
   d_id = d_id.replace(/\s/g, "").toUpperCase();

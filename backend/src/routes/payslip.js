@@ -1,5 +1,5 @@
 import express from "express";
-import path from "path";
+// import path from "path";
 import {chk_that_payslip_is_generated , chk_emp_id_exist , get_data_for_pdf, update_in_earning_and_save_in_archive,send_pdf_to_email} from "../controller/payslip.js"
 import multer from "multer";
 

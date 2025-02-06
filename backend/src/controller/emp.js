@@ -84,7 +84,7 @@ async function chk_for_update(req, res) {
     d_id: rawdata.emp_details?.d_id || null,
   };
 
-  console.log(data);
+  // console.log(data);
 
   try {
     const sql = `
@@ -95,7 +95,7 @@ async function chk_for_update(req, res) {
     `;
 
     const [SQLresult] = await pool.query(sql);
-    console.log(SQLresult);
+    // console.log(SQLresult);
 
     // Check mobile number
     if (
@@ -143,7 +143,7 @@ async function chk_for_update(req, res) {
       message = "Every detail is correct and unique";
     }
 
-    console.log(result);
+    // console.log(result);
     res.json({ success: true, result: result, message: message.trim() });
   } catch (err) {
     console.log(err);
@@ -175,7 +175,7 @@ async function check_for_data(req, res) {
     d_id: rawdata.emp_details?.d_id || null,
   };
 
-  console.log(data);
+  // console.log(data);
 
   try {
     const sql = `
@@ -186,8 +186,8 @@ async function check_for_data(req, res) {
     `;
 
     const [SQLresult] = await pool.query(sql);
-    console.log(SQLresult);
-    console.log(sql);
+    // console.log(SQLresult);
+    // console.log(sql);
 
     let message = "";
 
@@ -254,7 +254,7 @@ async function get_all_basic__emp_details(req, res) {
   }
 
 
-  console.log(checkConnection());
+  // console.log(checkConnection());
   const sql =
     "SELECT e_id,e_name,e_mobile_number,e_email,e_address,e_designation  FROM emp_details";
   try {
@@ -363,7 +363,7 @@ async function delete_e_id(req, res) {
       e_id,
     ]);
 
-    console.log("Queries executed successfully:", result);
+    // console.log("Queries executed successfully:", result);
     return res.json({
       success: true,
       message: ` employee details of id: ${e_id} is succesfully deleted`,
@@ -384,7 +384,7 @@ async function add_new_emp(req, res) {
   // img processing
   to_run_saved=false
 
-  console.log(req.file)
+  // console.log(req.file)
   let imgPath = req.file ? req.file.path : "NULL"; // Use the path of the uploaded file
   let imgstr64 = "NULL";
   if (imgPath !== "NULL") {
@@ -419,7 +419,7 @@ async function add_new_emp(req, res) {
   // Fetching data from req.body
 
   const data = req.body;
-  console.log(data)
+  // console.log(data)
   const formattedJoiningDate = await formatDateForMySQL(data.emp_details.e_date_of_joining);
   const formattedDOB = await formatDateForMySQL(data.emp_details.e_DOB);
 
@@ -546,24 +546,24 @@ async function add_new_emp(req, res) {
 async function update_emp(req, res) {
   to_run_saved=false
 
-  console.log(req.body);
-  console.log(req.file);
+  // console.log(req.body);
+  // console.log(req.file);
 
   let imgPath = req.file ? req.file.path : "NULL"; // Use the uploaded file path
   let imgstr64 = imgPath;
-  console.log("this is imgpath ------>   "+imgstr64) // Already in base64 format, assign directly
+  // console.log("this is imgpath ------>   "+imgstr64) // Already in base64 format, assign directly
 
 
   if (imgPath !== "NULL") {
     // Check if imgPath is already in base64 format
     const isBase64 = /^data:image\/(png|jpeg|jpg|gif);base64,/.test(imgPath);
-    console.log("this is isbase64 outside if ------>   "+isBase64) // Already in base64 format, assign directly
+    // console.log("this is isbase64 outside if ------>   "+isBase64) // Already in base64 format, assign directly
     
     if (isBase64) {
       imgstr64 = imgPath;
-      console.log("this is imgstr64 ------>   "+imgstr64) // Already in base64 format, assign directly
+      // console.log("this is imgstr64 ------>   "+imgstr64) // Already in base64 format, assign directly
     } else {
-      console.log("this is imgstr64 in to else------>   "+imgstr64) // Already in base64 format, assign directly
+      // console.log("this is imgstr64 in to else------>   "+imgstr64) // Already in base64 format, assign directly
 
       try {
         // Read the file and convert it to base64
