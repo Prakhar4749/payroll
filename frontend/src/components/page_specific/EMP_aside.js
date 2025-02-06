@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
-import { Search, UserPlus, UserCog, UserMinus, User, FilterX, Filter, FileText } from 'lucide-react';
+import React, { useState } from "react";
+import {  useNavigate } from "react-router-dom";
+import {  UserPlus, UserCog, UserMinus, User, FilterX, Filter, FileText } from 'lucide-react';
 import { view_emp_by_id, delete_emp_details, all_emp_data } from "../../controller/empController";
 import { SuccessfullyDone } from "../common/SuccessfullyDone";
 import { ConfirmDialogue } from "../common/ConfirmDialogue";
@@ -25,12 +25,12 @@ const EMP_aside = ({ setalldata, alldata, setempData, selected_e_id, setselected
     try {
 
 
-      console.log("aside", selected_e_id);
+      // console.log("aside", selected_e_id);
       const response = await delete_emp_details(selected_e_id); // Fetch employee data
       setshowDeleteSuccess({ message: `${response.message}`, success: response.success })
       setselected_e_id("")
 
-      console.log("aside show", showDeleteSuccess);
+      // console.log("aside show", showDeleteSuccess);
       try {
         const data = await all_emp_data();
         setalldata(data.result);
@@ -74,7 +74,7 @@ const EMP_aside = ({ setalldata, alldata, setempData, selected_e_id, setselected
       const response = await view_emp_by_id(selected_e_id); // Fetch employee data
       const data = response.result; // Fetch employee data
 
-      console.log("Employee data received:", data);
+      // console.log("Employee data received:", data);
 
       if (data && Object.keys(data).length > 0) {
         // Navigate to the view page with the employee data
@@ -92,7 +92,7 @@ const EMP_aside = ({ setalldata, alldata, setempData, selected_e_id, setselected
 
 
   const ViewEmp = async () => {
-    console.log(selected_e_id)
+    // console.log(selected_e_id)
     if (!selected_e_id) {
       console.error("No employee ID selected.");
       return; // Avoid making the API call if no ID is selected
@@ -102,7 +102,7 @@ const EMP_aside = ({ setalldata, alldata, setempData, selected_e_id, setselected
       const response = await view_emp_by_id(selected_e_id); // Fetch employee data
       const data = response.result; // Fetch employee data
 
-      console.log("Employee data received:", data);
+      // console.log("Employee data received:", data);
 
       if (data && Object.keys(data).length > 0) {
         // Navigate to the view page with the employee data

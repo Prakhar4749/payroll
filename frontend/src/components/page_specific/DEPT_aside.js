@@ -18,7 +18,7 @@ const DEPT_aside = ({
   setdeptDatacopy,
   d_id,
   setdeptData,
-  setd_id,
+  setd_id1,
 }) => {
   const [showDeleteSuccess, setshowDeleteSuccess] = useState({
     message: "",
@@ -51,13 +51,13 @@ const DEPT_aside = ({
   const onDeleteConfirm = async (selected_d_id) => {
     try {
       const resultt = await removeFromDept(selected_d_id);
-      console.log(resultt);
+      // console.log(resultt);
       if (resultt.success) {
         
         setshowDeleteSuccess({ message: resultt.message, success: true });
       } else {
         setShowInvalid({ message: resultt.message, success: true });
-        setd_id("");
+        setd_id1("");
       }
     } catch (error) {
       console.error("Error removing department:", error.message);
@@ -98,14 +98,20 @@ const DEPT_aside = ({
     setdeptDatacopy(filteredData);
 
     const filteredMatch = filteredData.some(
-      (dept) => dept.d_id === dId
+      (dept) => dept.d_id === d_id
     );
-    if (!filteredMatch) setd_id(null);
+    // console.log(filteredMatch)
+
+    // console.log(filteredData)
+    // console.log(dId)
+    // console.log("->"+d_id)
+
+    if (!filteredMatch) setd_id1("");
   }
 
   function clearFilter() {
-    setdID(null);
-    setdNamec(null);
+    setdID("");
+    setdNamec("");
     setdeptDatacopy(deptData);
   }
 

@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const ip="http://localhost:5000"
+// const ip="http://localhost:5000"
+const ip = process.env.REACT_APP_BASE_URL;
 
 async function fetchAllDeptData() {
   try {

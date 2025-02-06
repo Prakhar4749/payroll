@@ -47,7 +47,7 @@ export default function Department() {
             d_id={d_id}
             setdeptDatacopy={setdeptDatacopy}
             setdeptData={setdeptData}
-            setd_id={setd_id}
+            setd_id1={setd_id}
           />
         </div>
 

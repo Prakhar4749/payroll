@@ -1,8 +1,8 @@
 
 import { useState } from 'react';
-import { Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Navbar from '../layout/Navbar';
-import { User, Building, DollarSign, BanknoteIcon as BanknotesIcon, LaptopMinimalCheck, MinusCircle, Save, UserRoundPen, Eraser } from 'lucide-react';
+import { User, Building, DollarSign, LaptopMinimalCheck, MinusCircle } from 'lucide-react';
 import { BackButton } from "../common/backButton";
 import default_profile from "../../assets/images/default_profile.png";
 
@@ -10,7 +10,7 @@ import default_profile from "../../assets/images/default_profile.png";
 const ViewEmployee = () => {
     const location = useLocation();
     const Navigate = useNavigate();
-    console.log(location.state.data)
+    // console.log(location.state.data)
     const data = location.state.data;
     const [scrolled, setScrolled] = useState(false);
 
@@ -25,7 +25,7 @@ const ViewEmployee = () => {
     // Usage:
     const buffer = data.e_photo; // The buffer you received
     const imageSrc = getImageFromBuffer(buffer);
-    console.log(imageSrc); // Logs the Base64 string
+    // console.log(imageSrc); // Logs the Base64 string
 
     const handleSubmit = async (e) => {
         e.preventDefault();

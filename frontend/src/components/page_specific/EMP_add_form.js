@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 import { add_emp_details, check_for_add_emp } from "../../controller/empController";
 import { emp_data_model } from "../../models/EmpModel";
-import { User, Building, DollarSign, BanknoteIcon as BanknotesIcon, MinusCircle, Save, UserRoundPen, Eraser } from 'lucide-react';
+import { User, Building, DollarSign  , MinusCircle, Save, UserRoundPen, Eraser } from 'lucide-react';
 import Navbar from "../layout/Navbar"
 import { BackButton } from "../common/backButton";
 import { ConfirmDialogue } from "../common/ConfirmDialogue";
@@ -36,7 +36,7 @@ const AddForm = () => {
 
   const onAddConfirm = async () => {
     try {
-      console.log(data);
+      // console.log(data);
       const response = await add_emp_details(data);
 
       setshowAddSuccess({
@@ -80,7 +80,7 @@ const AddForm = () => {
 
 
   const handleFileUpload = async (section, file) => {
-    console.log(file)
+    // console.log(file)
 
     if (file && (file.type === "image/jpeg" || file.type === "image/png")) {
       const options = {
@@ -93,7 +93,7 @@ const AddForm = () => {
         const compressedImage = await imageCompression(file, options);
         setFile_to_sand(compressedImage);
         setFileName(file.name)
-        console.log("Compressed file:", compressedImage);
+        // console.log("Compressed file:", compressedImage);
         setData((prevData) => ({
           ...prevData,
           e_photo: compressedImage,
@@ -135,11 +135,11 @@ const AddForm = () => {
       },
     }));
 
-    console.log("final", data)
+    // console.log("final", data)
     try {
 
       const response = await check_for_add_emp(data);
-      console.log("data is ->" + data)
+      // console.log("data is ->" + data)
       const check_data = response.result;
 
       if (check_data.e_mobile_number && check_data.e_bank_acc_number && check_data.e_pan_number && check_data.d_id) {
