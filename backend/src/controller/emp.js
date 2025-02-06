@@ -410,7 +410,11 @@ async function add_new_emp(req, res) {
   const sql1 = "SELECT e_id FROM emp_details ORDER BY e_id ASC";
   try {
     const [results] = await pool.query(sql1);
-    new_e_id = incrementString(results[results.length - 1]["e_id"]);
+    if (results.length === 0) {
+      new_e_id = "E0001";
+    } else {
+      new_e_id = incrementString(results[results.length - 1]["e_id"]);
+    }
   } catch (err) {
     console.error("Database query error:", err);
     return res.status(500).json({ error: "Failed to fetch user data." });
@@ -476,24 +480,24 @@ async function add_new_emp(req, res) {
     `;
     await connection.query(empDeductionQuery, [
       new_e_id,
-      data.emp_deduction_details.e_name,
+      data.emp_details.e_name,
       0,
       0,
-      data.emp_deduction_details.deduction_CPF,
-      data.emp_deduction_details.GIS,
-      data.emp_deduction_details.house_rent,
-      data.emp_deduction_details.water_charges,
-      data.emp_deduction_details.electricity_charges,
-      data.emp_deduction_details.vehicle_deduction,
-      data.emp_deduction_details.HB_loan,
-      data.emp_deduction_details.GPF_loan,
-      data.emp_deduction_details.festival_loan,
-      data.emp_deduction_details.grain_charges,
-      data.emp_deduction_details.bank_advance,
-      data.emp_deduction_details.advance,
-      data.emp_deduction_details.RGPV_advance,
-      data.emp_deduction_details.income_tax,
-      data.emp_deduction_details.professional_tax,
+      parseInt(data.emp_deduction_details.deduction_CPF) || 0,
+      parseInt(data.emp_deduction_details.GIS) || 0,
+      parseInt(data.emp_deduction_details.house_rent) || 0,
+      parseInt(data.emp_deduction_details.water_charges) || 0,
+      parseInt(data.emp_deduction_details.electricity_charges) || 0,
+      parseInt(data.emp_deduction_details.vehicle_deduction) || 0,
+      parseInt(data.emp_deduction_details.HB_loan) || 0,
+      parseInt(data.emp_deduction_details.GPF_loan) || 0,
+      parseInt(data.emp_deduction_details.festival_loan) || 0,
+      parseInt(data.emp_deduction_details.grain_charges) || 0,
+      parseInt(data.emp_deduction_details.bank_advance) || 0,
+      parseInt(data.emp_deduction_details.advance) || 0,
+      parseInt(data.emp_deduction_details.RGPV_advance || 0),
+     parseInt(data.emp_deduction_details.income_tax) || 0,
+      parseInt(data.emp_deduction_details.professional_tax) || 0,
     ]);
 
     // Insert into emp_earning_details
@@ -505,20 +509,20 @@ async function add_new_emp(req, res) {
     `;
     await connection.query(empEarningQuery, [
       new_e_id,
-      data.emp_earning_details.e_name,
-      data.emp_earning_details.basic_salary,
-      data.emp_earning_details.special_pay,
-      data.emp_earning_details.dearness_allowance,
-      data.emp_earning_details.DA,
-      data.emp_earning_details.ADA,
-      data.emp_earning_details.interim_relief,
-      data.emp_earning_details.HRA,
-      data.emp_earning_details.CCA,
-      data.emp_earning_details.conveyance,
-      data.emp_earning_details.medical,
-      data.emp_earning_details.washing_allowance,
-      data.emp_earning_details.BDP,
-      data.emp_earning_details.arrears,
+      data.emp_details.e_name,
+      parseInt(data.emp_earning_details.basic_salary) || 0,
+      parseInt(data.emp_earning_details.special_pay) || 0,
+      parseInt(data.emp_earning_details.dearness_allowance) || 0,
+      parseInt(data.emp_earning_details.DA) || 0,
+      parseInt(data.emp_earning_details.ADA) || 0,
+      parseInt(data.emp_earning_details.interim_relief) || 0,
+      parseInt(data.emp_earning_details.HRA) || 0,
+      parseInt(data.emp_earning_details.CCA) || 0,
+      parseInt(data.emp_earning_details.conveyance) || 0,
+      parseInt(data.emp_earning_details.medical) || 0,
+      parseInt(data.emp_earning_details.washing_allowance) || 0,
+      parseInt(data.emp_earning_details.BDP) || 0,
+      parseInt(data.emp_earning_details.arrears) || 0,
     ]);
 
     // Commit the transaction

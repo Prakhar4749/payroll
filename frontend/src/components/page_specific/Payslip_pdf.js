@@ -126,7 +126,7 @@ export default function Payslip_pdf() {
       // console.log("end")
       // console.log("checking email", response)
       setshowSuccess({
-        message: response.message,
+        message: "An email has been successfully sent from our side, and the employee is expected to receive it shortly.",
         success: response.success,
         onClose: () => {
           setshowSuccess({

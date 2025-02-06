@@ -151,7 +151,7 @@ const AddForm = () => {
 
       }
       else {
-        if (data.emp_details.e_mobile_number.length === 10) {
+        if (data.emp_details.e_mobile_number.length !== 10) {
           setshowAddInvalid({
             message: "Enter valid new mobile number of 10 digits!", success: true
             , onClose: () => {
