@@ -39,17 +39,17 @@ const DeptUpdateForm = () => {
 
     const result = await checkDepartment(dId, dName);
 
-    if (result.d_id && result.d_name && data.d_id.toUpperCase()!=dId && data.d_id.toUpperCase()!=dId) {
+    if (result.d_id && result.d_name && data.d_id.toUpperCase()!==dId && data.d_id.toUpperCase()!==dId) {
       setShowInvalid({ message: "Both Department ID and Department Name already exist.", success: true });
       return;
     }
 
-    if (result.d_id && data.d_id.toUpperCase()!=dId) {
+    if (result.d_id && data.d_id.toUpperCase()!==dId) {
       setShowInvalid({ message: "Department ID already exists.", success: true });
       return;
     }
 
-    if (result.d_name && data.d_name!=dName ) {
+    if (result.d_name && data.d_name!==dName ) {
       setShowInvalid({ message: "Department Name already exists.", success: true });
       return;
     }

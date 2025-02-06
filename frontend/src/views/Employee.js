@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../components/layout/Navbar";
-import EMP_aside from "../components/page_specific/EMP_aside";
-import Emp_Table from "../components/page_specific/Emp_Table";
+import EMPAside from "../components/page_specific/EMP_aside";
+import EmpTable from "../components/page_specific/Emp_Table";
 import { all_emp_data } from "../controller/empController";
 
 export default function Employee() {
@@ -42,7 +42,7 @@ export default function Employee() {
           {/* Sidebar */}
           <div className="w-full lg:w-1/4 bg-white shadow-lg lg:min-h-[calc(100vh-4rem)]">
             <div className="sticky top-16 overflow-auto max-h-[calc(100vh-4rem)]">
-              <EMP_aside
+              <EMPAside
                 setalldata={setalldata}
                 alldata={alldata}
                 setempData={setempData}
@@ -55,7 +55,7 @@ export default function Employee() {
           {/* Main Content */}
           <main className="w-full lg:w-3/4 p-6 bg-gray-50">
             <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-              <Emp_Table 
+              <EmpTable 
                 data={empData} 
                 onRowSelect={handleRowSelection} 
                 selectedId={selected_e_id}

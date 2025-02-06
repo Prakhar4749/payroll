@@ -12,7 +12,8 @@ const ViewEmployee = () => {
     const Navigate = useNavigate();
     // console.log(location.state.data)
     const data = location.state.data;
-    const [scrolled, setScrolled] = useState(false);
+    const scrolled = false
+    // const [scrolled, setScrolled] = useState(false);
 
     const getImageFromBuffer = (buffer) => {
         // Convert buffer to Base64
