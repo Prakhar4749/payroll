@@ -154,6 +154,7 @@ async function update_in_earning_and_save_in_archive(req, res) {
       parseInt(emp_earning_details.washing_allowance) || 0,
       parseInt(emp_earning_details.BDP) || 0,
       parseInt(emp_earning_details.arrears) || 0,
+      emp_earning_details.e_id || "",
     ];
 
     await connection.query(updateEarningSQL, earningParams);

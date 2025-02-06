@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import { add_emp_details, check_for_add_emp } from "../../controller/empController";
 import { emp_data_model } from "../../models/EmpModel";
-import { User, Building, DollarSign  , MinusCircle, Save, UserRoundPen, Eraser } from 'lucide-react';
+import { User, Building, DollarSign, MinusCircle, Save, UserRoundPen, Eraser } from 'lucide-react';
 import Navbar from "../layout/Navbar"
 import { BackButton } from "../common/backButton";
 import { ConfirmDialogue } from "../common/ConfirmDialogue";
@@ -15,6 +15,17 @@ const AddForm = () => {
   const navigate = useNavigate()
   const today = new Date().toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD format
   const dateInputRef = useRef(null);
+
+  function titleCase(str) {
+    var splitStr = str.toLowerCase().split(' ');
+    for (var i = 0; i < splitStr.length; i++) {
+      // You do not need to check if i is larger than splitStr length, as your for does that for you
+      // Assign it back to the array
+      splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
+    }
+    // Directly return the joined string
+    return splitStr.join(' ');
+  }
 
 
   const [data, setData] = useState(emp_data_model); // State to store employee data
@@ -46,7 +57,7 @@ const AddForm = () => {
       setshowAddInvalid({
         message: response.message,
         success: !response.success, onClose: () => {
-        setshowAddInvalid({ message: "", success: false, onClose: () => { } })
+          setshowAddInvalid({ message: "", success: false, onClose: () => { } })
         }
       });
     } catch (err) {
@@ -281,8 +292,8 @@ const AddForm = () => {
                   <label className="block text-sm font-medium text-gray-700">Name</label>
                   <input
                     type="text"
-                    value={data.emp_details.e_name}
-                    onChange={(e) => handleInputChange("emp_details", "e_name", e.target.value)}
+                    value={titleCase(data.emp_details.e_name).replace(/\s+/g, ' ') || ""}
+                    onChange={(e) => handleInputChange("emp_details", "e_name", titleCase(e.target.value).replace(/\s+/g, ' '))}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                     required
                     maxLength={30}
@@ -561,7 +572,7 @@ const AddForm = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Basic Salary</label>
                   <input
-                  
+
                     type="number"
                     value={data.emp_earning_details.basic_salary || ""}
                     onChange={(e) => {

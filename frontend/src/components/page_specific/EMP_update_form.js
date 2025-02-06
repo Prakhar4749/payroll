@@ -18,7 +18,17 @@ const UpdateForm = () => {
   const dateInputRef = useRef(null);
 
   const [data, setData] = useState(location.state.data); // State to store employee data
-
+  function titleCase(str) {
+    var splitStr = str.toLowerCase().split(' ');
+    for (var i = 0; i < splitStr.length; i++) {
+        // You do not need to check if i is larger than splitStr length, as your for does that for you
+        // Assign it back to the array
+        splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);     
+    }
+    // Directly return the joined string
+    return splitStr.join(' '); 
+ }
+ 
   // Set data from location.state only once when the component mounts
   useEffect(() => {
     if (location.state?.data) {
@@ -26,6 +36,8 @@ const UpdateForm = () => {
     }
 
   }, [location.state]);
+
+  
 
   const [showUpdateSuccess, setshowUpdateSuccess] = useState({
     message: "", success: false
@@ -301,12 +313,12 @@ const UpdateForm = () => {
                   <label className="block text-sm font-medium text-gray-700">Name</label>
                   <input
                     type="text"
-                    value={data.emp_details.e_name}
-                    onChange={(e) => handleInputChange("emp_details", "e_name", e.target.value)}
+                    value={ titleCase(data.emp_details.e_name).replace(/\s+/g, ' ').trim() || ""}
+                    onChange={(e) => handleInputChange("emp_details", "e_name", titleCase(e.target.value).replace(/\s+/g, ' ').trim())}
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
                     required
                     maxLength={30}
-                    style={{ textTransform: "capitalize" }}
+                    
                   />
                 </div>
 

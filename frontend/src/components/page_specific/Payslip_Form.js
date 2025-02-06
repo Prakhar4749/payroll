@@ -34,20 +34,20 @@ const Payslip_Form = () => {
             // Check if response.result is not null or undefined
             if (response && response.result) {
 
-                
+
                 setData((prevData) => ({
                     ...prevData, // Keep previous state (salary_details)
                     emp_earning_details: response.result.emp_earning_details || {}, // Fallback to empty object if null
                     emp_deduction_details: response.result.emp_deduction_details || {}, // Fallback to empty object if null
                 }));
 
-                if(Number(data.salary_details.salary_month) === 2  ){
+                if (Number(data.salary_details.salary_month) === 2) {
 
                     // console.log("increament", data)
-                    
-            
-                    let new_basic_salary = parseInt(Number(response.result.emp_earning_details.basic_salary) +( Number(response.result.emp_earning_details.basic_salary)* 0.12))
-            
+
+
+                    let new_basic_salary = parseInt(Number(response.result.emp_earning_details.basic_salary) + (Number(response.result.emp_earning_details.basic_salary) * 0.12))
+
                     setData((prev) => ({
                         ...prev,
                         emp_earning_details: {
@@ -62,12 +62,12 @@ const Payslip_Form = () => {
                             setshowNotice(showInvalid)
                         }
                     });
-                    
+
                 }
             }
 
-            
-            
+
+
             else {
                 console.log(response);
             }
@@ -76,14 +76,14 @@ const Payslip_Form = () => {
         }
     };
 
-    useEffect( () => {
-         get_form_data();
+    useEffect(() => {
+        get_form_data();
 
-        
+
 
     }, []); // This will only run once on mount
 
-    
+
 
 
     // leave deduction amount Formula 
@@ -108,10 +108,10 @@ const Payslip_Form = () => {
 
 
 
-   
 
 
-    
+
+
 
     const onConfirm = async () => {
         // console.log("sent data", data)
@@ -271,7 +271,7 @@ const Payslip_Form = () => {
                                             <label className="block text-sm font-medium text-slate-700">Employee ID</label>
                                             <input
                                                 type="text"
-                                                value={data.salary_details.e_id ||""}
+                                                value={data.salary_details.e_id || ""}
                                                 onChange={(e) => handleInputChange("salary_details", "e_id", e.target.value)}
                                                 className="block w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl 
                     focus:outline-none focus:ring-2 focus:ring-emerald-200 focus:border-emerald-500 
@@ -285,7 +285,8 @@ const Payslip_Form = () => {
                                             <label className="block text-sm font-medium text-slate-700">Employee Name</label>
                                             <input
                                                 type="text"
-                                                value={data.emp_earning_details.e_name ||""}
+                                                value={
+                                                    data.emp_earning_details.e_name || "" }
                                                 onChange={(e) => handleInputChange("emp_earning_details", "e_name", e.target.value)}
                                                 className="block w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl 
                     focus:outline-none focus:ring-2 focus:ring-emerald-200 focus:border-emerald-500 
@@ -300,7 +301,7 @@ const Payslip_Form = () => {
                                         <div className="space-y-1.5">
                                             <label className="block text-sm font-medium text-slate-700">Salary Month</label>
                                             <select
-                                                value={data.salary_details.salary_month ||""}
+                                                value={data.salary_details.salary_month || ""}
                                                 onChange={(e) => handleInputChange("salary_details", "salary_month", e.target.value)}
                                                 className="block w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl 
                     focus:outline-none focus:ring-2 focus:ring-emerald-200 focus:border-emerald-500 
@@ -327,7 +328,7 @@ const Payslip_Form = () => {
                                         <div className="space-y-1.5">
                                             <label className="block text-sm font-medium text-slate-700">Salary Year</label>
                                             <select
-                                                value={data.salary_details.salary_year ||""}
+                                                value={data.salary_details.salary_year || ""}
                                                 onChange={(e) => handleInputChange("salary_details", "salary_year", e.target.value)}
                                                 className="block w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl 
                     focus:outline-none focus:ring-2 focus:ring-emerald-200 focus:border-emerald-500 
@@ -363,7 +364,7 @@ const Payslip_Form = () => {
                                             <label className="block text-sm font-medium text-slate-700">Basic Salary</label>
                                             <input
                                                 type="number"
-                                                value={data.emp_earning_details.basic_salary ||0}
+                                                value={data.emp_earning_details.basic_salary || 0}
                                                 onChange={(e) => handleInputChange("emp_earning_details", "basic_salary", e.target.value)}
                                                 className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 text-slate-700"
                                             />
@@ -374,7 +375,7 @@ const Payslip_Form = () => {
                                             <label className="block text-sm font-medium text-slate-700">Special Pay</label>
                                             <input
                                                 type="number"
-                                                value={data.emp_earning_details.special_pay ||0}
+                                                value={data.emp_earning_details.special_pay || 0}
                                                 onChange={(e) => handleInputChange("emp_earning_details", "special_pay", e.target.value)}
                                                 className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 text-slate-700"
                                             />
@@ -385,7 +386,7 @@ const Payslip_Form = () => {
                                             <label className="block text-sm font-medium text-slate-700">Dearness Allowance</label>
                                             <input
                                                 type="number"
-                                                value={data.emp_earning_details.dearness_allowance ||0}
+                                                value={data.emp_earning_details.dearness_allowance || 0}
                                                 onChange={(e) => handleInputChange("emp_earning_details", "dearness_allowance", e.target.value)}
                                                 className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 text-slate-700"
                                             />
@@ -396,7 +397,7 @@ const Payslip_Form = () => {
                                             <label className="block text-sm font-medium text-slate-700">DA</label>
                                             <input
                                                 type="number"
-                                                value={data.emp_earning_details.DA ||0}
+                                                value={data.emp_earning_details.DA || 0}
                                                 onChange={(e) => handleInputChange("emp_earning_details", "DA", e.target.value)}
                                                 className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 text-slate-700"
                                             />
@@ -407,7 +408,7 @@ const Payslip_Form = () => {
                                             <label className="block text-sm font-medium text-slate-700">ADA</label>
                                             <input
                                                 type="number"
-                                                value={data.emp_earning_details.ADA ||0}
+                                                value={data.emp_earning_details.ADA || 0}
                                                 onChange={(e) => handleInputChange("emp_earning_details", "ADA", e.target.value)}
                                                 className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 text-slate-700"
                                             />
@@ -418,7 +419,7 @@ const Payslip_Form = () => {
                                             <label className="block text-sm font-medium text-slate-700">Interim Relief</label>
                                             <input
                                                 type="number"
-                                                value={data.emp_earning_details.interim_relief ||0}
+                                                value={data.emp_earning_details.interim_relief || 0}
                                                 onChange={(e) => handleInputChange("emp_earning_details", "interim_relief", e.target.value)}
                                                 className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 text-slate-700"
                                             />
@@ -429,7 +430,7 @@ const Payslip_Form = () => {
                                             <label className="block text-sm font-medium text-slate-700">HRA</label>
                                             <input
                                                 type="number"
-                                                value={data.emp_earning_details.HRA ||0}
+                                                value={data.emp_earning_details.HRA || 0}
                                                 onChange={(e) => handleInputChange("emp_earning_details", "HRA", e.target.value)}
                                                 className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 text-slate-700"
                                             />
@@ -440,7 +441,7 @@ const Payslip_Form = () => {
                                             <label className="block text-sm font-medium text-slate-700">CCA</label>
                                             <input
                                                 type="number"
-                                                value={data.emp_earning_details.CCA ||0}
+                                                value={data.emp_earning_details.CCA || 0}
                                                 onChange={(e) => handleInputChange("emp_earning_details", "CCA", e.target.value)}
                                                 className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 text-slate-700"
                                             />
@@ -451,7 +452,7 @@ const Payslip_Form = () => {
                                             <label className="block text-sm font-medium text-slate-700">Conveyance</label>
                                             <input
                                                 type="number"
-                                                value={data.emp_earning_details.conveyance ||0}
+                                                value={data.emp_earning_details.conveyance || 0}
                                                 onChange={(e) => handleInputChange("emp_earning_details", "conveyance", e.target.value)}
                                                 className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 text-slate-700"
                                             />
@@ -462,7 +463,7 @@ const Payslip_Form = () => {
                                             <label className="block text-sm font-medium text-slate-700">Medical Allowance</label>
                                             <input
                                                 type="number"
-                                                value={data.emp_earning_details.medical ||0}
+                                                value={data.emp_earning_details.medical || 0}
                                                 onChange={(e) => handleInputChange("emp_earning_details", "medical", e.target.value)}
                                                 className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 text-slate-700"
                                             />
@@ -473,7 +474,7 @@ const Payslip_Form = () => {
                                             <label className="block text-sm font-medium text-slate-700">Washing Allowance</label>
                                             <input
                                                 type="number"
-                                                value={data.emp_earning_details.washing_allowance ||0}
+                                                value={data.emp_earning_details.washing_allowance || 0}
                                                 onChange={(e) => handleInputChange("emp_earning_details", "washing_allowance", e.target.value)}
                                                 className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 text-slate-700"
                                             />
@@ -484,7 +485,7 @@ const Payslip_Form = () => {
                                             <label className="block text-sm font-medium text-slate-700">BDP</label>
                                             <input
                                                 type="number"
-                                                value={data.emp_earning_details.BDP ||0}
+                                                value={data.emp_earning_details.BDP || 0}
                                                 onChange={(e) => handleInputChange("emp_earning_details", "BDP", e.target.value)}
                                                 className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 text-slate-700"
                                             />
@@ -495,7 +496,7 @@ const Payslip_Form = () => {
                                             <label className="block text-sm font-medium text-slate-700">Arrears</label>
                                             <input
                                                 type="number"
-                                                value={data.emp_earning_details.arrears ||0}
+                                                value={data.emp_earning_details.arrears || 0}
                                                 onChange={(e) => handleInputChange("emp_earning_details", "arrears", e.target.value)}
                                                 className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 text-slate-700"
                                             />
@@ -517,7 +518,7 @@ const Payslip_Form = () => {
                                         {/* Leave Days */}
                                         <div className="space-y-1.5">
                                             <label className="block text-sm font-medium text-slate-700">LEAVE DAYS</label>
-                                            <input type="number" value={data.emp_deduction_details.leave_days ||0} onChange={(e) => handleInputChange("emp_deduction_details", "leave_days", e.target.value)} className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-red-500 text-slate-700" />
+                                            <input type="number" value={data.emp_deduction_details.leave_days || 0} onChange={(e) => handleInputChange("emp_deduction_details", "leave_days", e.target.value)} className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-red-500 text-slate-700" />
                                         </div>
 
                                         {/* Leave Deduction Amount */}
@@ -525,7 +526,7 @@ const Payslip_Form = () => {
                                             <label className="block text-sm font-medium text-slate-700">LEAVE DEDUCTION AMOUNT</label>
                                             <input
                                                 type="number"
-                                                value={data.emp_deduction_details.leave_deduction_amount ||0}
+                                                value={data.emp_deduction_details.leave_deduction_amount || 0}
                                                 onChange={(e) => handleInputChange("emp_deduction_details", "leave_deduction_amount", e.target.value)}
                                                 className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-red-500 text-slate-700"
                                                 disabled
@@ -537,7 +538,7 @@ const Payslip_Form = () => {
                                             <label className="block text-sm font-medium text-slate-700">DEDUCTION CPF</label>
                                             <input
                                                 type="number"
-                                                value={data.emp_deduction_details.deduction_CPF ||0}
+                                                value={data.emp_deduction_details.deduction_CPF || 0}
                                                 onChange={(e) => handleInputChange("emp_deduction_details", "deduction_CPF", e.target.value)}
                                                 className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-red-500 text-slate-700"
                                             />
@@ -548,7 +549,7 @@ const Payslip_Form = () => {
                                             <label className="block text-sm font-medium text-slate-700">GIS</label>
                                             <input
                                                 type="number"
-                                                value={data.emp_deduction_details.GIS ||0}
+                                                value={data.emp_deduction_details.GIS || 0}
                                                 onChange={(e) => handleInputChange("emp_deduction_details", "GIS", e.target.value)}
                                                 className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-red-500 text-slate-700"
                                             />
@@ -559,7 +560,7 @@ const Payslip_Form = () => {
                                             <label className="block text-sm font-medium text-slate-700">HOUSE RENT</label>
                                             <input
                                                 type="number"
-                                                value={data.emp_deduction_details.house_rent ||0}
+                                                value={data.emp_deduction_details.house_rent || 0}
                                                 onChange={(e) => handleInputChange("emp_deduction_details", "house_rent", e.target.value)}
                                                 className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-red-500 text-slate-700"
                                             />
@@ -570,7 +571,7 @@ const Payslip_Form = () => {
                                             <label className="block text-sm font-medium text-slate-700">WATER CHARGES</label>
                                             <input
                                                 type="number"
-                                                value={data.emp_deduction_details.water_charges ||0}
+                                                value={data.emp_deduction_details.water_charges || 0}
                                                 onChange={(e) => handleInputChange("emp_deduction_details", "water_charges", e.target.value)}
                                                 className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-red-500 text-slate-700"
                                             />
@@ -581,7 +582,7 @@ const Payslip_Form = () => {
                                             <label className="block text-sm font-medium text-slate-700">ELECTRICITY CHARGES</label>
                                             <input
                                                 type="number"
-                                                value={data.emp_deduction_details.electricity_charges ||0}
+                                                value={data.emp_deduction_details.electricity_charges || 0}
                                                 onChange={(e) => handleInputChange("emp_deduction_details", "electricity_charges", e.target.value)}
                                                 className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-red-500 text-slate-700"
                                             />
@@ -592,7 +593,7 @@ const Payslip_Form = () => {
                                             <label className="block text-sm font-medium text-slate-700">VEHICLE DEDUCTION</label>
                                             <input
                                                 type="number"
-                                                value={data.emp_deduction_details.vehicle_deduction ||0}
+                                                value={data.emp_deduction_details.vehicle_deduction || 0}
                                                 onChange={(e) => handleInputChange("emp_deduction_details", "vehicle_deduction", e.target.value)}
                                                 className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-red-500 text-slate-700"
                                             />
@@ -603,7 +604,7 @@ const Payslip_Form = () => {
                                             <label className="block text-sm font-medium text-slate-700">HB LOAN</label>
                                             <input
                                                 type="number"
-                                                value={data.emp_deduction_details.HB_loan ||0}
+                                                value={data.emp_deduction_details.HB_loan || 0}
                                                 onChange={(e) => handleInputChange("emp_deduction_details", "HB_loan", e.target.value)}
                                                 className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-red-500 text-slate-700"
                                             />
@@ -614,7 +615,7 @@ const Payslip_Form = () => {
                                             <label className="block text-sm font-medium text-slate-700">GPF LOAN</label>
                                             <input
                                                 type="number"
-                                                value={data.emp_deduction_details.GPF_loan ||0}
+                                                value={data.emp_deduction_details.GPF_loan || 0}
                                                 onChange={(e) => handleInputChange("emp_deduction_details", "GPF_loan", e.target.value)}
                                                 className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-red-500 text-slate-700"
                                             />
@@ -625,7 +626,7 @@ const Payslip_Form = () => {
                                             <label className="block text-sm font-medium text-slate-700">FESTIVAL LOAN</label>
                                             <input
                                                 type="number"
-                                                value={data.emp_deduction_details.festival_loan ||0}
+                                                value={data.emp_deduction_details.festival_loan || 0}
                                                 onChange={(e) => handleInputChange("emp_deduction_details", "festival_loan", e.target.value)}
                                                 className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-red-500 text-slate-700"
                                             />
@@ -636,7 +637,7 @@ const Payslip_Form = () => {
                                             <label className="block text-sm font-medium text-slate-700">GRAIN CHARGES</label>
                                             <input
                                                 type="number"
-                                                value={data.emp_deduction_details.grain_charges ||0}
+                                                value={data.emp_deduction_details.grain_charges || 0}
                                                 onChange={(e) => handleInputChange("emp_deduction_details", "grain_charges", e.target.value)}
                                                 className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-red-500 text-slate-700"
                                             />
@@ -647,7 +648,7 @@ const Payslip_Form = () => {
                                             <label className="block text-sm font-medium text-slate-700">BANK ADVANCE</label>
                                             <input
                                                 type="number"
-                                                value={data.emp_deduction_details.bank_advance ||0}
+                                                value={data.emp_deduction_details.bank_advance || 0}
                                                 onChange={(e) => handleInputChange("emp_deduction_details", "bank_advance", e.target.value)}
                                                 className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-red-500 text-slate-700"
                                             />
@@ -658,7 +659,7 @@ const Payslip_Form = () => {
                                             <label className="block text-sm font-medium text-slate-700">ADVANCE</label>
                                             <input
                                                 type="number"
-                                                value={data.emp_deduction_details.advance ||0}
+                                                value={data.emp_deduction_details.advance || 0}
                                                 onChange={(e) => handleInputChange("emp_deduction_details", "advance", e.target.value)}
                                                 className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-red-500 text-slate-700"
                                             />
@@ -669,7 +670,7 @@ const Payslip_Form = () => {
                                             <label className="block text-sm font-medium text-slate-700">RGPV ADVANCE</label>
                                             <input
                                                 type="number"
-                                                value={data.emp_deduction_details.RGPV_advance ||0}
+                                                value={data.emp_deduction_details.RGPV_advance || 0}
                                                 onChange={(e) => handleInputChange("emp_deduction_details", "RGPV_advance", e.target.value)}
                                                 className="block w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-red-500 text-slate-700"
                                             />

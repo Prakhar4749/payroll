@@ -649,7 +649,7 @@ async function update_emp(req, res) {
       WHERE e_id = ?;
     `;
     const empDeductionValues = [
-      data.emp_details.e_id,
+
       data.emp_details.e_name,
       0,
       0,
@@ -668,6 +668,7 @@ async function update_emp(req, res) {
       parseInt(data.emp_deduction_details.RGPV_advance || 0),
      parseInt(data.emp_deduction_details.income_tax) || 0,
       parseInt(data.emp_deduction_details.professional_tax) || 0,
+      data.emp_details.e_id,
       
     ];
     await connection.query(empDeductionQuery, empDeductionValues);
@@ -682,7 +683,7 @@ async function update_emp(req, res) {
       WHERE e_id = ?;
     `;
     const empEarningValues = [
-      data.emp_details.e_id,
+      
       data.emp_details.e_name,
       parseInt(data.emp_earning_details.basic_salary) || 0,
       parseInt(data.emp_earning_details.special_pay) || 0,
@@ -697,6 +698,7 @@ async function update_emp(req, res) {
       parseInt(data.emp_earning_details.washing_allowance) || 0,
       parseInt(data.emp_earning_details.BDP) || 0,
       parseInt(data.emp_earning_details.arrears) || 0,
+      data.emp_details.e_id,
       
     ];
     await connection.query(empEarningQuery, empEarningValues);
