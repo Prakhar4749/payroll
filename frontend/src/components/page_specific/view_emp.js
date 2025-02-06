@@ -66,7 +66,7 @@ const ViewEmployee = () => {
                                     <div className="relative">
                                         <img
                                             src={imageSrc || default_profile}
-                                            alt={``}
+                                            alt={`🙎‍♂️`}
                                             className=" text-center text-8xl h-36 w-36 object-contain p-1 rounded-full bg-white border-4 border-slate-100 shadow-md transition-all duration-300 group-hover:scale-105"
                                         />
 
