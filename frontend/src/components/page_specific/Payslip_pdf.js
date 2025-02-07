@@ -13,9 +13,19 @@ import { InvalidDialogue } from "../common/InvalidDialogue";
 import { LoadingDialogue } from "../common/LoadingDailogue";
 import Navbar from "../layout/Navbar";
 import { BackButton } from "../common/backButton";
+// import "jspdf-autotable";
+
+// import htmlDocx from "html-docx-js";
+import { 
+  Document, Packer, Paragraph, TextRun, Table, TableCell, TableRow, WidthType, AlignmentType 
+} from "docx";
+import { saveAs } from "file-saver";
+
 
 
 export default function Payslip_pdf() {
+
+  
   const pdfRef = useRef();
   const navigate = useNavigate();
   const location = useLocation();
@@ -137,6 +147,116 @@ export default function Payslip_pdf() {
 
 
 
+// const handleDownloadPDF = async () => {
+//     setShowLoading({ message: "Please wait while your Word file is downloading", isOpen: true });
+
+//     const input = pdfRef.current;
+//     if (!input) return;
+
+//     try {
+//         const fileName = `Payslip_${data.salary_details.e_id}_${monthName}_${data.salary_details.salary_year}.docx`;
+
+//         // Employee Details
+//         const employeeDetails = [
+//             ["Employee ID"," data.salary_details.e_id"],
+//             ["Name", "data.salary_details.employee_name"],
+//             ["Designation", "Developer"],
+//             ["Department", "Information Technology"],
+//             ["Account No", "548"],
+//             ["Bank Name", "Harum Cum Ipsam Impedit Ut."],
+//             ["IT PAN No", "Reiciendis"],
+//             ["Leave Days", "0"],
+//             ["CPF/GPF No", "469"]
+//         ];
+
+//         // Earnings and Deductions
+//         const earnings = [
+//             ["Basic", "23156"], ["Spc./Pers. Pay", "73"], ["Dearness Pay", "218"], 
+//             ["D.A.", "37455"], ["AD.A", "174"], ["IR", "567"], ["HRA", "210"], 
+//             ["CCA", "0"], ["Conv Allow", "284"], ["Medical", "124"], ["Wash. Allow", "590"], 
+//             ["BDP/LWP", "0"], ["Arrears", "218"]
+//         ];
+
+//         const deductions = [
+//             ["Leave Deduction", "0"], ["CPF/GPF", "4495"], ["GIS", "18"], 
+//             ["House Rent", "600"], ["Water Charges", "0"], ["Electricity Deduction", "105"], 
+//             ["Vehicle Deduction", "520"], ["HB Loan", "0"], ["GPF Loan", "0"], 
+//             ["Festival Loan", "0"], ["Grain Advance", "546"], ["Bank Adv./Asso. Ded.", "21"], 
+//             ["Advance", "0"], ["RGPV Adv./Oth Ded", "236"]
+//         ];
+
+//         // Function to create table rows
+//         const createTableRows = (data) => 
+//             data.map(([key, value]) => 
+//                 new TableRow({
+//                     children: [
+//                         new TableCell({ width: { size: 50, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: key, bold: true })] })] }),
+//                         new TableCell({ width: { size: 50, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun(value)] })] })
+//                     ],
+//                 })
+//             );
+
+//         // Create a watermark text
+//         const watermark = new Paragraph({
+//             alignment: AlignmentType.CENTER,
+//             children: [
+//                 new TextRun({
+//                     text: "CONFIDENTIAL",
+//                     bold: true,
+//                     size: 50, // Large text
+//                     color: "AAAAAA", // Light gray
+//                 }),
+//             ],
+//         });
+
+//         // Create Word document with watermark, employee details, earnings, and deductions
+//         const doc = new Document({
+//             sections: [
+//                 {
+//                     properties: {},
+//                     children: [
+//                         watermark, // Watermark at the top
+//                         new Paragraph({ text: "University Institute of Technology\nRajiv Gandhi Proudyogiki Viswavidyalaya", bold: true, alignment: AlignmentType.CENTER }),
+//                         new Paragraph({ text: "\nPAYSLIP - August 2024", bold: true, alignment: AlignmentType.CENTER }),
+//                         new Paragraph({ text: "\nEmployee Details", bold: true }),
+//                         new Table({ width: { size: 100, type: WidthType.PERCENTAGE }, rows: createTableRows(employeeDetails) }),
+//                         new Paragraph({ text: "\nEarnings and Deductions", bold: true }),
+//                         new Table({ width: { size: 100, type: WidthType.PERCENTAGE }, rows: createTableRows(earnings.concat(deductions)) }),
+//                         new Paragraph({ text: `\nTotal Earnings: 63069`, bold: true }),
+//                         new Paragraph({ text: `Total Deductions: -7451`, bold: true }),
+//                         new Paragraph({ text: `Net Payable: 55618\n`, bold: true }),
+//                         new Paragraph({ text: "Account Section\n" }),
+//                         new Paragraph({ text: "In case of any discrepancy, please inform us immediately\n" }),
+//                         new Paragraph({ text: "Generated on 2025-02-07T09:18:25.000Z" })
+//                     ],
+//                 },
+//             ],
+//         });
+
+//         // Generate .docx file
+//         const blob = await Packer.toBlob(doc);
+//         saveAs(blob, fileName);
+
+//         setShowLoading({ message: "", isOpen: false });
+//         setshowSuccess({
+//             message: "Your payslip has been successfully downloaded as a Word file!",
+//             success: true,
+//             onClose: () => setshowSuccess({ message: "", success: false, onClose: () => {} }),
+//         });
+
+//     } catch (error) {
+//         console.error("Word File Generation Error:", error);
+//         alert("Failed to generate Word file. Please try again.");
+//         setShowLoading({ message: "", isOpen: false });
+//     }
+// };
+
+  
+  
+
+
+
+
 
 
 
@@ -238,8 +358,8 @@ export default function Payslip_pdf() {
     };
 
     try {
-      // console.log(data_to_send)
-      // console.log("start")
+      console.log(data_to_send)
+      console.log("start")
 
       const response = await send_pdf_to_email(data_to_send)
       // console.log("end")

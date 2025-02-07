@@ -18,7 +18,9 @@ const DEPT_aside = ({
   setdeptDatacopy,
   d_id,
   setdeptData,
-  setd_id1
+  setd_id1,
+  setshowloading
+
 }) => {
   const [showDeleteSuccess, setshowDeleteSuccess] = useState({
     message: "",
@@ -50,8 +52,10 @@ const DEPT_aside = ({
 
   const onDeleteConfirm = async (selected_d_id) => {
     try {
+      setshowloading(true)
       const resultt = await removeFromDept(selected_d_id);
       // console.log(resultt);
+      setshowloading(false)
       if (resultt.success) {
         
         setshowDeleteSuccess({ message: resultt.message, success: true });

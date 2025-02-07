@@ -6,8 +6,10 @@ import { InvalidDialogue } from "../components/common/InvalidDialogue";
 import { SuccessfullyDone } from "../components/common/SuccessfullyDone";
 import { Calendar, UserRound } from 'lucide-react';
 import { check_id, check_payslip_in_archive, get_payslip } from "../controller/Payslip";
+import ComanLoading from "../components/common/ComanLoading";
 
 export default function Payslip() {
+  const [showloading,setshowloading] = useState(false)
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -30,7 +32,11 @@ export default function Payslip() {
 
   const validateInputs = async () => {
     // Check if the employee ID is valid
+    setshowloading(true)
+    
     const idResponse = await check_id(salary_details.e_id);
+    setshowloading(false)
+
     if (!idResponse.result.e_id) {
       setShowInvalid({
         success: true,
@@ -63,11 +69,15 @@ export default function Payslip() {
 
 
       // Check if the payslip is generated for the given employee, month, and year
+    setshowloading(true)
+
       const payslipResponse = await check_payslip_in_archive({
         e_id: salary_details.e_id,
         salary_month: salary_details.salary_month,
         salary_year: salary_details.salary_year
       });
+    setshowloading(false)
+
       if (!payslipResponse.result.payslip) {
         // Get current date
         const currentDate = new Date();
@@ -115,7 +125,11 @@ export default function Payslip() {
             let response = {}
 
             try {
+    setshowloading(true)
+
               response = await get_payslip(salary_details);
+    setshowloading(false)
+
               if (response.success) {
                 // console.log(response.result);
 
@@ -165,6 +179,7 @@ export default function Payslip() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-sky-50">
       <Navbar />
+      <ComanLoading toshow={showloading} />
 
       {showSuccess.success && (
         <div className="fixed inset-0 z-50">

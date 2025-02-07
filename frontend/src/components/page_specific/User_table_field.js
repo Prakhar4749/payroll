@@ -9,7 +9,7 @@ import {
 
 
 
-export default ({ add_new_user, change_uId, change_uId_password, current_user_name, set_add, set_change_uId, set_change_uId_password, for_add_u, set_add_u, for_change_password, set_change_password, for_change_user_name,set_change_user_name,setShowConfirm,setshowInvalid,setshowSuccess, }) => {
+export default ({setshowloading, add_new_user, change_uId, change_uId_password, current_user_name, set_add, set_change_uId, set_change_uId_password, for_add_u, set_add_u, for_change_password, set_change_password, for_change_user_name,set_change_user_name,setShowConfirm,setshowInvalid,setshowSuccess, }) => {
 
 
 
@@ -37,7 +37,11 @@ export default ({ add_new_user, change_uId, change_uId_password, current_user_na
     setShowConfirm({
       message: "are you really want add new user", success: true, onConfirm: async () => {
         try {
+    setshowloading(true)
+
           const result = await fadd_new_user(for_add_u.user_name, for_add_u.user_password);
+    setshowloading(false)
+
 
 
           setshowSuccess({
@@ -81,11 +85,14 @@ export default ({ add_new_user, change_uId, change_uId_password, current_user_na
       message: "are you really want to update user password", success: true, onConfirm: async () => {
 
         try {
+    setshowloading(true)
+
           const result = await update_password(
             for_change_password.user_name,
             for_change_password.current_password,
             for_change_password.new_password
           );
+          setshowloading(false)
 
           if (result && result.success) {
             setshowSuccess({
@@ -140,11 +147,15 @@ export default ({ add_new_user, change_uId, change_uId_password, current_user_na
       message: "are you really want to update UserName", success: true, onConfirm: async () => {
 
         try {
+    setshowloading(true)
+
           const result = await update_userName(
             for_change_user_name.current_user_name,
             for_change_user_name.new_user_name,
             for_change_user_name.user_password
           );
+    setshowloading(false)
+
 
           if (result?.success) {
             setshowSuccess({

@@ -98,7 +98,7 @@ const send_pdf_to_email = async ({to,subject,text,html,file,file_name}) => {
     formData.append("html", html);
     formData.append("file", file, file_name);
 
-    const response = await axios.post("http://localhost:5000/payslip/send_email", formData, {
+    const response = await axios.post(`${base_url}/payslip/send_email`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },

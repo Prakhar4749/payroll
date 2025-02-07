@@ -7,10 +7,13 @@ import { BackButton } from "../common/backButton";
 import { InvalidDialogue } from "../common/InvalidDialogue";
 import { ConfirmDialogue } from "../common/ConfirmDialogue";
 import { Eraser, Save } from 'lucide-react';
+import ComanLoading from "../common/ComanLoading";
 
 const DeptUpdateForm = () => {
   const location = useLocation();
+  
   const data = location.state;
+  const [showloading,setshowloading] = useState(false)
   const [dId, setDId] = useState(data.d_id.toUpperCase());
   const [dName, setDName] = useState(data.d_name);
   const navigate = useNavigate();
@@ -37,7 +40,11 @@ const DeptUpdateForm = () => {
       return;
     }
 
+    setshowloading(true)
+
     const result = await checkDepartment(dId, dName);
+    setshowloading(false)
+
 
     if (result.d_id && result.d_name && data.d_id.toUpperCase()!==dId && data.d_id.toUpperCase()!==dId) {
       setShowInvalid({ message: "Both Department ID and Department Name already exist.", success: true });
@@ -64,7 +71,11 @@ const DeptUpdateForm = () => {
           new_d_id: dId,
           new_d_name: dName,
         };
+        setshowloading(true)
+
         await updateDepartment(updateData);
+        setshowloading(false)
+
         setShowSuccess({ message: "Department updated successfully!", success: true });
       },
     });
@@ -74,6 +85,8 @@ const DeptUpdateForm = () => {
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Navbar />
       <div className="max-w-4xl mx-auto mt-20">
+                <ComanLoading toshow={showloading} />
+        
         {showSuccess.success && (
           <SuccessfullyDone message={showSuccess.message} onClose={() => navigate("/department")} />
         )}

@@ -1,6 +1,7 @@
 import React from 'react';
+import img from "../../assets/images/loading.gif"
 
-export default ({ toshow, message = 'Loading...', gifUrl = "https://i0.wp.com/motiongraphicsphoebe.wordpress.com/wp-content/uploads/2018/10/8ee212dac057d412972e0c8cc164deee.gif?w=545&h=409&ssl=1" }) => {
+export default ({ toshow, message = 'Loading...', gifUrl = img }) => {
   if (!toshow) return null;
 
   return (

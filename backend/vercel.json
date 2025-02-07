@@ -10,4 +10,4 @@
       { "src": "/src/(.*)", "dest": "/src/app.js" }
     ],
     "installCommand": "npm install --legacy-peer-deps"
-  }
+  }  

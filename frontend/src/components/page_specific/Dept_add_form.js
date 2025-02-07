@@ -7,9 +7,12 @@ import { BackButton } from "../common/backButton";
 import { InvalidDialogue } from "../common/InvalidDialogue";
 import { ConfirmDialogue } from "../common/ConfirmDialogue";
 import { Eraser, Save } from 'lucide-react';
+import ComanLoading from "../common/ComanLoading";
 
 const DeptAddForm = () => {
   const navigate = useNavigate();
+  const [showloading,setshowloading] = useState(false)
+  
   const [dId, setDId] = useState("");
   const [dName, setDName] = useState("");
 
@@ -29,8 +32,10 @@ const DeptAddForm = () => {
       setShowInvalid({ message: "Invalid Department ID format.", success: true });
       return;
     }
+    setshowloading(true)
 
     const result = await checkDepartment(dId, dName);
+    setshowloading(false)
 
     if (result.d_id || result.d_name) {
       setShowInvalid({ message: "Department already exists.", success: true });
@@ -42,7 +47,11 @@ const DeptAddForm = () => {
           setShowConfirm({
             message: "Are you sure you want to add the new Department?",
             success: false})
+            
+            setshowloading(true)
           await addToDepartment({ d_id: dId, d_name: dName });
+    setshowloading(false)
+
           setShowSuccess({ message: "Department added successfully!", success: true });
         },
       });
@@ -53,6 +62,8 @@ const DeptAddForm = () => {
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Navbar />
       <div className="max-w-4xl mx-auto mt-20">
+        <ComanLoading toshow={showloading} />
+        
         {showSuccess.success && (
           <SuccessfullyDone message={showSuccess.message} onClose={() => navigate("/department")} />
         )}

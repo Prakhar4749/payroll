@@ -7,12 +7,14 @@ import UserField from '../components/page_specific/User_table_field';
 import { SuccessfullyDone } from "../components/common/SuccessfullyDone";
 import { InvalidDialogue } from "../components/common/InvalidDialogue";
 import { ConfirmDialogue } from "../components/common/ConfirmDialogue";
+import ComanLoading from "../components/common/ComanLoading";
+
 
 export default function User() {
   const [add_new_user, set_add] = useState(false);
   const [change_uId_password, set_change_uId_password] = useState(false);
   const [change_uId, set_change_uId] = useState(false);
-
+const [showloading,setshowloading] = useState(false)
   
 
   const user_name = sessionStorage.getItem('user_name');
@@ -47,6 +49,7 @@ export default function User() {
     <div className="min-h-screen flex flex-col">
       {/* Navbar - Fixed at top */}
       <Navbar />
+      <ComanLoading toshow={showloading} />
 
       {showSuccess.success && (
         <div className="fixed inset-0 z-50">
@@ -86,6 +89,7 @@ export default function User() {
           <div className="w-full lg:w-1/4 bg-white shadow-lg lg:min-h-[calc(100vh-4rem)]">
             <div className="sticky top-16 overflow-auto max-h-[calc(100vh-4rem)]">
               <UserAside
+              setshowloading={setshowloading}
                 set_add={set_add}
                 set_change_uId={set_change_uId}
                 set_change_uId_password={set_change_uId_password}
@@ -104,6 +108,7 @@ export default function User() {
           <main className="w-full lg:w-3/4 p-6 bg-gray-50">
             <div className="bg-white rounded-lg shadow-lg overflow-hidden">
               <UserField
+              setshowloading={setshowloading}
                 add_new_user={add_new_user}
                 change_uId={change_uId}
                 change_uId_password={change_uId_password}

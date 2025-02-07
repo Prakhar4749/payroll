@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 
 const UserActions = ({
+  setshowloading,
   set_add,
   set_change_uId,
   set_change_uId_password,

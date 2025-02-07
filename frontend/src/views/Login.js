@@ -5,12 +5,14 @@ import { loginUser } from '../controller/authController';
 import {ConfirmDialogue} from "../components/common/ConfirmDialogue";
 import {InvalidDialogue} from "../components/common/InvalidDialogue";
 import { SuccessfullyDone } from "../components/common/SuccessfullyDone";
+import ComanLoading from "../components/common/ComanLoading";
 
 export default function Login() {
   const [user_name, setUserName] = useState("");
   const [user_password, setUserPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
+  const [showloading,setshowloading] = useState(false)
 
   const [showConfirm, setShowConfirm] = useState({success: false, message: "", onConfirm: ()=>{}});
   const [showInvalid, setShowInvalid] = useState({success: false, message: "", onClose: ()=>{}});
@@ -21,7 +23,9 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     // console.log(user_name,",", user_password)
+    setshowloading(true)
     const response = await loginUser(user_name, user_password);
+    setshowloading(false)
     // console.log(response)
 
     if (response.success) {
@@ -56,9 +60,12 @@ export default function Login() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-emerald-600 via-teal-600 to-sky-600 p-4 sm:p-6 lg:p-8">
       <div className="w-full max-w-3xl flex flex-col lg:flex-row overflow-hidden bg-white rounded-[2rem] shadow-xl">
+      <ComanLoading toshow={showloading} />
 
       {showSuccess.success && (
                 <div className="fixed inset-0 z-50">
+
+
                   <SuccessfullyDone
                     message={showSuccess.message}
                     onClose={showSuccess.onClose}

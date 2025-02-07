@@ -9,9 +9,13 @@ import { ConfirmDialogue } from "../common/ConfirmDialogue";
 import { SuccessfullyDone } from "../common/SuccessfullyDone";
 import { InvalidDialogue } from "../common/InvalidDialogue";
 import { NoticeDialogue } from "../common/NoticeDialogue";
+import ComanLoading from "../common/ComanLoading";
+
 // import imageCompression from "browser-image-compression"
 
 const Payslip_Form = () => {
+      const [showloading,setshowloading] = useState(false)
+    
     const navigate = useNavigate();
     const location = useLocation();
     const today = new Date().toISOString().split("T")[0];
@@ -116,8 +120,11 @@ const Payslip_Form = () => {
     const onConfirm = async () => {
         // console.log("sent data", data)
         try {
+        setshowloading(true)
+
 
             const response = await create_salary_archive(data);
+            setshowloading(false)
 
             setshowSuccess({
                 message: response.message,
@@ -125,7 +132,12 @@ const Payslip_Form = () => {
                 onClose: async () => {
                     let response = {}
                     try {
+        setshowloading(true)
+
                         response = await get_payslip(salary_details);
+
+        setshowloading(false)
+
                         if (response.success) {
                             console.log(response.result);
 
@@ -196,6 +208,8 @@ const Payslip_Form = () => {
 
         <div className="min-h-screen flex flex-col bg-gray-50">
             <Navbar />
+            <ComanLoading toshow={showloading} />
+            
 
             {showSuccess.success && (
                 <div className="fixed inset-0 z-50">

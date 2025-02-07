@@ -52,6 +52,7 @@ export default function Department() {
       <div className="flex flex-col lg:flex-row w-full pt-16">
         <div className="w-full lg:w-1/4 bg-white  shadow-lg lg:min-h-[calc(100vh-4rem)] ">
           <DEPTAside
+          setshowloading={setshowloading}
             deptData={deptData}
             deptDatacopy={deptDatacopy}
             d_id={d_id}
