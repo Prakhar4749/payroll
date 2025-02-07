@@ -1,5 +1,7 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import * as Select from "@radix-ui/react-select";
 import { add_emp_details, check_for_add_emp } from "../../controller/empController";
+import { fetchAllDeptData } from "../../controller/department.controller";
 import { emp_data_model } from "../../models/EmpModel";
 import { User, Building, DollarSign, MinusCircle, Save, UserRoundPen, Eraser } from 'lucide-react';
 import Navbar from "../layout/Navbar"
@@ -46,6 +48,33 @@ const AddForm = () => {
   const [file_to_sand, setFile_to_sand] = useState(null);
 
   const [fileName, setFileName] = useState("Choose a file")
+
+  const [allDept, setAllDept] = useState([]);
+
+  const fetchDept = async () => {
+    try {
+      const response = await fetchAllDeptData(); // Fetch data
+
+      if (response && Array.isArray(response.result)) {
+        setAllDept(response.result); // Set only if it's an array
+      } else {
+        console.error("Invalid department data:", response);
+        setAllDept([]); // Ensure `allDept` is an array
+      }
+    } catch (error) {
+      console.error("Error fetching departments:", error);
+      setAllDept([]); // Prevent crashes
+    }
+  };
+
+
+  useEffect(() => {
+    fetchDept();
+  }, []);
+
+  useEffect(() => {
+    console.log("Fetched Departments:", allDept);
+  }, [allDept]);
 
   const onAddConfirm = async () => {
     try {
@@ -373,16 +402,36 @@ const AddForm = () => {
 
                 {/* Department ID */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Department ID</label>
-                  <input
-                    type="text"
-                    value={data.emp_details.d_id}
-                    onChange={(e) => handleInputChange("emp_details", "d_id", e.target.value.toUpperCase())}
-                    className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+                  <label className="block text-sm font-medium text-gray-700">Department</label>
+                  <div className="relative w-full">
+                    <select
+                      value={data.emp_details.d_id || ""}
+                      onChange={(e) => handleInputChange("emp_details", "d_id", e.target.value)}
+                      className="block w-full mt-1 px-4 py-2 border border-gray-300 rounded-lg
+               bg-white focus:outline-none focus:ring-emerald-500 focus:border-emerald-500
+               text-gray-700 shadow-sm hover:bg-gray-50 transition-all duration-150
+               appearance-none pr-10"
+                    >
+                      <option value="" disabled>Select a department</option>
 
-                    maxLength={4}
+                      {Array.isArray(allDept) && allDept.length > 0 ? (
+                        allDept.map((dept) => (
+                          <option key={dept.d_id} value={dept.d_id} className="text-gray-900">
+                            {dept.d_id}: {dept.d_name}
+                          </option>
+                        ))
+                      ) : (
+                        <option disabled>Loading departments...</option>
+                      )}
+                    </select>
 
-                  />
+                    {/* Custom Dropdown Arrow */}
+                    <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                      ⌄
+                    </div>
+                  </div>
+
+
                 </div>
 
                 {/* Designation */}

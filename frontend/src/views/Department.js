@@ -50,7 +50,7 @@ export default function Department() {
       <ComanLoading toshow={showloading} />
 
       <div className="flex flex-col lg:flex-row w-full pt-16">
-        <div className="w-full lg:w-1/4 bg-white shadow-lg min-h-[calc(100vh-4rem)]">
+        <div className="w-full lg:w-1/4 bg-white  shadow-lg lg:min-h-[calc(100vh-4rem)] ">
           <DEPTAside
             deptData={deptData}
             deptDatacopy={deptDatacopy}
