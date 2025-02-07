@@ -65,7 +65,7 @@ export default function Payslip_pdf() {
 
         // Capture the component as an image using optimized settings
         const canvas = await html2canvas(input, {
-            scale: window.devicePixelRatio || 2, // Dynamically adjust based on screen DPI
+            scale: 3, // Dynamically adjust based on screen DPI
             useCORS: true, // Fix external image issues
             backgroundColor: "#ffffff",
             logging: false,
@@ -83,7 +83,7 @@ export default function Payslip_pdf() {
         }
 
         // Convert canvas to image
-        const imgData = canvas.toDataURL("image/jpeg", 0.95); // Change PNG to JPEG for better compression
+        const imgData = canvas.toDataURL("image/jpeg", 2); // Change PNG to JPEG for better compression
 
         // Create the PDF
         const pdf = new jsPDF("p", "mm", "a4", true);
@@ -131,75 +131,69 @@ export default function Payslip_pdf() {
 
   const handleSendEmail = async () => {
     setShowLoading({message: "We are sending your payslip to your email. Please hold on.", isOpen:true})
-    let originalStyle = null
 
     const input = pdfRef.current;
     if (!input) return;
 
-    // Hide buttons before capturing
-      // Temporarily make the component visible (for hidden elements)
-      console.log(input.style.display)
-      const screenWidth = window.innerWidth;
+   
+        const screenWidth = window.innerWidth;
+        let originalStyle = input.style.display;
 
-      originalStyle = input.style.display;
-      if (screenWidth < 1024) { // lg = 1024px in Tailwind
-        input.style.display = "block";
-        input.style.position = "absolute";
-        input.style.top = "-9999px";
-      }
-
-      // Wait a bit for rendering
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
-      // Capture the component as an image
-      const canvas = await html2canvas(input, {
-        scale: 2, // Ensures high resolution
-        useCORS: true, // Fixes issues with external images
-        backgroundColor: "#ffffff", // Prevents transparent background
-        logging: false, // Logs useful debugging info
-        onclone: (document) => {
-          // Ensure all elements are properly loaded before capture
-          document.getElementById("pdf-content").style.display = "block";
+        // Handle visibility for mobile screens
+        if (screenWidth < 1024) {
+            input.style.display = "block";
+            input.style.position = "absolute";
+            input.style.top = "-9999px";
         }
-      });
 
-      // Restore original state
+        // Use requestAnimationFrame for smoother UI updates
+        await new Promise((resolve) => requestAnimationFrame(resolve));
 
-      if (screenWidth < 1024) {
-        input.style.display = originalStyle;
-        input.style.position = "relative";
-        input.style.top = "auto";
-      }
+        // Capture the component as an image using optimized settings
+        const canvas = await html2canvas(input, {
+            scale: window.devicePixelRatio || 2, // Dynamically adjust based on screen DPI
+            useCORS: true, // Fix external image issues
+            backgroundColor: "#ffffff",
+            logging: false,
+            removeContainer: true, // Removes extra DOM elements for better performance
+            onclone: (document) => {
+                document.getElementById("pdf-content").style.display = "block";
+            }
+        });
 
+        // Restore original state
+        if (screenWidth < 1024) {
+            input.style.display = originalStyle;
+            input.style.position = "relative";
+            input.style.top = "auto";
+        }
 
-      // Convert canvas to image
-      const imgData = canvas.toDataURL("image/png", 0.9);
-      if (!imgData.startsWith("data:image/png;base64,")) {
-        throw new Error("Failed to generate valid image data.");
-      }
+        // Convert canvas to image
+        const imgData = canvas.toDataURL("image/jpeg", 0.95); // Change PNG to JPEG for better compression
 
-      // Create the PDF
-      const pdf = new jsPDF("p", "mm", "a4", true);
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      const pageHeight = pdf.internal.pageSize.getHeight();
+        // Create the PDF
+        const pdf = new jsPDF("p", "mm", "a4", true);
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
 
-      const margin = 5;
-      const availableWidth = pageWidth - margin * 2;
-      const availableHeight = pageHeight - margin * 2;
+        const margin = 5;
+        const availableWidth = pageWidth - margin * 2;
+        const availableHeight = pageHeight - margin * 2;
 
-      let imgWidth = availableWidth;
-      let imgHeight = (canvas.height * imgWidth) / canvas.width;
+        let imgWidth = availableWidth;
+        let imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-      if (imgHeight > availableHeight) {
-        const scaleFactor = availableHeight / imgHeight;
-        imgWidth *= scaleFactor;
-        imgHeight *= scaleFactor;
-      }
+        if (imgHeight > availableHeight) {
+            const scaleFactor = availableHeight / imgHeight;
+            imgWidth *= scaleFactor;
+            imgHeight *= scaleFactor;
+        }
 
-      const xPos = (pageWidth - imgWidth) / 2;
-      const yPos = margin;
+        const xPos = (pageWidth - imgWidth) / 2;
+        const yPos = margin;
 
-      pdf.addImage(imgData, "PNG", xPos, yPos, imgWidth, imgHeight);
+        // Optimize image rendering speed
+        pdf.addImage(imgData, "JPEG", xPos, yPos, imgWidth, imgHeight, undefined, "FAST"); // "FAST" for speed
     const pdfBlob = pdf.output("blob");
     // Show buttons again after generating the PDF
    
@@ -267,18 +261,20 @@ export default function Payslip_pdf() {
 
   const style_watermark = {
     backgroundImage: `url(${watermark})`,
-    backgroundRepeat: 'no-repeat',
-    backgroundPosition: 'center',
-    backgroundSize: 'contain',
-    opacity: 0.2, // Reduce image opacity
-    position: 'absolute',
-    top: '48%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)', // Center the watermark
-    width: '100%',
-    height: '100%',
-    zIndex: 2, // Send it behind content
-  };
+    backgroundRepeat: "no-repeat",
+    backgroundPosition: "center",
+    backgroundSize: "contain",
+    position: "absolute",
+    top: "48%",
+    left: "50%",
+    transform: "translate(-50%, -50%)", // Center the watermark
+    width: "100%",
+    height: "100%",
+    pointerEvents: "none", // Prevent interactions
+    zIndex: -2, // Keep it behind content
+    mixBlendMode: "multiply", // Blend with background
+    opacity: 0.3, // Apply opacity only to watermark
+};
 
 
   return (
@@ -439,7 +435,8 @@ export default function Payslip_pdf() {
             <div className="overflow-x-auto  lg:scale-100 origin-top sm:origin-center ">
 
 
-              <div ref={pdfRef} id="pdf-content" className="bg-white  mx-auto w-[1000px] px-2 print:w-[1000px] print:shadow-none print:border-none relative pt-serif-regular hidden lg:block print:block  pb-3  ">
+              <div ref={pdfRef} id="pdf-content" className="
+                mx-auto w-[1000px] px-2 print:w-[1000px] print:shadow-none print:border-none relative pt-serif-regular hidden lg:block print:block  pb-3  ">
                 <div style={style_watermark} className="absolute"></div>
 
                 {/* Header Section */}
@@ -638,6 +635,14 @@ export default function Payslip_pdf() {
                           <tr className="">
                             <td className="px-4 py-2 border-b-2 border-l-2 border-black">RGPV Adv./Oth Ded</td>
                             <td className="px-4 py-2 text-right border-b-2 border-l-2 border-black">{data.salary_details.RGPV_advance}</td>
+                          </tr>
+                          <tr className="">
+                            <td className="px-4 py-2 border-b-2 border-l-2 border-black">Income Tax</td>
+                            <td className="px-4 py-2 text-right border-b-2 border-l-2 border-black">{data.salary_details.income_tax}</td>
+                          </tr>
+                          <tr className="">
+                            <td className="px-4 py-2 border-b-2 border-l-2 border-black">Proff. Tax</td>
+                            <td className="px-4 py-2 text-right border-b-2 border-l-2 border-black">{data.salary_details.professional_tax}</td>
                           </tr>
                         </tbody>
                       </table>
