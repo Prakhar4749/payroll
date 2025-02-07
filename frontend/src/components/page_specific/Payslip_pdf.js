@@ -16,10 +16,7 @@ import { BackButton } from "../common/backButton";
 // import "jspdf-autotable";
 
 // import htmlDocx from "html-docx-js";
-import { 
-  Document, Packer, Paragraph, TextRun, Table, TableCell, TableRow, WidthType, AlignmentType 
-} from "docx";
-import { saveAs } from "file-saver";
+
 
 
 
@@ -47,219 +44,87 @@ export default function Payslip_pdf() {
 
 
   const handleDownloadPDF = async () => {
-    setShowLoading({message: "Please wait while your Pdf is downloading", isOpen:true})
-    let originalStyle = null
+    setShowLoading({ message: "Please wait while your PDF is downloading", isOpen: true });
 
     const input = pdfRef.current;
     if (!input) return;
 
-    // Hide buttons before capturing
-
-
     try {
-      // Temporarily make the component visible (for hidden elements)
-      console.log(input.style.display)
-      const screenWidth = window.innerWidth;
+        const screenWidth = window.innerWidth;
+        let originalStyle = input.style.display;
 
-      originalStyle = input.style.display;
-      if (screenWidth < 1024) { // lg = 1024px in Tailwind
-        input.style.display = "block";
-        input.style.position = "absolute";
-        input.style.top = "-9999px";
-      }
-
-      // Wait a bit for rendering
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
-      // Capture the component as an image
-      const canvas = await html2canvas(input, {
-        scale: 2, // Ensures high resolution
-        useCORS: true, // Fixes issues with external images
-        backgroundColor: "#ffffff", // Prevents transparent background
-        logging: false, // Logs useful debugging info
-        onclone: (document) => {
-          // Ensure all elements are properly loaded before capture
-          document.getElementById("pdf-content").style.display = "block";
+        // Handle visibility for mobile screens
+        if (screenWidth < 1024) {
+            input.style.display = "block";
+            input.style.position = "absolute";
+            input.style.top = "-9999px";
         }
-      });
 
-      // Restore original state
+        // Use requestAnimationFrame for smoother UI updates
+        await new Promise((resolve) => requestAnimationFrame(resolve));
 
-      if (screenWidth < 1024) {
-        input.style.display = originalStyle;
-        input.style.position = "relative";
-        input.style.top = "auto";
-      }
+        // Capture the component as an image using optimized settings
+        const canvas = await html2canvas(input, {
+            scale: window.devicePixelRatio || 2, // Dynamically adjust based on screen DPI
+            useCORS: true, // Fix external image issues
+            backgroundColor: "#ffffff",
+            logging: false,
+            removeContainer: true, // Removes extra DOM elements for better performance
+            onclone: (document) => {
+                document.getElementById("pdf-content").style.display = "block";
+            }
+        });
 
-
-      // Convert canvas to image
-      const imgData = canvas.toDataURL("image/png", 0.9);
-      if (!imgData.startsWith("data:image/png;base64,")) {
-        throw new Error("Failed to generate valid image data.");
-      }
-
-      // Create the PDF
-      const pdf = new jsPDF("p", "mm", "a4", true);
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      const pageHeight = pdf.internal.pageSize.getHeight();
-
-      const margin = 5;
-      const availableWidth = pageWidth - margin * 2;
-      const availableHeight = pageHeight - margin * 2;
-
-      let imgWidth = availableWidth;
-      let imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-      if (imgHeight > availableHeight) {
-        const scaleFactor = availableHeight / imgHeight;
-        imgWidth *= scaleFactor;
-        imgHeight *= scaleFactor;
-      }
-
-      const xPos = (pageWidth - imgWidth) / 2;
-      const yPos = margin;
-
-      pdf.addImage(imgData, "PNG", xPos, yPos, imgWidth, imgHeight);
-      pdf.save(`Payslip_${data.salary_details.e_id}_${monthName}_${data.salary_details.salary_year}.pdf`);
-
-      setShowLoading({message: "", isOpen:false})
-      setshowSuccess({
-        message: "Your payslip has been successfully downloaded—check it out now!",
-        success: true,
-        onClose: () => {
-          setshowSuccess({
-            message: "",
-            success: false,
-            onClose: () => { }
-          })
+        // Restore original state
+        if (screenWidth < 1024) {
+            input.style.display = originalStyle;
+            input.style.position = "relative";
+            input.style.top = "auto";
         }
-      });
+
+        // Convert canvas to image
+        const imgData = canvas.toDataURL("image/jpeg", 0.95); // Change PNG to JPEG for better compression
+
+        // Create the PDF
+        const pdf = new jsPDF("p", "mm", "a4", true);
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
+
+        const margin = 5;
+        const availableWidth = pageWidth - margin * 2;
+        const availableHeight = pageHeight - margin * 2;
+
+        let imgWidth = availableWidth;
+        let imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+        if (imgHeight > availableHeight) {
+            const scaleFactor = availableHeight / imgHeight;
+            imgWidth *= scaleFactor;
+            imgHeight *= scaleFactor;
+        }
+
+        const xPos = (pageWidth - imgWidth) / 2;
+        const yPos = margin;
+
+        // Optimize image rendering speed
+        pdf.addImage(imgData, "JPEG", xPos, yPos, imgWidth, imgHeight, undefined, "FAST"); // "FAST" for speed
+
+        // Save the PDF with optimized file name
+        pdf.save(`Payslip_${data.salary_details.e_id}_${monthName}_${data.salary_details.salary_year}.pdf`);
+
+        // Show success message
+        setShowLoading({ message: "", isOpen: false });
+        setshowSuccess({
+            message: "Your payslip has been successfully downloaded—check it out now!",
+            success: true,
+            onClose: () => setshowSuccess({ message: "", success: false })
+        });
 
     } catch (error) {
-      console.error("PDF Generation Error:", error);
-      alert("Failed to generate PDF. Please try again.");
+        console.error("PDF Generation Error:", error);
+        alert("Failed to generate PDF. Please try again.");
     }
-
-    // Show buttons again after PDF download
-
-  };
-
-
-
-
-// const handleDownloadPDF = async () => {
-//     setShowLoading({ message: "Please wait while your Word file is downloading", isOpen: true });
-
-//     const input = pdfRef.current;
-//     if (!input) return;
-
-//     try {
-//         const fileName = `Payslip_${data.salary_details.e_id}_${monthName}_${data.salary_details.salary_year}.docx`;
-
-//         // Employee Details
-//         const employeeDetails = [
-//             ["Employee ID"," data.salary_details.e_id"],
-//             ["Name", "data.salary_details.employee_name"],
-//             ["Designation", "Developer"],
-//             ["Department", "Information Technology"],
-//             ["Account No", "548"],
-//             ["Bank Name", "Harum Cum Ipsam Impedit Ut."],
-//             ["IT PAN No", "Reiciendis"],
-//             ["Leave Days", "0"],
-//             ["CPF/GPF No", "469"]
-//         ];
-
-//         // Earnings and Deductions
-//         const earnings = [
-//             ["Basic", "23156"], ["Spc./Pers. Pay", "73"], ["Dearness Pay", "218"], 
-//             ["D.A.", "37455"], ["AD.A", "174"], ["IR", "567"], ["HRA", "210"], 
-//             ["CCA", "0"], ["Conv Allow", "284"], ["Medical", "124"], ["Wash. Allow", "590"], 
-//             ["BDP/LWP", "0"], ["Arrears", "218"]
-//         ];
-
-//         const deductions = [
-//             ["Leave Deduction", "0"], ["CPF/GPF", "4495"], ["GIS", "18"], 
-//             ["House Rent", "600"], ["Water Charges", "0"], ["Electricity Deduction", "105"], 
-//             ["Vehicle Deduction", "520"], ["HB Loan", "0"], ["GPF Loan", "0"], 
-//             ["Festival Loan", "0"], ["Grain Advance", "546"], ["Bank Adv./Asso. Ded.", "21"], 
-//             ["Advance", "0"], ["RGPV Adv./Oth Ded", "236"]
-//         ];
-
-//         // Function to create table rows
-//         const createTableRows = (data) => 
-//             data.map(([key, value]) => 
-//                 new TableRow({
-//                     children: [
-//                         new TableCell({ width: { size: 50, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: key, bold: true })] })] }),
-//                         new TableCell({ width: { size: 50, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun(value)] })] })
-//                     ],
-//                 })
-//             );
-
-//         // Create a watermark text
-//         const watermark = new Paragraph({
-//             alignment: AlignmentType.CENTER,
-//             children: [
-//                 new TextRun({
-//                     text: "CONFIDENTIAL",
-//                     bold: true,
-//                     size: 50, // Large text
-//                     color: "AAAAAA", // Light gray
-//                 }),
-//             ],
-//         });
-
-//         // Create Word document with watermark, employee details, earnings, and deductions
-//         const doc = new Document({
-//             sections: [
-//                 {
-//                     properties: {},
-//                     children: [
-//                         watermark, // Watermark at the top
-//                         new Paragraph({ text: "University Institute of Technology\nRajiv Gandhi Proudyogiki Viswavidyalaya", bold: true, alignment: AlignmentType.CENTER }),
-//                         new Paragraph({ text: "\nPAYSLIP - August 2024", bold: true, alignment: AlignmentType.CENTER }),
-//                         new Paragraph({ text: "\nEmployee Details", bold: true }),
-//                         new Table({ width: { size: 100, type: WidthType.PERCENTAGE }, rows: createTableRows(employeeDetails) }),
-//                         new Paragraph({ text: "\nEarnings and Deductions", bold: true }),
-//                         new Table({ width: { size: 100, type: WidthType.PERCENTAGE }, rows: createTableRows(earnings.concat(deductions)) }),
-//                         new Paragraph({ text: `\nTotal Earnings: 63069`, bold: true }),
-//                         new Paragraph({ text: `Total Deductions: -7451`, bold: true }),
-//                         new Paragraph({ text: `Net Payable: 55618\n`, bold: true }),
-//                         new Paragraph({ text: "Account Section\n" }),
-//                         new Paragraph({ text: "In case of any discrepancy, please inform us immediately\n" }),
-//                         new Paragraph({ text: "Generated on 2025-02-07T09:18:25.000Z" })
-//                     ],
-//                 },
-//             ],
-//         });
-
-//         // Generate .docx file
-//         const blob = await Packer.toBlob(doc);
-//         saveAs(blob, fileName);
-
-//         setShowLoading({ message: "", isOpen: false });
-//         setshowSuccess({
-//             message: "Your payslip has been successfully downloaded as a Word file!",
-//             success: true,
-//             onClose: () => setshowSuccess({ message: "", success: false, onClose: () => {} }),
-//         });
-
-//     } catch (error) {
-//         console.error("Word File Generation Error:", error);
-//         alert("Failed to generate Word file. Please try again.");
-//         setShowLoading({ message: "", isOpen: false });
-//     }
-// };
-
-  
-  
-
-
-
-
-
-
-
+};
 
 
 
