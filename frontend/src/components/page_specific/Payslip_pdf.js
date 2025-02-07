@@ -10,6 +10,7 @@ import watermark from '../../assets/images/pdf_watermark.jpg';
 import { ConfirmDialogue } from "../common/ConfirmDialogue";
 import { SuccessfullyDone } from "../common/SuccessfullyDone";
 import { InvalidDialogue } from "../common/InvalidDialogue";
+import { LoadingDialogue } from "../common/LoadingDailogue";
 import Navbar from "../layout/Navbar";
 import { BackButton } from "../common/backButton";
 
@@ -21,6 +22,7 @@ export default function Payslip_pdf() {
   const [data, setData] = useState(location.state);
   const monthName = new Date(2024, data.salary_details.salary_month - 1).toLocaleString('en-US', { month: 'long' });
 
+  const [showLoading, setShowLoading] = useState({ message: "", isOpen: false});
   const [showConfirm, setShowConfirm] = useState({ success: false, message: "", onConfirm: () => { } });
   const [showInvalid, setshowInvalid] = useState({ success: false, message: "", onClose: () => { } });
   const [showSuccess, setshowSuccess] = useState({ success: false, message: "", onClose: () => { } });
@@ -35,6 +37,7 @@ export default function Payslip_pdf() {
 
 
   const handleDownloadPDF = async () => {
+    setShowLoading({message: "Please wait while your Pdf is downloading", isOpen:true})
     let originalStyle = null
 
     const input = pdfRef.current;
@@ -109,6 +112,19 @@ export default function Payslip_pdf() {
       pdf.addImage(imgData, "PNG", xPos, yPos, imgWidth, imgHeight);
       pdf.save(`Payslip_${data.salary_details.e_id}_${monthName}_${data.salary_details.salary_year}.pdf`);
 
+      setShowLoading({message: "", isOpen:false})
+      setshowSuccess({
+        message: "Your payslip has been successfully downloaded—check it out now!",
+        success: true,
+        onClose: () => {
+          setshowSuccess({
+            message: "",
+            success: false,
+            onClose: () => { }
+          })
+        }
+      });
+
     } catch (error) {
       console.error("PDF Generation Error:", error);
       alert("Failed to generate PDF. Please try again.");
@@ -129,40 +145,79 @@ export default function Payslip_pdf() {
 
 
   const handleSendEmail = async () => {
+    setShowLoading({message: "We are sending your payslip to your email. Please hold on.", isOpen:true})
+    let originalStyle = null
+
     const input = pdfRef.current;
+    if (!input) return;
 
-    // Hide buttons before generating the PDF
-    const buttons = document.querySelector(".pdf-buttons");
-    if (buttons) buttons.style.display = "none";
+    // Hide buttons before capturing
+      // Temporarily make the component visible (for hidden elements)
+      console.log(input.style.display)
+      const screenWidth = window.innerWidth;
 
-    const canvas = await html2canvas(input, { scale: 2, useCORS: true });
-    const imgData = canvas.toDataURL("image/jpeg");
+      originalStyle = input.style.display;
+      if (screenWidth < 1024) { // lg = 1024px in Tailwind
+        input.style.display = "block";
+        input.style.position = "absolute";
+        input.style.top = "-9999px";
+      }
 
-    const pdf = new jsPDF("p", "mm", "a4");
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const pageHeight = pdf.internal.pageSize.getHeight();
+      // Wait a bit for rendering
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
-    const margin = 5;
-    const availableWidth = pageWidth - margin * 2;
-    const availableHeight = pageHeight - margin * 2;
+      // Capture the component as an image
+      const canvas = await html2canvas(input, {
+        scale: 2, // Ensures high resolution
+        useCORS: true, // Fixes issues with external images
+        backgroundColor: "#ffffff", // Prevents transparent background
+        logging: false, // Logs useful debugging info
+        onclone: (document) => {
+          // Ensure all elements are properly loaded before capture
+          document.getElementById("pdf-content").style.display = "block";
+        }
+      });
 
-    let imgWidth = availableWidth;
-    let imgHeight = (canvas.height * imgWidth) / canvas.width;
+      // Restore original state
 
-    if (imgHeight > availableHeight) {
-      const scaleFactor = availableHeight / imgHeight;
-      imgWidth *= scaleFactor;
-      imgHeight *= scaleFactor;
-    }
+      if (screenWidth < 1024) {
+        input.style.display = originalStyle;
+        input.style.position = "relative";
+        input.style.top = "auto";
+      }
 
-    const xPos = (pageWidth - imgWidth) / 2;
-    const yPos = margin;
 
-    pdf.addImage(imgData, "JPG", xPos, yPos, imgWidth, imgHeight);
+      // Convert canvas to image
+      const imgData = canvas.toDataURL("image/png", 0.9);
+      if (!imgData.startsWith("data:image/png;base64,")) {
+        throw new Error("Failed to generate valid image data.");
+      }
 
+      // Create the PDF
+      const pdf = new jsPDF("p", "mm", "a4", true);
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+
+      const margin = 5;
+      const availableWidth = pageWidth - margin * 2;
+      const availableHeight = pageHeight - margin * 2;
+
+      let imgWidth = availableWidth;
+      let imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+      if (imgHeight > availableHeight) {
+        const scaleFactor = availableHeight / imgHeight;
+        imgWidth *= scaleFactor;
+        imgHeight *= scaleFactor;
+      }
+
+      const xPos = (pageWidth - imgWidth) / 2;
+      const yPos = margin;
+
+      pdf.addImage(imgData, "PNG", xPos, yPos, imgWidth, imgHeight);
     const pdfBlob = pdf.output("blob");
     // Show buttons again after generating the PDF
-    if (buttons) buttons.style.display = "flex";
+   
 
     const data_to_send = {
       to: `${data.emp_details.e_email}`,
@@ -189,6 +244,7 @@ export default function Payslip_pdf() {
       const response = await send_pdf_to_email(data_to_send)
       // console.log("end")
       // console.log("checking email", response)
+      setShowLoading({message: "", isOpen:false})
       setshowSuccess({
         message: "An email has been successfully sent from our side, and the employee is expected to receive it shortly.",
         success: response.success,
@@ -244,6 +300,15 @@ export default function Payslip_pdf() {
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Navbar />
       <div className="w-full lg:max-w-[1215px] mx-auto mt-20 px-4 sm:px-4 lg:px-8">
+        {/* loading Dialog */}
+        {showLoading.isOpen && (
+          <div className="fixed inset-0 z-50">
+            <LoadingDialogue
+              message={showLoading.message}
+              isOpen={showLoading.isOpen}
+            />
+          </div>
+        )}
         {/* Success Dialog */}
         {showSuccess.success && (
           <div className="fixed inset-0 z-50">
