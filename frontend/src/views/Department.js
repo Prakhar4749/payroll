@@ -3,22 +3,30 @@ import Navbar from "../components/layout/Navbar";
 import DEPTAside from "../components/page_specific/DEPT_aside";
 import DeptTable from "../components/page_specific/Dept_Table";
 import { fetchAllDeptData } from "../controller/department.controller.js";
+import ComanLoading from "../components/common/ComanLoading";
+
 
 export default function Department() {
   const [deptData, setdeptData] = useState([]);
   const [deptDatacopy, setdeptDatacopy] = useState([]);
   const [d_id, setd_id] = useState("");
+  const [showloading,setshowloading] = useState(false)
 
   
 
   useEffect(() => {
     async function getDeptData() {
       try {
+    setshowloading(true)
+
         const rawdata = await fetchAllDeptData();
         // console.log("raw data "+rawdata)
         const data = rawdata.result
+        setshowloading(false)
         setdeptData(data);
         setdeptDatacopy(data);
+
+
       } catch (error) {
         console.error("Error fetching department data:", error);
       }
@@ -38,6 +46,8 @@ export default function Department() {
   return (
     <div>
       <Navbar />
+
+      <ComanLoading toshow={showloading} />
 
       <div className="flex flex-col lg:flex-row w-full pt-16">
         <div className="w-full lg:w-1/4 bg-white  shadow-lg lg:min-h-[calc(100vh-4rem)] ">
