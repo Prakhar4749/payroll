@@ -236,7 +236,7 @@ const UpdateForm = () => {
 
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Navbar />
-      <div className="max-w-6xl mx-auto mt-20">
+      <div className="w-full lg:max-w-[1215px] mx-auto mt-20 px-4 sm:px-6 lg:px-8">
 
 
         {showUpdateSuccess.success && (
