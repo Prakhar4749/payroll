@@ -19,7 +19,7 @@ async function get_all_dept_details(req, res) {
     try {
        
 
-        const sql = `SELECT * FROM dept_details`;
+        const sql = `SELECT * FROM dept_details ORDER BY d_id;`;
         const [results,fields] = await pool.query(sql);
         const sanitizedFields = fields.map((field) => ({
           name: field.name,

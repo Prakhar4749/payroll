@@ -11,7 +11,7 @@ import cors from"cors";
 
 
 const app = express();
-const PORT  = process.env.BACKEND_PORT 
+const PORT  = process.env.BACKEND_PORT ||5000
 
 
 //using middlewares globally 
