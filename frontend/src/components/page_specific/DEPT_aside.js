@@ -116,7 +116,7 @@ const DEPT_aside = ({
   }
 
   return (
-    <aside className="w-full bg-white shadow-lg rounded-lg overflow-hidden">
+    <aside className="w-full bg-white border rounded-lg overflow-hidden">
       {showDeleteSuccess.success && (
         <div className="fixed inset-0 z-50">
           <SuccessfullyDone

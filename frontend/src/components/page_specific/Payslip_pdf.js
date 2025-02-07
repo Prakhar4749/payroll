@@ -407,7 +407,7 @@ export default function Payslip_pdf() {
         </header>
 
         {/* Payslip Container with Box Design */}
-        <div className=" lg:max-w-[1150px] mx-auto pt-8 bg-white rounded-b-2xl shadow-xl border border-gray-200 lg:px-3 md:px-3 ">
+        <div className=" lg:max-w-[1150px] mx-auto md:pt-3 bg-white rounded-b-2xl shadow-xl border border-gray-200 md:px-3 ">
 
 
 
@@ -418,8 +418,8 @@ export default function Payslip_pdf() {
 
             {/* payaslip preview unavailable box  */}
 
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4 lg:hidden ">
-              <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8 text-center">
+            <div className="  bg-gray-50 flex items-center justify-center p-4 lg:hidden ">
+              <div className="max-w-md w-full bg-white rounded-lg shadow-lg my-7 p-8 text-center">
                 <div className="flex justify-center mb-6">
                   <FileText className="w-16 h-16 text-blue-600" />
                 </div>
