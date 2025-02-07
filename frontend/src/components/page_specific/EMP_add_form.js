@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import * as Select from "@radix-ui/react-select";
 import { add_emp_details, check_for_add_emp } from "../../controller/empController";
 import { fetchAllDeptData } from "../../controller/department.controller";
 import { emp_data_model } from "../../models/EmpModel";
