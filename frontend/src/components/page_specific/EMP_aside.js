@@ -4,8 +4,13 @@ import {  UserPlus, UserCog, UserMinus, User, FilterX, Filter, FileText } from '
 import { view_emp_by_id, delete_emp_details, all_emp_data } from "../../controller/empController";
 import { SuccessfullyDone } from "../common/SuccessfullyDone";
 import { ConfirmDialogue } from "../common/ConfirmDialogue";
+import ComanLoading from "../common/ComanLoading";
 
-const EMP_aside = ({ setalldata, alldata, setempData, selected_e_id, setselected_e_id }) => {
+const EMP_aside = ({setshowloading, setalldata, alldata, setempData, selected_e_id, setselected_e_id }) => {
+
+  // const [showloading,setshowloading] = useState(false)
+  
+
   const [e_id, sete_id] = useState("");
   const [e_name, sete_name] = useState("");
   const [e_mob, sete_mob] = useState("");
@@ -26,12 +31,16 @@ const EMP_aside = ({ setalldata, alldata, setempData, selected_e_id, setselected
 
 
       // console.log("aside", selected_e_id);
+      
+      setshowloading(true)
       const response = await delete_emp_details(selected_e_id); // Fetch employee data
+      setshowloading(false)
       setshowDeleteSuccess({ message: `${response.message}`, success: response.success })
       setselected_e_id("")
 
       // console.log("aside show", showDeleteSuccess);
       try {
+
         const data = await all_emp_data();
         setalldata(data.result);
         setempData(data.result);
@@ -71,8 +80,11 @@ const EMP_aside = ({ setalldata, alldata, setempData, selected_e_id, setselected
     }
 
     try {
+      
+      setshowloading(true)
       const response = await view_emp_by_id(selected_e_id); // Fetch employee data
       const data = response.result; // Fetch employee data
+      setshowloading(false)
 
       // console.log("Employee data received:", data);
 
@@ -93,17 +105,21 @@ const EMP_aside = ({ setalldata, alldata, setempData, selected_e_id, setselected
 
   const ViewEmp = async () => {
     // console.log(selected_e_id)
+
+
     if (!selected_e_id) {
       console.error("No employee ID selected.");
       return; // Avoid making the API call if no ID is selected
     }
 
     try {
+      setshowloading(true)
       const response = await view_emp_by_id(selected_e_id); // Fetch employee data
       const data = response.result; // Fetch employee data
-
+      
       // console.log("Employee data received:", data);
-
+      setshowloading(false)
+      
       if (data && Object.keys(data).length > 0) {
         // Navigate to the view page with the employee data
         navigate("/employee/viewEmployee", { state: { data } });
@@ -159,7 +175,7 @@ const EMP_aside = ({ setalldata, alldata, setempData, selected_e_id, setselected
   return (
 
     <aside className="w-full bg-white shadow-lg rounded-lg overflow-hidden">
-
+       
       {showDeleteSuccess.success && (
         <div className="fixed inset-0 z-50">
           <SuccessfullyDone

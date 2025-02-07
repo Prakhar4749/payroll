@@ -9,10 +9,13 @@ import { ConfirmDialogue } from "../common/ConfirmDialogue";
 import { SuccessfullyDone } from "../common/SuccessfullyDone";
 import { InvalidDialogue } from "../common/InvalidDialogue";
 import imageCompression from "browser-image-compression"
+import ComanLoading from "../common/ComanLoading";
+
 
 const UpdateForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [showloading,setshowloading] = useState(false)
   const today = new Date().toISOString().split("T")[0];
   // console.log("today", today) // Get today's date in YYYY-MM-DD format
   const dateInputRef = useRef(null);
@@ -57,9 +60,10 @@ const UpdateForm = () => {
   const onUpdateConfirm = async () => {
     // console.log("sent data", data)
     try {
-
+      setshowloading(true)
       const response = await update_emp_details(data);
-      console.log("form", response.message)
+      // console.log("form", response.message)
+      setshowloading(false)
 
       setshowUpdateSuccess({
         message: response.message,
@@ -153,9 +157,10 @@ const UpdateForm = () => {
     }));
 
     try {
+      setshowloading(true)
       const response = await check_for_update_emp(data);
       const check_data = response.result;
-
+      setshowloading(false)
       if (check_data.e_mobile_number && check_data.e_bank_acc_number && check_data.e_pan_number && check_data.d_id) {
         setShowUpdateConfirm({
           message: `Are you sure you want to update the Employee details ?`,
@@ -237,7 +242,7 @@ const UpdateForm = () => {
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Navbar />
       <div className="w-full lg:max-w-[1215px] mx-auto mt-20 px-4 sm:px-6 lg:px-8">
-
+<ComanLoading toshow={showloading} />
 
         {showUpdateSuccess.success && (
           <div className="fixed inset-0 z-50">
