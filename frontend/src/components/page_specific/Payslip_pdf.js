@@ -5,7 +5,6 @@ import { ArrowLeft, Mail, Download, Calendar, FileText, } from "lucide-react";
 import { useRef } from "react";
 import html2canvas from "html2canvas";
 import html2pdf from "html2pdf.js";
-import Mammoth from "mammoth";
 import jsPDF from "jspdf";
 import watermark from '../../assets/images/pdf_watermark.jpg';
 import { ConfirmDialogue } from "../common/ConfirmDialogue";
@@ -14,11 +13,6 @@ import { InvalidDialogue } from "../common/InvalidDialogue";
 import { LoadingDialogue } from "../common/LoadingDailogue";
 import Navbar from "../layout/Navbar";
 import { BackButton } from "../common/backButton";
-import PizZip from "pizzip";
-import Docxtemplater from "docxtemplater";
-import { saveAs } from "file-saver";
-
-import pdfTamplet from "../../assets/images/payslip_template.docx"
 // import "jspdf-autotable";
 
 // import htmlDocx from "html-docx-js";
@@ -26,17 +20,16 @@ import pdfTamplet from "../../assets/images/payslip_template.docx"
 
 
 
-
 export default function Payslip_pdf() {
 
-
+  
   const pdfRef = useRef();
   const navigate = useNavigate();
   const location = useLocation();
   const [data, setData] = useState(location.state);
   const monthName = new Date(2024, data.salary_details.salary_month - 1).toLocaleString('en-US', { month: 'long' });
 
-  const [showLoading, setShowLoading] = useState({ message: "", isOpen: false });
+  const [showLoading, setShowLoading] = useState({ message: "", isOpen: false});
   const [showConfirm, setShowConfirm] = useState({ success: false, message: "", onConfirm: () => { } });
   const [showInvalid, setshowInvalid] = useState({ success: false, message: "", onClose: () => { } });
   const [showSuccess, setshowSuccess] = useState({ success: false, message: "", onClose: () => { } });
@@ -50,19 +43,12 @@ export default function Payslip_pdf() {
   // }, []);
 
 
-<<<<<<< HEAD
   const handleDownloadPDF = async () => {
     setShowLoading({ message: "Please wait while your PDF is downloading", isOpen: true });
-=======
-  // const handleDownloadPDF = async () => {
-  //   setShowLoading({message: "Please wait while your Pdf is downloading", isOpen:true})
-  //   let originalStyle = null
->>>>>>> ae7667dbb9899697ed85bf6f4ad9305e63546728
 
-  //   const input = pdfRef.current;
-  //   if (!input) return;
+    const input = pdfRef.current;
+    if (!input) return;
 
-<<<<<<< HEAD
     try {
         const screenWidth = window.innerWidth;
         let originalStyle = input.style.display;
@@ -139,402 +125,84 @@ export default function Payslip_pdf() {
         alert("Failed to generate PDF. Please try again.");
     }
 };
-=======
-  //   // Hide buttons before capturing
-
-
-  //   try {
-  //     // Temporarily make the component visible (for hidden elements)
-  //     console.log(input.style.display)
-  //     const screenWidth = window.innerWidth;
-
-  //     originalStyle = input.style.display;
-  //     if (screenWidth < 1024) { // lg = 1024px in Tailwind
-  //       input.style.display = "block";
-  //       input.style.position = "absolute";
-  //       input.style.top = "-9999px";
-  //     }
-
-  //     // Wait a bit for rendering
-  //     await new Promise((resolve) => setTimeout(resolve, 500));
-
-  //     // Capture the component as an image
-  //     const canvas = await html2canvas(input, {
-  //       scale: 2, // Ensures high resolution
-  //       useCORS: true, // Fixes issues with external images
-  //       backgroundColor: "#ffffff", // Prevents transparent background
-  //       logging: false, // Logs useful debugging info
-  //       onclone: (document) => {
-  //         // Ensure all elements are properly loaded before capture
-  //         document.getElementById("pdf-content").style.display = "block";
-  //       }
-  //     });
-
-  //     // Restore original state
-
-  //     if (screenWidth < 1024) {
-  //       input.style.display = originalStyle;
-  //       input.style.position = "relative";
-  //       input.style.top = "auto";
-  //     }
-
-
-  //     // Convert canvas to image
-  //     const imgData = canvas.toDataURL("image/png", 0.9);
-  //     if (!imgData.startsWith("data:image/png;base64,")) {
-  //       throw new Error("Failed to generate valid image data.");
-  //     }
-
-  //     // Create the PDF
-  //     const pdf = new jsPDF("p", "mm", "a4", true);
-  //     const pageWidth = pdf.internal.pageSize.getWidth();
-  //     const pageHeight = pdf.internal.pageSize.getHeight();
-
-  //     const margin = 5;
-  //     const availableWidth = pageWidth - margin * 2;
-  //     const availableHeight = pageHeight - margin * 2;
-
-  //     let imgWidth = availableWidth;
-  //     let imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-  //     if (imgHeight > availableHeight) {
-  //       const scaleFactor = availableHeight / imgHeight;
-  //       imgWidth *= scaleFactor;
-  //       imgHeight *= scaleFactor;
-  //     }
-
-  //     const xPos = (pageWidth - imgWidth) / 2;
-  //     const yPos = margin;
-
-  //     pdf.addImage(imgData, "PNG", xPos, yPos, imgWidth, imgHeight);
-  //     pdf.save(`Payslip_${data.salary_details.e_id}_${monthName}_${data.salary_details.salary_year}.pdf`);
-
-  //     setShowLoading({message: "", isOpen:false})
-  //     setshowSuccess({
-  //       message: "Your payslip has been successfully downloaded—check it out now!",
-  //       success: true,
-  //       onClose: () => {
-  //         setshowSuccess({
-  //           message: "",
-  //           success: false,
-  //           onClose: () => { }
-  //         })
-  //       }
-  //     });
-
-  //   } catch (error) {
-  //     console.error("PDF Generation Error:", error);
-  //     alert("Failed to generate PDF. Please try again.");
-  //   }
-
-  //   // Show buttons again after PDF download
-
-  // };
-
-  // for trial 
-
-  // Function to load the .docx file
-  async function loadFile(url) {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error("Failed to load file");
-    return response.arrayBuffer();
-  }
-
-  const generateDocument = async () => {
-    try {
-      // Ensure pdfTemplate URL is correct
-      const content = await loadFile(pdfTamplet);
-      console.log("content", content);
-
-      // Load the .docx file into PizZip
-      let zip;
-      try {
-        zip = new PizZip(content);
-      } catch (zipError) {
-        throw new Error("Error loading .docx file: " + zipError.message);
-      }
-
-      const doc = new Docxtemplater(zip);
-
-      // Data for placeholders
-      const pdf_data = {
-        e_id: data.emp_details.e_id,
-        e_name: data.emp_details.e_name,
-        e_designation: data.emp_details.e_designation,
-        e_mobile_number: data.emp_details.e_mobile_number,
-        e_gender: data.emp_details.e_gender,
-        e_email: data.emp_details.e_email,
-        e_address: data.emp_details.e_address,
-        e_date_of_joining: data.emp_details.e_date_of_joining,
-        e_DOB: data.emp_details.e_DOB,
-    
-        d_id: data.dept_details.d_id,
-        d_name: data.dept_details.d_name,
-    
-        e_bank_name: data.bank_details.e_bank_name,
-        e_bank_acc_number: data.bank_details.e_bank_acc_number,
-        e_pan_number: data.bank_details.e_pan_number,
-        e_bank_IFSC: data.bank_details.e_bank_IFSC,
-        e_cpf_or_gpf_number: data.bank_details.e_cpf_or_gpf_number,
-    
-        salary_month: monthName,
-        salary_year: data.salary_details.salary_year,
-        payslip_issue_date: data.salary_details.payslip_issue_date,
-        basic_salary: data.salary_details.basic_salary,
-        special_pay: data.salary_details.special_pay,
-        dearness_allowance: data.salary_details.dearness_allowance,
-        DA: data.salary_details.DA,
-        ADA: data.salary_details.ADA,
-        interim_relief: data.salary_details.interim_relief,
-        HRA: data.salary_details.HRA,
-        CCA: data.salary_details.CCA,
-        conveyance: data.salary_details.conveyance,
-        medical: data.salary_details.medical,
-        washing_allowance: data.salary_details.washing_allowance,
-        BDP: data.salary_details.BDP,
-        arrears: data.salary_details.arrears,
-        leave_days: data.salary_details.leave_days,
-        leave_deduction_amount: data.salary_details.leave_deduction_amount,
-        deduction_CPF: data.salary_details.deduction_CPF,
-        GIS: data.salary_details.GIS,
-        house_rent: data.salary_details.house_rent,
-        water_charges: data.salary_details.water_charges,
-        electricity_charges: data.salary_details.electricity_charges,
-        vehicle_deduction: data.salary_details.vehicle_deduction,
-        HB_loan: data.salary_details.HB_loan,
-        GPF_loan: data.salary_details.GPF_loan,
-        festival_loan: data.salary_details.festival_loan,
-        grain_charges: data.salary_details.grain_charges,
-        bank_advance: data.salary_details.bank_advance,
-        advance: data.salary_details.advance,
-        RGPV_advance: data.salary_details.RGPV_advance,
-        income_tax: data.salary_details.income_tax,
-        professional_tax: data.salary_details.professional_tax,
-        total_earning: data.salary_details.total_earning,
-        total_deduction: data.salary_details.total_deduction,
-        net_payable: data.salary_details.net_payable
-    };
-
-      // Replace placeholders in the template
-      doc.render(pdf_data);
-
-      // / Convert the filled document to a .docx Blob
-        const docxBlob = doc.getZip().generate({ type: "blob" });
-
-        // Convert DOCX to text using Mammoth
-        const reader = new FileReader();
-        reader.onload = async function (event) {
-            const arrayBuffer = event.target.result;
-            const result = await Mammoth.convertToHtml({ arrayBuffer });
-            const htmlContent = `<div style="font-family:Arial">${result.value}</div>`;
-
-            // Convert HTML to PDF
-            html2pdf().from(htmlContent).save("Payslip.pdf");
-        };
-        reader.readAsArrayBuffer(docxBlob);
-    } catch (error) {
-        console.error("Error generating PDF:", error);
-    }
-  };
-
-  const handleDownloadPDF = async () => {
-    await generateDocument();
-  };
-
-
-
-  // const handleDownloadPDF = async () => {
-  //     setShowLoading({ message: "Please wait while your Word file is downloading", isOpen: true });
-
-  //     const input = pdfRef.current;
-  //     if (!input) return;
-
-  //     try {
-  //         const fileName = `Payslip_${data.salary_details.e_id}_${monthName}_${data.salary_details.salary_year}.docx`;
-
-  //         // Employee Details
-  //         const employeeDetails = [
-  //             ["Employee ID"," data.salary_details.e_id"],
-  //             ["Name", "data.salary_details.employee_name"],
-  //             ["Designation", "Developer"],
-  //             ["Department", "Information Technology"],
-  //             ["Account No", "548"],
-  //             ["Bank Name", "Harum Cum Ipsam Impedit Ut."],
-  //             ["IT PAN No", "Reiciendis"],
-  //             ["Leave Days", "0"],
-  //             ["CPF/GPF No", "469"]
-  //         ];
-
-  //         // Earnings and Deductions
-  //         const earnings = [
-  //             ["Basic", "23156"], ["Spc./Pers. Pay", "73"], ["Dearness Pay", "218"], 
-  //             ["D.A.", "37455"], ["AD.A", "174"], ["IR", "567"], ["HRA", "210"], 
-  //             ["CCA", "0"], ["Conv Allow", "284"], ["Medical", "124"], ["Wash. Allow", "590"], 
-  //             ["BDP/LWP", "0"], ["Arrears", "218"]
-  //         ];
-
-  //         const deductions = [
-  //             ["Leave Deduction", "0"], ["CPF/GPF", "4495"], ["GIS", "18"], 
-  //             ["House Rent", "600"], ["Water Charges", "0"], ["Electricity Deduction", "105"], 
-  //             ["Vehicle Deduction", "520"], ["HB Loan", "0"], ["GPF Loan", "0"], 
-  //             ["Festival Loan", "0"], ["Grain Advance", "546"], ["Bank Adv./Asso. Ded.", "21"], 
-  //             ["Advance", "0"], ["RGPV Adv./Oth Ded", "236"]
-  //         ];
-
-  //         // Function to create table rows
-  //         const createTableRows = (data) => 
-  //             data.map(([key, value]) => 
-  //                 new TableRow({
-  //                     children: [
-  //                         new TableCell({ width: { size: 50, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: key, bold: true })] })] }),
-  //                         new TableCell({ width: { size: 50, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun(value)] })] })
-  //                     ],
-  //                 })
-  //             );
-
-  //         // Create a watermark text
-  //         const watermark = new Paragraph({
-  //             alignment: AlignmentType.CENTER,
-  //             children: [
-  //                 new TextRun({
-  //                     text: "CONFIDENTIAL",
-  //                     bold: true,
-  //                     size: 50, // Large text
-  //                     color: "AAAAAA", // Light gray
-  //                 }),
-  //             ],
-  //         });
-
-  //         // Create Word document with watermark, employee details, earnings, and deductions
-  //         const doc = new Document({
-  //             sections: [
-  //                 {
-  //                     properties: {},
-  //                     children: [
-  //                         watermark, // Watermark at the top
-  //                         new Paragraph({ text: "University Institute of Technology\nRajiv Gandhi Proudyogiki Viswavidyalaya", bold: true, alignment: AlignmentType.CENTER }),
-  //                         new Paragraph({ text: "\nPAYSLIP - August 2024", bold: true, alignment: AlignmentType.CENTER }),
-  //                         new Paragraph({ text: "\nEmployee Details", bold: true }),
-  //                         new Table({ width: { size: 100, type: WidthType.PERCENTAGE }, rows: createTableRows(employeeDetails) }),
-  //                         new Paragraph({ text: "\nEarnings and Deductions", bold: true }),
-  //                         new Table({ width: { size: 100, type: WidthType.PERCENTAGE }, rows: createTableRows(earnings.concat(deductions)) }),
-  //                         new Paragraph({ text: `\nTotal Earnings: 63069`, bold: true }),
-  //                         new Paragraph({ text: `Total Deductions: -7451`, bold: true }),
-  //                         new Paragraph({ text: `Net Payable: 55618\n`, bold: true }),
-  //                         new Paragraph({ text: "Account Section\n" }),
-  //                         new Paragraph({ text: "In case of any discrepancy, please inform us immediately\n" }),
-  //                         new Paragraph({ text: "Generated on 2025-02-07T09:18:25.000Z" })
-  //                     ],
-  //                 },
-  //             ],
-  //         });
-
-  //         // Generate .docx file
-  //         const blob = await Packer.toBlob(doc);
-  //         saveAs(blob, fileName);
-
-  //         setShowLoading({ message: "", isOpen: false });
-  //         setshowSuccess({
-  //             message: "Your payslip has been successfully downloaded as a Word file!",
-  //             success: true,
-  //             onClose: () => setshowSuccess({ message: "", success: false, onClose: () => {} }),
-  //         });
-
-  //     } catch (error) {
-  //         console.error("Word File Generation Error:", error);
-  //         alert("Failed to generate Word file. Please try again.");
-  //         setShowLoading({ message: "", isOpen: false });
-  //     }
-  // };
-
-
-
-
-
-
-
-
-
-
->>>>>>> ae7667dbb9899697ed85bf6f4ad9305e63546728
 
 
 
 
   const handleSendEmail = async () => {
-    setShowLoading({ message: "We are sending your payslip to your email. Please hold on.", isOpen: true })
+    setShowLoading({message: "We are sending your payslip to your email. Please hold on.", isOpen:true})
     let originalStyle = null
 
     const input = pdfRef.current;
     if (!input) return;
 
     // Hide buttons before capturing
-    // Temporarily make the component visible (for hidden elements)
-    console.log(input.style.display)
-    const screenWidth = window.innerWidth;
+      // Temporarily make the component visible (for hidden elements)
+      console.log(input.style.display)
+      const screenWidth = window.innerWidth;
 
-    originalStyle = input.style.display;
-    if (screenWidth < 1024) { // lg = 1024px in Tailwind
-      input.style.display = "block";
-      input.style.position = "absolute";
-      input.style.top = "-9999px";
-    }
-
-    // Wait a bit for rendering
-    await new Promise((resolve) => setTimeout(resolve, 500));
-
-    // Capture the component as an image
-    const canvas = await html2canvas(input, {
-      scale: 2, // Ensures high resolution
-      useCORS: true, // Fixes issues with external images
-      backgroundColor: "#ffffff", // Prevents transparent background
-      logging: false, // Logs useful debugging info
-      onclone: (document) => {
-        // Ensure all elements are properly loaded before capture
-        document.getElementById("pdf-content").style.display = "block";
+      originalStyle = input.style.display;
+      if (screenWidth < 1024) { // lg = 1024px in Tailwind
+        input.style.display = "block";
+        input.style.position = "absolute";
+        input.style.top = "-9999px";
       }
-    });
 
-    // Restore original state
+      // Wait a bit for rendering
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
-    if (screenWidth < 1024) {
-      input.style.display = originalStyle;
-      input.style.position = "relative";
-      input.style.top = "auto";
-    }
+      // Capture the component as an image
+      const canvas = await html2canvas(input, {
+        scale: 2, // Ensures high resolution
+        useCORS: true, // Fixes issues with external images
+        backgroundColor: "#ffffff", // Prevents transparent background
+        logging: false, // Logs useful debugging info
+        onclone: (document) => {
+          // Ensure all elements are properly loaded before capture
+          document.getElementById("pdf-content").style.display = "block";
+        }
+      });
+
+      // Restore original state
+
+      if (screenWidth < 1024) {
+        input.style.display = originalStyle;
+        input.style.position = "relative";
+        input.style.top = "auto";
+      }
 
 
-    // Convert canvas to image
-    const imgData = canvas.toDataURL("image/png", 0.9);
-    if (!imgData.startsWith("data:image/png;base64,")) {
-      throw new Error("Failed to generate valid image data.");
-    }
+      // Convert canvas to image
+      const imgData = canvas.toDataURL("image/png", 0.9);
+      if (!imgData.startsWith("data:image/png;base64,")) {
+        throw new Error("Failed to generate valid image data.");
+      }
 
-    // Create the PDF
-    const pdf = new jsPDF("p", "mm", "a4", true);
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const pageHeight = pdf.internal.pageSize.getHeight();
+      // Create the PDF
+      const pdf = new jsPDF("p", "mm", "a4", true);
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
 
-    const margin = 5;
-    const availableWidth = pageWidth - margin * 2;
-    const availableHeight = pageHeight - margin * 2;
+      const margin = 5;
+      const availableWidth = pageWidth - margin * 2;
+      const availableHeight = pageHeight - margin * 2;
 
-    let imgWidth = availableWidth;
-    let imgHeight = (canvas.height * imgWidth) / canvas.width;
+      let imgWidth = availableWidth;
+      let imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-    if (imgHeight > availableHeight) {
-      const scaleFactor = availableHeight / imgHeight;
-      imgWidth *= scaleFactor;
-      imgHeight *= scaleFactor;
-    }
+      if (imgHeight > availableHeight) {
+        const scaleFactor = availableHeight / imgHeight;
+        imgWidth *= scaleFactor;
+        imgHeight *= scaleFactor;
+      }
 
-    const xPos = (pageWidth - imgWidth) / 2;
-    const yPos = margin;
+      const xPos = (pageWidth - imgWidth) / 2;
+      const yPos = margin;
 
-    pdf.addImage(imgData, "PNG", xPos, yPos, imgWidth, imgHeight);
+      pdf.addImage(imgData, "PNG", xPos, yPos, imgWidth, imgHeight);
     const pdfBlob = pdf.output("blob");
     // Show buttons again after generating the PDF
-
+   
 
     const data_to_send = {
       to: `${data.emp_details.e_email}`,
@@ -561,7 +229,7 @@ export default function Payslip_pdf() {
       const response = await send_pdf_to_email(data_to_send)
       // console.log("end")
       // console.log("checking email", response)
-      setShowLoading({ message: "", isOpen: false })
+      setShowLoading({message: "", isOpen:false})
       setshowSuccess({
         message: "An email has been successfully sent from our side, and the employee is expected to receive it shortly.",
         success: response.success,
