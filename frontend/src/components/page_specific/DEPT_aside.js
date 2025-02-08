@@ -228,7 +228,7 @@ const DEPT_aside = ({
                 id="deptId"
                 value={dId}
                 onChange={(e) => setdID(e.target.value)}
-                className="w-full border border-gray-300 rounded-md py-2 px-3 text-sm"
+                className="w-full border border-gray-300 rounded-md py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-colors duration-200"
                 placeholder="Search by ID..."
               />
             </div>
@@ -245,7 +245,7 @@ const DEPT_aside = ({
                 id="deptName"
                 value={dNamec}
                 onChange={(e) => setdNamec(e.target.value)}
-                className="w-full border border-gray-300 rounded-md py-2 px-3 text-sm"
+                className="w-full border border-gray-300 rounded-md py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-colors duration-200"
                 placeholder="Search by name..."
               />
             </div>
