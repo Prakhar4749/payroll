@@ -13,8 +13,8 @@ export default function Employee() {
   const [showloading,setshowloading] = useState(false)
 
   useEffect(() => {
-    setshowloading(true)
     async function getallempData() {
+      setshowloading(true)
       try {
         const data = await all_emp_data();
         setalldata(data.result);
@@ -22,12 +22,12 @@ export default function Employee() {
       } catch (error) {
         console.error("Error fetching employee data:", error);
       }
+      setshowloading(false)
     }
 
 
     getallempData();
 
-    setshowloading(false)
   }, []);
 
   

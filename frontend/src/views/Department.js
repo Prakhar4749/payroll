@@ -22,9 +22,9 @@ export default function Department() {
         const rawdata = await fetchAllDeptData();
         // console.log("raw data "+rawdata)
         const data = rawdata.result
-        setshowloading(false)
         setdeptData(data);
         setdeptDatacopy(data);
+        setshowloading(false)
 
 
       } catch (error) {
