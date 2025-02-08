@@ -6,7 +6,7 @@ import { Check } from "lucide-react";
 function SuccessfullyDone({ message, onClose ,className }) {
   return (
     <div className={`fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm animate-in fade-in duration-200 ${className}`}>
-      <div className="bg-white rounded-2xl shadow-2xl text-center w-full max-w-md mx-4 transform transition-all scale-in-center relative top-10">
+      <div className="bg-white rounded-2xl shadow-2xl text-center w-full sm:max-w-md max-w-sm mx-4 transform transition-all scale-in-center relative top-10">
         <div className="relative ">
           {/* Gradient Background Circle */}
           <div className="absolute -top-12 left-1/2 -translate-x-1/2">

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { User,Shield,Bell,Settings,UserCog,LockKeyhole,UserPlus,Eraser,Save } from "lucide-react";
+import { User, Shield, Bell, Settings, UserCog, LockKeyhole, UserPlus, Eraser, Save } from "lucide-react";
 import {
   fadd_new_user,
   update_password,
@@ -9,11 +9,11 @@ import {
 
 
 
-export default ({setshowloading, add_new_user, change_uId, change_uId_password, current_user_name, set_add, set_change_uId, set_change_uId_password, for_add_u, set_add_u, for_change_password, set_change_password, for_change_user_name,set_change_user_name,setShowConfirm,setshowInvalid,setshowSuccess, }) => {
+export default ({ setshowloading, add_new_user, change_uId, change_uId_password, current_user_name, set_add, set_change_uId, set_change_uId_password, for_add_u, set_add_u, for_change_password, set_change_password, for_change_user_name, set_change_user_name, setShowConfirm, setshowInvalid, setshowSuccess, }) => {
 
 
 
-  
+
 
   const [showPassword, setShowPassword] = useState({
     user_password: false,
@@ -37,10 +37,10 @@ export default ({setshowloading, add_new_user, change_uId, change_uId_password, 
     setShowConfirm({
       message: "are you really want add new user", success: true, onConfirm: async () => {
         try {
-    setshowloading(true)
+          setshowloading(true)
 
           const result = await fadd_new_user(for_add_u.user_name, for_add_u.user_password);
-    setshowloading(false)
+          setshowloading(false)
 
 
 
@@ -50,6 +50,11 @@ export default ({setshowloading, add_new_user, change_uId, change_uId_password, 
               set_change_uId_password(false)
               set_add(false)
               set_change_uId(false)
+              clearForm(set_add_u, {
+                user_name: "",
+                user_password: "",
+                confirm_password: "",
+              });
 
             }
           });
@@ -87,7 +92,7 @@ export default ({setshowloading, add_new_user, change_uId, change_uId_password, 
       });
       return;
     }
-    
+
 
     // console.log("Updating password:", for_change_password);
 
@@ -95,7 +100,7 @@ export default ({setshowloading, add_new_user, change_uId, change_uId_password, 
       message: "are you really want to update user password", success: true, onConfirm: async () => {
 
         try {
-    setshowloading(true)
+          setshowloading(true)
 
           const result = await update_password(
             for_change_password.user_name,
@@ -110,6 +115,7 @@ export default ({setshowloading, add_new_user, change_uId, change_uId_password, 
               success: true,
               onClose: () => {
                 setshowSuccess({ success: false, message: "", onClose: () => { } })
+                clearForm(set_change_password, { user_name: current_user_name, current_password: "", new_password: "", confirm_password: "" });
                 set_change_uId_password(false)
                 set_add(false)
                 set_change_uId(false)
@@ -160,7 +166,7 @@ export default ({setshowloading, add_new_user, change_uId, change_uId_password, 
       return;
     }
 
-   
+
 
     // console.log("Updating username:", for_change_user_name);
 
@@ -168,39 +174,44 @@ export default ({setshowloading, add_new_user, change_uId, change_uId_password, 
       message: "are you really want to update UserName", success: true, onConfirm: async () => {
 
         try {
-    setshowloading(true)
+          setshowloading(true)
 
           const result = await update_userName(
             for_change_user_name.current_user_name,
             for_change_user_name.new_user_name,
             for_change_user_name.user_password
           );
-    setshowloading(false)
-
-
+          setshowloading(false)
           
+          if (result && result.success) {
+            sessionStorage.setItem("user_name", for_change_user_name.new_user_name);
+            window.dispatchEvent(new Event("storageChange"));
             setshowSuccess({
-              message: result.message || "Username updated successfully!",
-              success: result.success,
-              onClose: () => setshowSuccess({ success: false, message: "", onClose: () => { } })
+              message: result?.message || "Password updated successfully!",
+              success: true,
+              onClose: () => {
+                setshowSuccess({ success: false, message: "", onClose: () => { } })
+                clearForm(set_change_user_name, { current_user_name: current_user_name, new_user_name: "", user_password: "" });
+                set_change_uId_password(false)
+                set_add(false)
+                set_change_uId(false)
+              }
             });
-            sessionStorage.setItem("user_name", result.for_change_user_name.new_user_name);
-       
+          } else {
             setshowInvalid({
-              message: result?.message || "Something went wrong",
-              success: !result.success,
+              message: result?.message || "your current password is wrong ",
+              success: true,
               onClose: () => setshowInvalid({ success: false, message: "", onClose: () => { } })
             });
-        
+          }
+
         } catch (error) {
           console.error("Error updating username:", error);
-
           setshowInvalid({
             message: error?.response?.data?.message || "An error occurred while updating the username",
             success: true,
             onClose: () => {
               setshowInvalid({ success: false, message: "", onClose: () => { } })
-
               set_change_uId_password(false)
               set_add(false)
               set_change_uId(false)
@@ -257,7 +268,7 @@ export default ({setshowloading, add_new_user, change_uId, change_uId_password, 
 
   return (
     <div className="">
-      
+
 
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
@@ -317,17 +328,19 @@ export default ({setshowloading, add_new_user, change_uId, change_uId_password, 
                     </div>
                   </div>
 
-                  
+
                 </div>
               </div>
 
               {/* Quick Actions */}
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 <button
-                onClick={() => { set_change_uId_password(false);
-                  set_add(false);
-                  set_change_uId(true);}}
-                  
+                  onClick={() => {
+                    set_change_uId_password(false);
+                    set_add(false);
+                    set_change_uId(true);
+                  }}
+
                   className="p-4 bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 group"
                 >
                   <div className="flex items-center gap-4">
@@ -342,9 +355,11 @@ export default ({setshowloading, add_new_user, change_uId, change_uId_password, 
                 </button>
 
                 <button
-                  onClick={() => {set_change_uId_password(true);
+                  onClick={() => {
+                    set_change_uId_password(true);
                     set_add(false);
-                    set_change_uId(false);}}
+                    set_change_uId(false);
+                  }}
                   className="p-4 bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 group"
                 >
                   <div className="flex items-center gap-4">
@@ -359,14 +374,16 @@ export default ({setshowloading, add_new_user, change_uId, change_uId_password, 
                 </button>
 
                 <button
-                 onClick={() => {set_change_uId_password(false);
-                  set_add(true);
-                  set_change_uId(false);}}
+                  onClick={() => {
+                    set_change_uId_password(false);
+                    set_add(true);
+                    set_change_uId(false);
+                  }}
                   className="p-4 bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 group"
                 >
                   <div className="flex items-center gap-4">
                     <div className="bg-emerald-500/10 p-3 rounded-lg group-hover:bg-emerald-500/20 transition-colors" >
-                      <UserPlus  className="w-6 h-6 text-emerald-600"  />
+                      <UserPlus className="w-6 h-6 text-emerald-600" />
                     </div>
                     <div className="text-left">
                       <h3 className="font-semibold text-gray-900">Add New User</h3>
@@ -382,7 +399,7 @@ export default ({setshowloading, add_new_user, change_uId, change_uId_password, 
           {add_new_user && (
             <form onSubmit={add_submit} className="bg-white rounded-2xl shadow-xl overflow-hidden">
               <div className="bg-gradient-to-r from-emerald-500 via-emerald-600 to-emerald-700 px-6 py-8">
-              
+
                 <div className="flex justify-center">
                   <div className="bg-white/10 p-3 rounded-full">
                     <UserPlus className="w-8 h-8 text-white" />
@@ -403,7 +420,7 @@ export default ({setshowloading, add_new_user, change_uId, change_uId_password, 
                       onChange={(e) => handleChange(e, set_add_u)}
                       required
                       className="mt-1 block w-full focus:outline-none px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
-                      
+
                     />
                   </div>
 
@@ -416,12 +433,12 @@ export default ({setshowloading, add_new_user, change_uId, change_uId_password, 
                         value={for_add_u.user_password}
                         onChange={(e) => handleChange(e, set_add_u)}
                         required
-                         className="mt-1 block w-full focus:outline-none px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
+                        className="mt-1 block w-full focus:outline-none px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
                       />
                       <button
                         type="button"
                         onClick={() => togglePasswordVisibility("user_password")}
-                         className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-emerald-600 hover:text-emerald-700"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-emerald-600 hover:text-emerald-700"
                       >
                         {showPassword.user_password ? "Hide" : "Show"}
                       </button>
@@ -442,7 +459,7 @@ export default ({setshowloading, add_new_user, change_uId, change_uId_password, 
                       <button
                         type="button"
                         onClick={() => togglePasswordVisibility("confirm_password")}
-                       className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-emerald-600 hover:text-emerald-700"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-emerald-600 hover:text-emerald-700"
                       >
                         {showPassword.confirm_password ? "Hide" : "Show"}
                       </button>
@@ -461,15 +478,15 @@ export default ({setshowloading, add_new_user, change_uId, change_uId_password, 
                       });
                       set_add(false);
                     }}
-                    
+
                     className="flex-1 px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 focus:ring-2 focus:ring-gray-300 transition-colors flex items-center justify-center gap-2"
                   >
                     <Eraser className="w-5 h-5" /> Cancel
                   </button>
                   <button
                     type="submit"
-                     className="flex-1 px-6 py-3 bg-gradient-to-r from-emerald-500 via-emerald-600 to-emerald-700 text-white rounded-lg hover:from-emerald-600 hover:to-emerald-700 focus:ring-2 focus:ring-emerald-500 transition-colors flex items-center justify-center gap-2"
-                    
+                    className="flex-1 px-6 py-3 bg-gradient-to-r from-emerald-500 via-emerald-600 to-emerald-700 text-white rounded-lg hover:from-emerald-600 hover:to-emerald-700 focus:ring-2 focus:ring-emerald-500 transition-colors flex items-center justify-center gap-2"
+
                   >
                     <Save className="w-5 h-5" /> Create User
                   </button>
@@ -498,7 +515,7 @@ export default ({setshowloading, add_new_user, change_uId, change_uId_password, 
                     <input
                       type="text"
                       name="current_user_name"
-                      value={for_change_user_name.current_user_name}
+                      value={current_user_name}
                       onChange={(e) => handleChange(e, set_change_user_name)}
                       required
                       disabled
@@ -521,18 +538,18 @@ export default ({setshowloading, add_new_user, change_uId, change_uId_password, 
                   <div>
                     <label className="block text-sm font-medium text-gray-700">Current Password</label>
                     <div className="relative">
-                    <input
-                      type={showPassword.user_password ? "text" : "password"}
-                      name="user_password"
-                      value={for_change_user_name.user_password}
-                      onChange={(e) => handleChange(e, set_change_user_name)}
-                      required
-                      className="mt-1 block w-full focus:outline-none px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                    />
-                    <button
+                      <input
+                        type={showPassword.user_password ? "text" : "password"}
+                        name="user_password"
+                        value={for_change_user_name.user_password}
+                        onChange={(e) => handleChange(e, set_change_user_name)}
+                        required
+                        className="mt-1 block w-full focus:outline-none px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                      />
+                      <button
                         type="button"
                         onClick={() => togglePasswordVisibility("user_password")}
-                         className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-emerald-600 hover:text-emerald-700"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-emerald-600 hover:text-emerald-700"
                       >
                         {showPassword.user_password ? "Hide" : "Show"}
                       </button>
@@ -584,7 +601,7 @@ export default ({setshowloading, add_new_user, change_uId, change_uId_password, 
                     <input
                       type="text"
                       name="user_name"
-                      value={for_change_password.user_name}
+                      value={current_user_name}
                       onChange={(e) => handleChange(e, set_change_password)}
                       required
                       disabled
@@ -607,7 +624,7 @@ export default ({setshowloading, add_new_user, change_uId, change_uId_password, 
                         type="button"
                         onClick={() => togglePasswordVisibility("current_password")}
                         className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-violet-600 hover:text-violet-700"
-                       
+
                       >
                         {showPassword.current_password ? "Hide" : "Show"}
                       </button>
@@ -623,14 +640,14 @@ export default ({setshowloading, add_new_user, change_uId, change_uId_password, 
                         value={for_change_password.new_password}
                         onChange={(e) => handleChange(e, set_change_password)}
                         required
-                         className="mt-1 block w-full focus:outline-none px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition-colors"
-                        
+                        className="mt-1 block w-full focus:outline-none px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition-colors"
+
                       />
                       <button
                         type="button"
                         onClick={() => togglePasswordVisibility("new_password")}
                         className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-violet-600 hover:text-violet-700"
-                        
+
                       >
                         {showPassword.new_password ? "Hide" : "Show"}
                       </button>
@@ -672,7 +689,7 @@ export default ({setshowloading, add_new_user, change_uId, change_uId_password, 
                   </button>
                   <button
                     type="submit"
-                   className="flex-1 px-6 py-3 bg-gradient-to-r from-violet-500 to-violet-600 text-white rounded-lg hover:from-violet-600 hover:to-violet-700 focus:ring-2 focus:ring-violet-500 transition-colors flex items-center justify-center gap-2"
+                    className="flex-1 px-6 py-3 bg-gradient-to-r from-violet-500 to-violet-600 text-white rounded-lg hover:from-violet-600 hover:to-violet-700 focus:ring-2 focus:ring-violet-500 transition-colors flex items-center justify-center gap-2"
                   >
                     <Save className="w-5 h-5" /> Update Password
                   </button>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '../components/layout/Navbar';
 
 import UserAside from '../components/page_specific/User_aside';
@@ -17,7 +17,22 @@ export default function User() {
 const [showloading,setshowloading] = useState(false)
   
 
-  const user_name = sessionStorage.getItem('user_name');
+
+  const [user_name, setUserName] = useState(sessionStorage.getItem("user_name") || "");
+
+    useEffect(() => {
+        const updateUserName = () => {
+            setUserName(sessionStorage.getItem("user_name") || "");
+        };
+
+        // Custom event listener for sessionStorage changes
+        window.addEventListener("storageChange", updateUserName);
+
+        return () => {
+            window.removeEventListener("storageChange", updateUserName);
+        };
+    }, []);
+
 
   const [showConfirm, setShowConfirm] = useState({ success: false, message: "", onConfirm: () => { } });
   const [showInvalid, setshowInvalid] = useState({ success: false, message: "", onClose: () => { } });
