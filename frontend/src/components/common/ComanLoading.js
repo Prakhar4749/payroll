@@ -5,20 +5,20 @@ export default ({ toshow, message = 'Loading...', gifUrl = img }) => {
   if (!toshow) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 animate-fade-in">
-      <div className="bg-white rounded-2xl p-8 max-w-sm w-full mx-4 shadow-xl animate-slide-up">
+    <div className="fixed inset-0 backdrop-blur-[2px] flex items-center justify-center z-50 animate-fade-in">
+      <div className=" animate-slide-up">
         <div className="flex flex-col items-center space-y-4">
           {/* GIF container */}
           <div className="relative mb-6">
             <img
               src={gifUrl}
               alt="Loading..."
-              className="w-60 h-60 object-contain animate-pulse"
+              className=" w-40 h-40 sm:w-60 sm:h-60 object-contain "
             />
           </div>
 
           {/* Message */}
-          <h3 className="text-xl font-semibold text-gray-800 text-center">
+          <h3 className="text-2xl font-bold text-gray-800 text-center">
             {message}
           </h3>
 

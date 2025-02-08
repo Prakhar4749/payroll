@@ -24,7 +24,7 @@ export default ({setshowloading, add_new_user, change_uId, change_uId_password, 
 
   const handleChange = (e, setState) => {
     const { name, value } = e.target;
-    setState((prevState) => ({ ...prevState, [name]: value }));
+    setState((prevState) => ({ ...prevState, [name]: value.trim() }));
   };
 
   const add_submit = (e) => {
@@ -70,6 +70,15 @@ export default ({setshowloading, add_new_user, change_uId, change_uId_password, 
   const update_password_submit = async (e) => {
     e.preventDefault();
 
+    if (current_user_name === "admin") {
+      setshowInvalid({
+        message: "You can not make changes to this user entry",
+        success: true,
+        onClose: () => setshowInvalid({ success: false, message: "", onClose: () => { } })
+      });
+      return;
+    }
+
     if (for_change_password.new_password !== for_change_password.confirm_password) {
       setshowInvalid({
         message: "Passwords do not match!",
@@ -78,6 +87,7 @@ export default ({setshowloading, add_new_user, change_uId, change_uId_password, 
       });
       return;
     }
+    
 
     // console.log("Updating password:", for_change_password);
 
@@ -132,6 +142,15 @@ export default ({setshowloading, add_new_user, change_uId, change_uId_password, 
   const update_username_submit = async (e) => {
     e.preventDefault();
 
+    if (current_user_name === "admin") {
+      setshowInvalid({
+        message: "You can not make changes to this user entry",
+        success: true,
+        onClose: () => setshowInvalid({ success: false, message: "", onClose: () => { } })
+      });
+      return;
+    }
+
     if (!for_change_user_name.new_user_name) {
       setshowInvalid({
         message: "New username is required!",
@@ -140,6 +159,8 @@ export default ({setshowloading, add_new_user, change_uId, change_uId_password, 
       });
       return;
     }
+
+   
 
     // console.log("Updating username:", for_change_user_name);
 
@@ -157,20 +178,20 @@ export default ({setshowloading, add_new_user, change_uId, change_uId_password, 
     setshowloading(false)
 
 
-          if (result?.success) {
+          
             setshowSuccess({
               message: result.message || "Username updated successfully!",
-              success: true,
+              success: result.success,
               onClose: () => setshowSuccess({ success: false, message: "", onClose: () => { } })
             });
             sessionStorage.setItem("user_name", result.for_change_user_name.new_user_name);
-          } else {
+       
             setshowInvalid({
               message: result?.message || "Something went wrong",
-              success: true,
+              success: !result.success,
               onClose: () => setshowInvalid({ success: false, message: "", onClose: () => { } })
             });
-          }
+        
         } catch (error) {
           console.error("Error updating username:", error);
 

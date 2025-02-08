@@ -136,7 +136,7 @@ export default function Login() {
                   type="text"
                   id="user"
                   value={user_name}
-                  onChange={(e) => setUserName(e.target.value)}
+                  onChange={(e) => setUserName(e.target.value.trim())}
                   required
                   className="block w-full px-5 py-3.5 bg-white border border-slate-200 rounded-xl text-slate-900 text-sm placeholder-slate-400
                   focus:outline-none focus:border-emerald-300 focus:ring-4 focus:ring-emerald-100 transition-all duration-200
@@ -154,7 +154,7 @@ export default function Login() {
                     type={showPassword ? "text" : "password"}
                     id="password"
                     value={user_password}
-                    onChange={(e) => setUserPassword(e.target.value)}
+                    onChange={(e) => setUserPassword(e.target.value.trim())}
                     required
                     className="block w-full px-5 py-3.5 bg-white border border-slate-200 rounded-xl text-slate-900 text-sm placeholder-slate-400
                     focus:outline-none focus:border-emerald-300 focus:ring-4 focus:ring-emerald-100 transition-all duration-200

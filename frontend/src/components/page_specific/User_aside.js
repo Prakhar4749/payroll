@@ -22,6 +22,7 @@ const UserActions = ({
   set_change_password,
   set_change_user_name,
   setShowConfirm,
+  setshowInvalid
 
 }) => {
   const [showEnterPassword, setShowEnterPassword] = useState({
@@ -86,6 +87,16 @@ const UserActions = ({
   };
 
   const handleDeleteUser = async () => {
+
+    if (current_user_name === "admin") {
+      setshowInvalid({
+        message: "You can not make changes to this user entry",
+        success: true,
+        onClose: () => setshowInvalid({ success: false, message: "", onClose: () => { } })
+      });
+      return;
+    }
+
     setShowConfirm({
       message: `Are you sure you want to delete your account, ${current_user_name}?`,
       success: true,
