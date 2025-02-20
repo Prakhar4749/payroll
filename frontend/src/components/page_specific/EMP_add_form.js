@@ -324,7 +324,7 @@ const AddForm = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {/* Name */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Name</label>
+                  <label className="block text-sm font-medium text-gray-700">Name <span className="text-red-600 text-xl">*</span></label>
                   <input
                     type="text"
                     value={titleCase(data.emp_details.e_name).replace(/\s+/g, ' ') || ""}
@@ -338,7 +338,7 @@ const AddForm = () => {
 
                 {/* Mobile Number */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Mobile Number</label>
+                  <label className="block text-sm font-medium text-gray-700">Mobile Number<span className="text-red-600 text-xl">*</span></label>
                   <input
                     type="tel"
                     value={data.emp_details.e_mobile_number}
@@ -358,7 +358,7 @@ const AddForm = () => {
 
                 {/* Gender */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Gender</label>
+                  <label className="block text-sm font-medium text-gray-700">Gender<span className="text-red-600 text-xl">*</span></label>
                   <select
                     value={data.emp_details.e_gender}
                     onChange={(e) => handleInputChange("emp_details", "e_gender", e.target.value)}
@@ -388,7 +388,7 @@ const AddForm = () => {
 
                 {/* Address */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Address</label>
+                  <label className="block text-sm font-medium text-gray-700">Address<span className="text-red-600 text-xl">*</span></label>
                   <input
                     type="text"
                     value={data.emp_details.e_address}
@@ -465,7 +465,7 @@ const AddForm = () => {
 
                 {/* date of joining */}
                 <div >
-                  <label className="block text-sm font-medium text-gray-700">Date of Joining</label>
+                  <label className="block text-sm font-medium text-gray-700">Date of Joining<span className="text-red-600 text-xl">*</span></label>
                   <input
                     onClick={() => dateInputRef.current.focus()} // Focus the date input when clicking the container
                     ref={dateInputRef} // Attach the ref to the input element
@@ -481,7 +481,7 @@ const AddForm = () => {
 
                 {/* Date of Birth */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Date of Birth</label>
+                  <label className="block text-sm font-medium text-gray-700">Date of Birth<span className="text-red-600 text-xl">*</span></label>
                   <input
                     onClick={() => dateInputRef.current.focus()} // Focus the date input when clicking the container
                     ref={dateInputRef} // Attach the ref to the input element
@@ -490,6 +490,7 @@ const AddForm = () => {
                     onChange={(e) => handleInputChange("emp_details", "e_DOB", e.target.value)}
                     max={today} // Restrict dates greater than today
                     className="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 cursor-pointer"
+                    required
                   />
                 </div>
 
@@ -535,7 +536,7 @@ const AddForm = () => {
 
                 {/* Bank Name */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Bank Name</label>
+                  <label className="block text-sm font-medium text-gray-700">Bank Name<span className="text-red-600 text-xl">*</span></label>
                   <input
                     type="text"
                     value={data.emp_bank_details.e_bank_name}
@@ -548,7 +549,7 @@ const AddForm = () => {
 
                 {/* Bank Account Number */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Bank Account Number</label>
+                  <label className="block text-sm font-medium text-gray-700">Bank Account Number<span className="text-red-600 text-xl">*</span></label>
                   <input
                     type="number"
                     value={data.emp_bank_details.e_bank_acc_number || ""}
@@ -566,7 +567,7 @@ const AddForm = () => {
 
                 {/* PAN Number */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">PAN Number</label>
+                  <label className="block text-sm font-medium text-gray-700">PAN Number<span className="text-red-600 text-xl">*</span></label>
                   <input
                     type="text"
                     value={data.emp_bank_details.e_pan_number}
@@ -580,7 +581,7 @@ const AddForm = () => {
 
                 {/* Bank IFSC Code */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Bank IFSC Code</label>
+                  <label className="block text-sm font-medium text-gray-700">Bank IFSC Code<span className="text-red-600 text-xl">*</span></label>
                   <input
                     type="text"
                     value={data.emp_bank_details.e_bank_IFSC}
@@ -625,7 +626,7 @@ const AddForm = () => {
 
                 {/* Basic Salary */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Basic Salary</label>
+                  <label className="block text-sm font-medium text-gray-700">Basic Salary<span className="text-red-600 text-xl">*</span></label>
                   <input
 
                     type="number"
