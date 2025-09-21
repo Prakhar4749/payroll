@@ -5,7 +5,7 @@ const ip = process.env.REACT_APP_BASE_URL;
 
 async function fetchAllDeptData() {
   try {
-    const response = await axios.get(`${ip}/dept`);
+    const response = await axios.get(`${ip}/dept/`);
     // console.log(response.data);
     // console.log(response.data)
     return response.data  ; // Update state with API response
