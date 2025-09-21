@@ -1,3 +1,5 @@
+// src/app.js
+
 import express from'express'; 
 import { checkDbMiddleware } from './middleware/CheckDbMiddleware.js';
 import emproute from "./routes/emp.js"

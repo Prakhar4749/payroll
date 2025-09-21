@@ -1,3 +1,4 @@
+// src/routes/emp.js
 import express from 'express'
 import {get_all_basic__emp_details ,get_all_e_id_emp_details , delete_e_id ,add_new_emp, update_emp ,check_for_data , chk_for_update } from '../controller/emp.js'
 import path from 'path'

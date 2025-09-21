@@ -11,9 +11,23 @@ export const loginUser = async (user_name, user_password) => {
       user_password
     });
 
-    // console.log(response);
-
+    console.log(response);
+    
     const { success, message, result } = response.data;
+    console.log(result.token);
+
+    // Add this check before storing
+if (typeof(Storage) !== "undefined" && sessionStorage) {
+  console.log("SessionStorage is available");
+} else {
+  console.log("SessionStorage is NOT available");
+}
+
+console.log("About to check success condition:");
+console.log("success value:", success);
+console.log("success type:", typeof success);
+console.log("success === true:", success === true);
+console.log("Boolean(success):", Boolean(success));
 
     if (success) {
       sessionStorage.setItem("token", result.token);

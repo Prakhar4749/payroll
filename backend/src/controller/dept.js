@@ -1,3 +1,6 @@
+// ./controller/dept.js
+
+
 import { pool } from '../config/db.js';
 
 

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import {  useNavigate } from 'react-router-dom';
-import { Eye, EyeOff , Building2} from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Eye, EyeOff, Building2 } from 'lucide-react';
+import { jwtDecode } from 'jwt-decode';
 import { loginUser } from '../controller/authController';
-import {ConfirmDialogue} from "../components/common/ConfirmDialogue";
-import {InvalidDialogue} from "../components/common/InvalidDialogue";
+import { ConfirmDialogue } from "../components/common/ConfirmDialogue";
+import { InvalidDialogue } from "../components/common/InvalidDialogue";
 import { SuccessfullyDone } from "../components/common/SuccessfullyDone";
 import ComanLoading from "../components/common/ComanLoading";
 
@@ -12,50 +13,93 @@ export default function Login() {
   const [user_password, setUserPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
-  const [showloading,setshowloading] = useState(false)
+  const [showloading, setshowloading] = useState(false);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
   const [showConfirm, setShowConfirm] = useState({success: false, message: "", onConfirm: ()=>{}});
   const [showInvalid, setShowInvalid] = useState({success: false, message: "", onClose: ()=>{}});
-  const [showSuccess, setShowSuccess] = useState({success: false, message: "", onClose: ()=>{ }});
+  const [showSuccess, setShowSuccess] = useState({success: false, message: "", onClose: ()=>{}});
 
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // console.log(user_name,",", user_password)
-    setshowloading(true)
-    const response = await loginUser(user_name, user_password);
-    setshowloading(false)
-    // console.log(response)
-
-    if (response.success) {
-    //   setShowSuccess({success: true, message: response.message, onClose: ()=>{
-    //     setShowSuccess( {success: false, message:"", onClose: ()=>{} }); // Close dialog smoothly
-    //     navigate('/payslip');
-    //   }})
-    //   setTimeout(() => {
-    //   setShowSuccess( {success: false, message:"", onClose:()=>{} });
-    //   navigate('/payslip'); // Redirect after closing
-    // }, 1000);
-    sessionStorage.setItem('user_name', user_name );
-    navigate('/payslip');
     
-    } else {
-      setShowInvalid({success: true, message: response.message, onClose: ()=>{
-            setShowInvalid( {success: false, message:"", onClose: ()=>{} }); 
-          }})
+    // Clear any previous errors
+    setError('');
+    
+    // Basic validation
+    if (!user_name.trim() || !user_password.trim()) {
+      setError('Please enter both username and password');
+      return;
+    }
+    
+    setshowloading(true);
+    
+    try {
+      const response = await loginUser(user_name, user_password);
       
+      if (response.success) {
+        // Navigate immediately on successful login
+        navigate('/payslip', { replace: true });
+      } else {
+        setShowInvalid({
+          success: true, 
+          message: response.message, 
+          onClose: () => {
+            setShowInvalid({success: false, message: "", onClose: () => {}});
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      setError('An unexpected error occurred. Please try again.');
+    } finally {
+      setshowloading(false);
     }
   };
 
+  // Enhanced auth check with proper token validation
   useEffect(() => {
-    // Redirect if already logged in
-    let login = sessionStorage.getItem('login');
-    if (login) {
-      navigate('/payslip');
+    const checkAuthStatus = () => {
+      try {
+        const token = sessionStorage.getItem('token');
+        const login = sessionStorage.getItem('login');
+        
+        if (token && login === 'true') {
+          const decoded = jwtDecode(token);
+          console.log("decoded",decoded)
+          const currentTime = Date.now() / 1000;
+          
+          if (decoded.exp > currentTime) {
+            // Token is valid, redirect to payslip
+            navigate('/payslip', { replace: true });
+            return;
+          }
+        }
+        
+        
+        
+      } catch (error) {
+        console.error('Auth validation error:', error);
+        // Clean up on any token validation error
+        sessionStorage.clear();
+      } finally {
+        setIsCheckingAuth(false);
+      }
+    };
 
-    }
-  }, [navigate]);
+    checkAuthStatus();
+  }, []);
+
+  // Show loading while checking authentication
+  if (isCheckingAuth) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-emerald-600 via-teal-600 to-sky-600">
+        <ComanLoading toshow={true} />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-emerald-600 via-teal-600 to-sky-600 p-4 sm:p-6 lg:p-8">

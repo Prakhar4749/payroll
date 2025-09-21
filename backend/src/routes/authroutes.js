@@ -1,3 +1,4 @@
+// src/routes/authroutes.js
 import express from "express";
 import {login_user,register_user,change_password,change_user_name ,  getallusers ,delete_user  } from '../controller/authcontroller.js'
 const route = express.Router();

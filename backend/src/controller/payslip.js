@@ -1,3 +1,6 @@
+// ./controller/payslip.js
+
+
 import { pool } from '../config/db.js'; // Adjust the 
 // import path
 import nodemailer from "nodemailer";

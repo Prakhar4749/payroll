@@ -1,3 +1,4 @@
+// src/routes/dept.js
 import express from 'express'
 import {chk_isit_present, get_all_dept_details ,get_d_id_details , delete_d_id ,add_new_dept, update_dept } from '../controller/dept.js'
 

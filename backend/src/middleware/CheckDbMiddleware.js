@@ -1,3 +1,6 @@
+// src/middleware/CheckDbMiddleware.js
+
+
 import { checkConnection } from "../config/db.js";
 
 // Middleware to check database connection
